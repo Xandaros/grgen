@@ -1,0 +1,14 @@
+using attrib_model_001;
+
+rule r {
+	a:NINT;
+	b:NINT;
+	a -e:Edge-> b;
+
+	replace {
+		c: typeof(a)<a>;
+		a -e-> c;
+		
+	}
+}
+

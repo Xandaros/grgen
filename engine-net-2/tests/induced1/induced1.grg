@@ -1,0 +1,27 @@
+rule init1
+{
+
+    replace
+    {
+        a:Node;
+        b:Node;
+        c:Node;
+        d:Node;
+        e:Node;
+        a --> b;
+        b --> c;
+        c --> d;
+        d --> e;
+    }
+}
+
+induced rule makeUndirected
+{
+	a:Node -e:Edge-> b:Node;
+
+    replace
+    {
+        a -e-> b;
+        b --> a;
+    }
+}

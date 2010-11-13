@@ -1,0 +1,20 @@
+using attrib_model_001;
+
+rule r {
+	ni : NINT;
+	nb : NBOOL;
+	nf : NFLOAT;
+	nd : NDOUBLE;
+	ns : NSTRING;
+	no : NOBJECT;
+	-ei:EINT->;
+	-eb:EBOOL->;
+	-ef:EFLOAT->;
+	-ed:EDOUBLE->;
+	-es:ESTRING->;
+	-eo:EOBJECT->;
+	
+	modify {
+	}
+}
+

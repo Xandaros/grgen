@@ -1,0 +1,9 @@
+rule r : (Node) {
+	x: Node;
+	y: Node;
+
+	modify {
+		return(x, y);
+	}
+}
+

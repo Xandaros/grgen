@@ -1,0 +1,52 @@
+new graph storages/storages
+
+st1 = new set Node
+xgrs ( (n)=addNode ;> st1.add(n) )[5]
+set st1 size
+
+st2 = new set EE
+xgrs for{n in st1; (e)=addReflexiveEdgeEE(n) ;> st2.add(e)}
+set st2 size
+show num nodes
+show num edges
+
+xgrs for{e in st2; isReflexiveEdge(e)}
+xgrs for{n in st1; exactlyOneReflexiveEdge(n)}
+
+xgrs for{e in st2; remEdge(e)}
+set st2 size
+show num nodes
+show num edges
+
+st3 = new set EE
+xgrs for{e in st2; st3.add(e)}
+set st3 size
+
+set st3 size
+xgrs if{e in st3; false; st3.add(e) && addNode}
+show num nodes
+set st3 size
+
+xgrs for{e in st3; st2.rem(e)}
+set st2 size
+show num nodes
+show num edges
+set st3 size
+
+set st2 size
+xgrs if{e in st2; st2.rem(e) && addNode; false}
+show num nodes
+set st2 size
+xgrs for{n in st3; st2.rem(n) && false} && addNode
+show num nodes
+set st2 size
+
+set st3 size
+xgrs s=st3.size()
+show var s
+xgrs st3.clear()
+set st3 size
+xgrs s=st3.size()
+show var s
+
+quit

@@ -1,0 +1,8 @@
+rule empty_1 {
+	;
+
+	replace {
+		;
+	}
+}
+

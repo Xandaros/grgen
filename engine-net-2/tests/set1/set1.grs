@@ -1,0 +1,67 @@
+new graph set1/set1
+
+new na:A
+na.a
+na.ac
+na.val
+
+new nb:B
+nb.a
+nb.ac
+nb.val
+nb.b
+nb.bc
+
+new na -ea:EA-> na
+ea.a
+ea.ac
+
+new nb -eb:EB-> nb
+eb.a
+eb.ac
+eb.b
+eb.bc
+
+xgrs aWithFoo
+
+na.a
+xgrs addFooNoEffect
+na.a
+nb.b
+xgrs addFoo
+nb.b
+
+xgrs bWithBar
+
+nb.a
+xgrs removeBar
+nb.a
+nb.a
+xgrs removeBarNoEffect
+nb.a
+
+xgrs bWithBar
+
+na.val
+nb.val
+xgrs [anonymousSet]
+xgrs anonymousSetNA
+
+new n:A
+set n.m add "Hallo"
+set n.m add "Handtuch"
+v=n.m
+n.m
+
+xgrs useSetVar(v)
+
+set n.m remove "Hallo"
+n.m
+
+xgrs useSetVar(v)
+
+m=new set string
+set m add "Hallo"
+xgrs useSetVar(m)
+
+quit

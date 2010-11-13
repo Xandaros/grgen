@@ -1,0 +1,11 @@
+using test_model_002;
+
+rule to_1 {
+	a : A;
+	: A;
+	b : typeof(a);
+
+	replace{
+		a --> b;
+	}
+}

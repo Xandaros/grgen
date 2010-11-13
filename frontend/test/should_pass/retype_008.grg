@@ -1,0 +1,10 @@
+using attrib_model_001;
+
+rule r {
+	-e:EINT->;
+	-f:EBOOL->;
+
+	modify {
+		- ee:typeof(f)<e> ->;
+	}
+}

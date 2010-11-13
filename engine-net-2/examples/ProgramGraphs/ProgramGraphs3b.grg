@@ -1,0 +1,40 @@
+// rule file containing tests and subpatterns, with the subpattern using itself recursively
+//  this can be used to match structures extending into depth, here it is used to match a statement list/chain
+// before was ProgramGraphs3a.grg, next is ProgramGraphs3c.grg
+
+using ProgramGraphs;
+
+#include "ProgramGraphs0WithoutUsing.grg"
+
+test MatchStatements
+{
+	mb:MethodBody;
+	st:Statements(mb);
+}
+
+pattern Statements(exOrMb:Entity)
+{
+	alternative
+	{
+		Assignment {
+			exOrMb -:next-> e:Expression;
+			e -:writesTo->;
+			st:Statements(e);
+		}
+		Call {
+			exOrMb -:next-> e:Expression;
+			e -:calls->;
+			st:Statements(e);
+		}
+		Return {
+			exOrMb -:next-> e:Expression;
+			e -:uses->;
+			st:Statements(e);
+		}
+		EndOfList {
+			negative {
+				exOrMb -:next->;
+			}
+		}
+	}	
+}

@@ -1,0 +1,114 @@
+/*
+ * GrGen: graph rewrite generator tool -- release GrGen.NET 2.6
+ * Copyright (C) 2003-2010 Universitaet Karlsruhe, Institut fuer Programmstrukturen und Datenorganisation, LS Goos
+ * licensed under LGPL v3 (see LICENSE.txt included in the packaging of this file)
+ * www.grgen.net
+ */
+
+using System;
+using System.Collections.Generic;
+using de.unika.ipd.grGen.libGr.sequenceParser;
+
+namespace de.unika.ipd.grGen.libGr
+{
+    /// <summary>
+    /// A container of rules.
+    /// </summary>
+    public abstract class BaseActions
+    {
+        #region Abstract members
+
+        /// <summary>
+        /// An associated name.
+        /// </summary>
+        public abstract String Name { get; }
+
+        /// <summary>
+        /// An MD5 hash of the used IGraphModel.
+        /// Probably useless...
+        /// </summary>
+        public abstract String ModelMD5Hash { get; }
+
+        /// <summary>
+        /// The associated graph.
+        /// </summary>
+        public abstract IGraph Graph { get; set; }
+
+        /// <summary>
+        /// Enumerates all actions managed by this BaseActions instance.
+        /// </summary>
+        public abstract IEnumerable<IAction> Actions { get; }
+
+        /// <summary>
+        /// Gets the action with the given name.
+        /// </summary>
+        /// <param name="name">The name of the action.</param>
+        /// <returns>The action with the given name, or null, if no such action exists.</returns>
+        public abstract IAction GetAction(String name);
+
+        /// <summary>
+        /// Does action-backend dependent stuff.
+        /// </summary>
+        /// <param name="args">Any kind of parameters for the stuff to do</param>
+        public abstract void Custom(params object[] args);
+
+        #endregion Abstract members
+
+        #region Convenience methods
+
+        /// <summary>
+        /// Apply a graph rewrite sequence to the currently associated graph.
+        /// </summary>
+        /// <param name="seqStr">The graph rewrite sequence in form of a string</param>
+        /// <returns>The result of the sequence.</returns>
+        public bool ApplyGraphRewriteSequence(String seqStr)
+        {
+            return Graph.ApplyGraphRewriteSequence(ParseSequence(seqStr));
+        }
+
+        /// <summary>
+        /// Apply a graph rewrite sequence to the currently associated graph.
+        /// </summary>
+        /// <param name="seqStr">The graph rewrite sequence in form of a string</param>
+        /// <param name="env">The execution environment giving access to the names and user interface (null if not available)</param>
+        /// <returns>The result of the sequence.</returns>
+        public bool ApplyGraphRewriteSequence(String seqStr, SequenceExecutionEnvironment env)
+        {
+            return Graph.ApplyGraphRewriteSequence(ParseSequence(seqStr), env);
+        }
+              
+        /// <summary>
+        /// Tests whether the given sequence succeeds on a clone of the associated graph.
+        /// </summary>
+        /// <param name="seqStr">The sequence to be executed in form of a string</param>
+        /// <returns>True, iff the sequence succeeds on the cloned graph </returns>
+        public bool ValidateWithSequence(String seqStr)
+        {
+            return Graph.ValidateWithSequence(ParseSequence(seqStr));
+        }
+
+        /// <summary>
+        /// Tests whether the given sequence succeeds on a clone of the associated graph.
+        /// </summary>
+        /// <param name="seqStr">The sequence to be executed in form of a string</param>
+        /// <param name="env">The execution environment giving access to the names and user interface (null if not available)</param>
+        /// <returns>True, iff the sequence succeeds on the cloned graph </returns>
+        public bool ValidateWithSequence(String seqStr, SequenceExecutionEnvironment env)
+        {
+            return Graph.ValidateWithSequence(ParseSequence(seqStr), env);
+        }
+
+        /// <summary>
+        /// Parses the given XGRS string and generates a Sequence object.
+        /// Any actions in the string must refer to actions from this action container.
+        /// </summary>
+        /// <param name="seqStr">The sequence to be parsed in form of an XGRS string.</param>
+        /// <returns>The sequence object according to the given string.</returns>
+        public Sequence ParseSequence(String seqStr)
+        {
+            return SequenceParser.ParseSequence(seqStr, this);
+        }
+
+        #endregion Convenience methods
+    }
+}

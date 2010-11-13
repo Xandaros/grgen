@@ -1,0 +1,10 @@
+new graph "inducedHom2\inducedHom2" "InducedHom graph"
+
+show num nodes
+show num edges
+xgrs init1
+show num nodes
+show num edges
+xgrs [?doNothing]
+
+quit

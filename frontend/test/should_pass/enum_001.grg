@@ -1,0 +1,15 @@
+using enum_model_001;
+
+rule r {
+	a:A -b:B-> a;
+
+	modify {
+		eval {
+			a.e = b.e;
+			b.e = te::a;
+			b.e = te::c;
+			b.e = te::b;
+		}
+	}
+}
+
