@@ -1,0 +1,9 @@
+using attrib_model_001;
+
+rule r {
+	x: NINT;
+
+	modify {
+		y: NBOOL<x>;
+	}
+}

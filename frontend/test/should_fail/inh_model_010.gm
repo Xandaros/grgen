@@ -1,0 +1,5 @@
+edge class A extends B;
+edge class B extends C,D;
+edge class D extends E;
+edge class E extends A;
+edge class C extends A;

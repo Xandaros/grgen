@@ -1,0 +1,8 @@
+dpo rule r {
+    x:Node;
+    y:Node;
+    exact(x,y);
+
+	replace {
+	}
+}

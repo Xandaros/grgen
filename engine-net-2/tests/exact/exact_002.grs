@@ -1,0 +1,15 @@
+new graph "exact\exact" "Exact graph"
+
+show num nodes
+show num edges
+xgrs init2
+show num nodes
+show num edges
+xgrs [deleteSrcNode]
+show num nodes
+show num edges
+xgrs [deleteNodeWithDanglingEdge]
+show num nodes
+show num edges
+
+quit

@@ -1,0 +1,14 @@
+using basic_model_002;
+
+rule r {
+	x : A;
+	y : B;
+	z : C;
+
+	replace {
+		eval {
+			y.ib = 42;
+		}
+	}
+}
+

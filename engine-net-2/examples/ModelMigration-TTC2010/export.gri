@@ -1,0 +1,313 @@
+// This is the GrGen.NET solution to the Model Migration case of Transformation Tool Contest 2010.
+
+rule initial_id : (int) {
+	modify {
+		return (1);
+	}
+}
+
+rule number_node(var id:int) : (int) {
+	n:Node\DumpNode;
+	
+	negative {
+		n -:DumpEdge->;
+	}
+	
+	modify {
+		n -:DumpEdge-> d:DumpNode;
+		eval {
+			d.id = id;
+		}
+		return (id + 1);
+	}
+}
+
+rule XMI_prefix {
+	modify {
+		emit("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<uml:Package xmi:version=\"2.1\" xmlns:xmi=\"http://schema.omg.org/spec/XMI/2.1\" xmlns:uml=\"http://www.eclipse.org/uml2/3.0.0/UML\" xmi:id=\"0\">\n");
+	}
+}
+
+rule node_by_id(var id:int) : (Node, int) {
+	n:Node -:DumpEdge-> d:DumpNode;
+	
+	if { d.id == id; }
+	
+	modify {
+		return (n, id + 1);
+	}
+}
+
+rule emit_activity {
+	activity:uml_Activity;
+	activity -:DumpEdge-> d:DumpNode;
+	
+	modify {
+		emit("  <packagedElement xmi:type=\"uml:Activity\" xmi:id=\"" + d.id + "\" name=\"" + activity._name + "\">\n");
+		exec(emit_activity_nodes(activity));
+		exec(emit_activity_edges(activity));
+		exec(emit_activity_groups(activity));
+		emit("  </packagedElement>\n");
+	}
+}
+
+rule emit_activity_nodes(activity:uml_Activity) {
+	modify {
+		exec((id)=initial_id && ((n, id)=node_by_id(id) && (true | emit_activity_node(activity, n)))*);
+	}
+}
+
+rule emit_activity_node(activity:uml_Activity, n:uml_ActivityNode<Node>) {
+	activity -:uml_Activity_node-> n;
+
+	modify {
+		exec(emit_InitialNode(n) || emit_ForkNode(n) || emit_JoinNode(n) || emit_DecisionNode(n) || emit_ActivityFinalNode(n) || emit_OpaqueAction(n) || emit_Pin(n));
+	}
+}
+
+rule emit_InitialNode(n:uml_InitialNode<uml_ActivityNode>) {
+	modify {
+		emit("    <node xmi:type=\"uml:InitialNode\"");
+		exec(emit_node_attributes(n));
+		emit("/>\n");
+	}
+}
+
+rule emit_ForkNode(n:uml_ForkNode<uml_ActivityNode>) {
+	modify {
+		emit("    <node xmi:type=\"uml:ForkNode\"");
+		exec(emit_node_attributes(n));
+		emit("/>\n");
+	}
+}
+
+rule emit_JoinNode(n:uml_JoinNode<uml_ActivityNode>) {
+	modify {
+		emit("    <node xmi:type=\"uml:JoinNode\"");
+		exec(emit_node_attributes(n));
+		emit("/>\n");
+	}
+}
+
+rule emit_DecisionNode(n:uml_DecisionNode<uml_ActivityNode>) {
+	modify {
+		emit("    <node xmi:type=\"uml:DecisionNode\"");
+		exec(emit_node_attributes(n));
+		emit("/>\n");
+	}
+}
+
+rule emit_ActivityFinalNode(n:uml_ActivityFinalNode<uml_ActivityNode>) {
+	modify {
+		emit("    <node xmi:type=\"uml:ActivityFinalNode\"");
+		exec(emit_node_attributes(n));
+		emit("/>\n");
+	}
+}
+
+rule emit_OpaqueAction(n:uml_OpaqueAction<uml_ActivityNode>) {
+	modify {
+		emit("    <node xmi:type=\"uml:OpaqueAction\"");
+		exec(emit_node_attributes(n));
+		emit("/>\n");
+	}
+}
+
+rule emit_Pin(n:uml_Pin<uml_ActivityNode>) {
+	modify {
+		emit("    <node xmi:type=\"uml:Pin\"");
+		exec(emit_node_attributes(n));
+		emit("/>\n");
+	}
+}
+
+rule emit_node_attributes(n:uml_ActivityNode) {
+	n -:DumpEdge-> d:DumpNode;
+	
+	modify {
+		emit(" xmi:id=\"" + d.id + "\" name=\"" + n._name + "\"");
+		exec(emit_outgoing_attribute(n));
+		exec(emit_incoming_attribute(n));
+		exec(emit_inPartition_attribute(n));
+	}
+}
+
+rule emit_incoming_attribute(n:uml_ActivityNode) {
+	n -:uml_ActivityNode_incoming->;
+
+	modify {
+		emit(" incoming=\"");
+		exec([emit_incoming(n)]);
+		emit("\"");
+	}
+}
+
+rule emit_incoming(n:uml_ActivityNode) {
+	n -:uml_ActivityNode_incoming-> e:uml_ActivityEdge;
+	e -:DumpEdge-> d:DumpNode;
+
+	modify {
+		emit(d.id + " ");
+	}
+}
+
+rule emit_outgoing_attribute(n:uml_ActivityNode) {
+	n -:uml_ActivityNode_outgoing->;
+
+	modify {
+		emit(" outgoing=\"");
+		exec([emit_outgoing(n)]);
+		emit("\"");
+	}
+}
+
+rule emit_outgoing(n:uml_ActivityNode) {
+	n -:uml_ActivityNode_outgoing-> e:uml_ActivityEdge;
+	e -:DumpEdge-> d:DumpNode;
+
+	modify {
+		emit(d.id + " ");
+	}
+}
+
+rule emit_inPartition_attribute(n:uml_ActivityNode) {
+	n -:uml_ActivityNode_inPartition->;
+
+	modify {
+		emit(" inPartition=\"");
+		exec([emit_inPartition(n)]);
+		emit("\"");
+	}
+}
+
+rule emit_inPartition(n:uml_ActivityNode) {
+	n -:uml_ActivityNode_inPartition-> e:uml_ActivityPartition;
+	e -:DumpEdge-> d:DumpNode;
+
+	modify {
+		emit(d.id + " ");
+	}
+}
+
+rule emit_activity_edges(activity:uml_Activity) {
+	modify {
+		exec((id)=initial_id && ((n, id)=node_by_id(id) && (true | emit_activity_edge(activity, n)))*);
+	}
+}
+
+rule emit_activity_edge(activity:uml_Activity, n:uml_ActivityEdge<Node>) {
+	activity -:uml_Activity_edge-> n;
+
+	modify {
+		exec(emit_ControlFlow(n) || emit_ObjectFlow(n));
+	}
+}
+
+rule emit_ControlFlow(n:uml_ControlFlow<uml_ActivityEdge>) {
+	modify {
+		emit("    <edge xmi:type=\"uml:ControlFlow\"");
+		exec(emit_edge_attributes(n));
+		exec(emit_guard(n) || emit_no_guard(n));
+	}
+}
+
+rule emit_ObjectFlow(n:uml_ObjectFlow<uml_ActivityEdge>) {
+	modify {
+		emit("    <edge xmi:type=\"uml:ObjectFlow\"");
+		exec(emit_edge_attributes(n));
+		emit("/>\n");
+	}
+}
+
+rule emit_edge_attributes(n:uml_ActivityEdge) {
+	n -:DumpEdge-> d:DumpNode;
+	n -:uml_ActivityEdge_source-> src:uml_ActivityNode;
+	n -:uml_ActivityEdge_target-> tgt:uml_ActivityNode;
+	src -:DumpEdge-> src_d:DumpNode;
+	tgt -:DumpEdge-> tgt_d:DumpNode;
+	
+	modify {
+		emit(" xmi:id=\"" + d.id + "\" source=\"" + src_d.id + "\" target=\"" + tgt_d.id + "\"");
+	}
+}
+
+rule emit_guard(n:uml_ActivityEdge) {
+	n -:uml_ActivityEdge_guard-> expr:uml_OpaqueExpression;
+	expr -:DumpEdge-> expr_d:DumpNode;
+
+	modify {
+		emit(">\n");
+		emit("      <guard xmi:type=\"uml:OpaqueExpression\" xmi:id=\"" + expr_d.id + "\" name=\"" + expr._name + "\">\n");
+		emit("        <body>" + expr._body + "</body>\n");
+		emit("      </guard>\n");
+		emit("    </edge>\n");
+	}
+}
+
+rule emit_no_guard(n:uml_ActivityEdge) {
+	modify {
+		emit("/>\n");
+	}
+}
+
+rule emit_activity_groups(activity:uml_Activity) {
+	modify {
+		exec((id)=initial_id && ((n, id)=node_by_id(id) && (true | emit_activity_group(activity, n)))*);
+	}
+}
+
+rule emit_activity_group(activity:uml_Activity, n:uml_ActivityPartition<Node>) {
+	activity -:uml_Activity_group-> n;
+
+	modify {
+		emit("    <group xmi:type=\"uml:ActivityPartition\"");
+		exec(emit_group_attributes(n));
+		emit("/>\n");
+	}
+}
+
+rule emit_group_attributes(n:uml_ActivityPartition) {
+	n -:DumpEdge-> d:DumpNode;
+	
+	modify {
+		emit(" xmi:id=\"" + d.id + "\" name=\"" + n._name + "\"");
+		exec(emit_contained_nodes(n));
+	}
+}
+
+rule emit_contained_nodes(n:uml_ActivityPartition) {
+	n -:uml_ActivityPartition_node->;
+
+	modify {
+		emit(" node=\"");
+		exec([emit_contained_node(n)]);
+		emit("\"");
+	}
+}
+
+rule emit_contained_node(n:uml_ActivityPartition) {
+	n -:uml_ActivityPartition_node-> other:uml_ActivityNode;
+	other -:DumpEdge-> d:DumpNode;
+
+	modify {
+		emit(d.id + " ");
+	}
+}
+
+rule XMI_suffix {
+	modify {
+		emit("</uml:Package>");
+	}
+}
+
+rule finish_dump {
+	modify {
+		exec([delete_DumpNode]);
+	}
+}
+
+rule delete_DumpNode {
+	d:DumpNode;
+	
+	replace {}
+}

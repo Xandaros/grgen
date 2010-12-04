@@ -1,0 +1,55 @@
+rule init1
+{
+
+    replace
+    {
+        x:Node;
+        
+        x --> x;
+    }
+}
+
+rule init2
+{
+
+    replace
+    {
+        x:Node;
+        y:Node;
+        
+        x --> y;
+        x --> y;
+    }
+}
+
+dpo rule deleteAll
+{
+    x:Node;
+    y:Node;
+    
+    x -e:Edge-> y;
+    x -f:Edge-> y;
+    
+    hom(e,f);
+
+    replace
+    {
+    }
+}
+
+dpo rule deleteAllHom
+{
+    x:Node;
+    y:Node;
+    
+    hom(x,y);
+    
+    x -e:Edge-> y;
+    x -f:Edge-> y;
+    
+    hom(e,f);
+
+    replace
+    {
+    }
+}

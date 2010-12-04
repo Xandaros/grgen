@@ -1,0 +1,7 @@
+rule r {
+
+	modify {
+		x : Node;
+	}
+}
+

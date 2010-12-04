@@ -1,0 +1,7 @@
+dpo rule r {
+	x: Node -:Edge-> y:Node;
+
+	replace {
+	}
+}
+
