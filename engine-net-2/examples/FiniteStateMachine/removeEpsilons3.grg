@@ -1,0 +1,76 @@
+// graph rewrite rule file, shows how node retypings look like, keeping the incident edges while changing the type,
+// how type constraints look like, and shows edges matching in both directions
+// the rules needed for freeing the nfa from epsilon transitions are now complete
+// before was removeEpsilons2b.grg, next is simulate4.grg
+
+using NFAModel;
+
+test checkStartState {
+    x:StartState;
+    negative {
+        x;
+        y:StartState;
+    }
+}
+
+test checkDoublettes {
+    x:State -e:Transition-> y:State;
+    hom(x,y);
+    x -doublette:typeof(e)-> y;
+    if { ((typeof(e) == EpsilonTransition) || (e.Trigger == doublette.Trigger)); }
+}
+
+rule forwardTransition {
+    x:State -:EpsilonTransition-> y:State -e:Transition-> z:State;
+    hom(y,z);
+    negative {
+        x -exists:Transition-> z;
+        if {typeof(exists) == typeof(e);}
+        if { ((typeof(e) == EpsilonTransition) || (e.Trigger == exists.Trigger)); }
+    }
+
+    modify {
+        x -forward:typeof(e)-> z;
+        eval {forward.Trigger = e.Trigger;}
+    }    
+}
+
+rule addStartFinalState {
+    x:StartState -:EpsilonTransition-> :FinalState;
+
+    modify {
+        y:StartFinalState<x>;        
+    }
+}
+
+// a state with an epsilon transition into a final state becomes a final state itself
+rule addFinalState {
+    x:State -:EpsilonTransition-> :FinalState;
+    if {typeof(x) < SpecialState;}
+
+    modify {
+        y:FinalState<x>;
+    }
+}
+
+rule removeEpsilonTransition {
+    -e:EpsilonTransition->;
+
+    replace {
+	}   
+}
+
+rule removeLonelyStates {
+	x:State\StartFinalState;
+	negative {
+		x<-->;
+	}
+	
+    modify {
+		delete(x);
+	}
+}
+
+test epsilonTransition {
+	-:EpsilonTransition->;
+}

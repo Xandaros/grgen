@@ -1,0 +1,14 @@
+
+// should warn that z and zz have no common sub type, so non-injective matching is not possible
+
+using deep_model_001;
+
+rule r {
+	x:A -e:Edge-> y:Ac -f:Edge-> z:Bcc <-:Edge- zz:Accc;
+	hom(z, zz);
+
+	replace {
+		x <-:Edge- y <-- z;
+	}
+}
+

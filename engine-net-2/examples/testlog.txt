@@ -1,0 +1,142 @@
+Agri:
+  Agri.grs -> 0
+AntWorld-GraBaTs08:
+  AntWorld_BorderNodes.grs -> 0
+  AntWorld_ExtendAtAimless.grs -> 0
+  AntWorld_ExtendAtEndOfRound.grs -> 0
+  AntWorld_ExtendAtEndOfRound_NoGammel.grs -> 0
+  AntWorld_GrowWithFirst.grs -> 0
+  AntWorld_RememberBorder.grs -> 0
+Clique:
+  Clique.grs -> 0
+ConferenceScheduling-GraBaTs08-Live-Contest-Winning-Solution:
+  conference.grs -> 0
+  conferenceShow.grs -> 0
+  conferenceassignment4.grs -> 0
+Connectivity:
+  Connectivity.grs -> 0
+ConveyorBeltSystem-GraBaTs09-Live-Contest-Winning-Solution:
+  Run.grs -> 0
+DTree:
+  DTree.grs -> 0
+DebugExec:
+  debugexec.grs -> 0
+DebugTesting:
+  test.grs -> 0
+Dragon:
+  Dragon.grs -> 0
+  DragonDebug.grs -> 0
+ExternalAttributeEvaluationExample:
+  ExternalAttributeEvaluation.grs -> 0
+FiniteStateMachine:
+  reduced.grs -> 0
+  removeEpsilons.grs -> 0
+  removeEpsilons0.grs -> 0
+  removeEpsilons1.grs -> 0
+  removeEpsilons2.grs -> 0
+  removeEpsilons2b.grs -> 0
+  removeEpsilons3.grs -> 0
+  simulate4.grs -> 0
+  simulate5.grs -> 0
+Firm-IFConv:
+  IFConv.grs -> 0
+FloweringGeraniumInCrackedPot:
+  FloweringGeraniumInCrackedPot.grs -> 0
+GrIO:
+  GrIOtest.grs -> 0
+HighwayMetropolis:
+  Highway.grs -> 0
+JavaProgramGraphs-GraBaTs08:
+  EncapsulateField.grs -> 0
+  MoveMethod.grs -> 0
+Ludo2:
+  Ludo2.grs -> 0
+  Ludo2_000000042.grs -> 0
+  Ludo2_004937812.grs -> 0
+  Ludo2_098754321.grs -> 0
+  Ludo2_123456789.grs -> 0
+  Ludo2_987654321.grs -> 0
+ModelMigration-TTC2010:
+  alternative_ObjectFlowState.grs -> 0
+  core.grs -> 0
+  export.grs -> 0
+  export_objectflow_extension.grs -> 0
+  show_uml14.grs -> 0
+  show_uml22.grs -> 0
+  show_uml22_objectflow_extension.grs -> 0
+Mutex:
+  Mutex10.grs -> 0
+  Mutex1000.grs -> 0
+  Mutex100000.grs -> 0
+  Mutex1000000.grs -> 0
+  Mutex160000.grs -> 0
+  Mutex40000.grs -> 0
+  Mutex8000.grs -> 0
+  Mutex80000.grs -> 0
+  MutexPimped1000.grs -> 0
+  MutexPimped100000.grs -> 0
+  MutexPimped1000000.grs -> 0
+ObjectToSchema:
+  ObjectToSchema.grs -> 0
+Petri:
+  sp100.grs -> 0
+  sp10000.grs -> 0
+ProgramComprehension-GraBaTs09:
+  task1.grs -> 0
+  task2.grs -> 0
+ProgramGraphs:
+  ProgramGraphs0a.grs -> 0
+  ProgramGraphs0b.grs -> 0
+  ProgramGraphs0c.grs -> 0
+  ProgramGraphs0d.grs -> 0
+  ProgramGraphs1a.grs -> 0
+  ProgramGraphs1b.grs -> 255
+  ProgramGraphs2.grs -> 255
+  ProgramGraphs3a.grs -> 255
+  ProgramGraphs3b.grs -> 0
+  ProgramGraphs3c.grs -> 255
+  ProgramGraphs3d.grs -> 255
+  ProgramGraphs4a.grs -> 255
+  ProgramGraphs4b.grs -> 0
+  ProgramGraphsAlongEdges.grs -> 0
+  ProgramGraphsOriginal.grs -> 0
+Recursive:
+  Recursive.grs -> 0
+  RecursiveReverse.grs -> 0
+  RecursiveReverseToCommon.grs -> 0
+Sierpinski:
+  Sierpinski.grs -> 0
+Sierpinski2:
+  Sierpinski2.grs -> 0
+Sierpinski3:
+  Sierpinski3.grs -> 0
+Snowflake:
+  Snowflake.grs -> 0
+Transkription:
+  Transkription.grs -> 0
+TranskriptionAbstrakt:
+  TranskriptionAbstrakt.grs -> 0
+  generateGraph.grs -> 0
+TranskriptionAbstraktNachAtom:
+  TranskriptionAbstraktNachAtom.grs -> 0
+Turing:
+  busybeaver3.grs -> 0
+  busybeaver5_1.grs -> 0
+  busybeaver5_7.grs -> 0
+Turing3:
+  busybeaver3__3.grs -> 0
+  busybeaver3__5_1.grs -> 0
+  busybeaver3__5_7.grs -> 0
+TuringRubino:
+  TuringRubino_BB3.grs -> 0
+UML:
+  StateMachine_001.grs -> 255
+  demo_sm.grs -> 255
+  g2x.grs -> 255
+  test.grs -> 255
+UML2CSP-GraBaTs09:
+  UML2CSP.grs -> 0
+UML2CSP2-GraBaTs08:
+  UML2CSP.grs -> 0
+WeakComponents:
+  visit.grs -> 0

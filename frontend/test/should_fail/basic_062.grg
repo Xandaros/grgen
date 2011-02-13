@@ -1,0 +1,13 @@
+using attrib_model_001;
+
+rule r {
+	x: NBOOL;
+	q: Q;
+
+	modify {
+		eval {
+			x.a = false == q.a;
+		}
+	}
+}
+

@@ -1,0 +1,17 @@
+new graph "exact\exact" "Exact graph"
+
+
+show num nodes
+show num edges
+xgrs init4
+show num nodes
+show num edges
+xgrs [?twoOfThreeExact]
+xgrs [?oneOfTwoExact]
+xgrs oneOfTwoExact
+show num nodes
+show num edges
+xgrs [?twoOfThreeExact]
+xgrs [?oneOfTwoExact]
+
+quit

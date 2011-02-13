@@ -1,0 +1,13 @@
+using deep_model_001;
+
+rule r(y : Acc) {
+  hom(a,b);
+  a : A;
+  b : B;
+  n : Node;
+  modify{
+    c : AcccAccAcA<b>;
+    exec(r(c)); // subtype as param
+    exec(r(y)); // exact type as param
+  }
+}

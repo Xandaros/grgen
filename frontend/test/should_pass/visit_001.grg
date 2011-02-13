@@ -1,0 +1,183 @@
+using attrib_model_001;
+
+// the tests with visited_ were tests for entities of name visited
+// thats not worth the effort, visited is keyword, be it
+
+test VisitedNotAKeyword1(var visitorID:int) : (Node)
+{
+	visited_:NINT;
+	if { typeof(visited_) > Node; visited_.a == 7; }
+	
+	return(visited_);
+}
+
+test VisitedNotAKeyword2(var visited_:boolean)
+{
+	if { visited_; }
+}
+
+test FindUnvisitedNode1(var visitorID:int) : (Node)
+{
+	n:Node;
+	if { n.visited[visitorID]; }
+	
+	return(n);
+}
+
+rule FindUnvisitedNode2(visitorIDNode:NINT) : (Node)
+{
+	n:Node;
+	if { !n.visited[visitorIDNode.a]; }
+	
+	modify {
+		return(n);
+	}
+}
+
+// visitorIDNode.a + 1 doesn't make sense here, it's just to test the syntax
+test FindUnvisitedNode3(visitorIDNode:NINT) : (Node)
+{
+	n:Node;
+	if { !n.visited[visitorIDNode.a + 1]; }
+	
+	return(n);
+}
+
+test FindUnvisitedEdge1(var visitorID:int) : (Edge)
+{
+	-e:Edge->;
+	if { e.visited[visitorID]; }
+	
+	return(e);
+}
+
+rule FindUnvisitedEdge2(-visitorIDEdge:EINT->) : (Edge)
+{
+	-e:Edge->;
+	if { !e.visited[visitorIDEdge.a]; }
+	
+	modify {
+		return(e);
+	}
+}
+
+// visitorIDNode.a + 1 doesn't make sense here, it's just to test the syntax
+test FindUnvisitedEdge3(-visitorIDEdge:EINT->) : (Edge)
+{
+	-e:Edge->;
+	if { !e.visited[visitorIDEdge.a + 1]; }
+	
+	return(e);
+}
+
+rule VisitUnvisitedNode(var visID:int)
+{
+    n:Node;
+    if { !n.visited[visID]; }
+
+    modify {
+        eval {
+            n.visited[visID] = true;
+        }
+    }
+}
+
+rule VisitUnvisitedEdge(var visID:int)
+{
+	-e:Edge->;
+    if { !e.visited[visID]; }
+
+    modify {
+        eval {
+            e.visited[visID] = true;
+        }
+    }
+}
+
+test GetVisitedNode1(n:Node, var id:int) : (boolean)
+{
+    return (n.visited[id]);
+}
+
+test GetVisitedNode2(var id:int) : (boolean)
+{
+    n:Node;
+    return (n.visited[id]);
+}
+
+rule GetVisitedNode3(n:Node, var id:int) : (boolean)
+{
+    modify {
+        return (n.visited[id]);
+    }
+}
+
+rule GetVisitedNode4(var id:int) : (boolean)
+{
+    n:Node;
+    modify {
+        return (n.visited[id]);
+    }
+}
+
+rule GetVisitedEdge3(-e:Edge->, var id:int) : (boolean)
+{
+    modify {
+        return (e.visited[id]);
+    }
+}
+
+rule GetVisitedEdge4(var id:int) : (boolean)
+{
+    -e:Edge->;
+    modify {
+        return (e.visited[id]);
+    }
+}
+
+rule SetVisitedNode(var visID1:int, var visID2:int) : (boolean)
+{
+    n:Node;
+    if { !n.visited[visID1] || !n.visited[visID2]; }
+    m:Node;
+
+    modify {
+        eval {
+            n.visited[visID1] = m.visited[visID2] ? true
+                : n.visited[visID2] ^ m.visited[visID1];
+        }
+        return(m.visited[visID2]);
+    }
+}
+
+rule SetVisitedEdge(var visID1:int, var visID2:int) : (boolean)
+{
+    -e:Edge->;
+    if { !e.visited[visID1] || !f.visited[visID2]; }
+    -f:Edge->;
+
+    modify {
+        eval {
+            e.visited[visID1] = f.visited[visID2] ? true
+                : e.visited[visID2] ^ f.visited[visID1];
+        }
+        return(f.visited[visID2]);
+    }
+}
+
+test FixedVisitedNode
+{
+    n:Node;
+    if { n.visited[0]; }
+}
+
+rule SetFixedVisitedNode
+{
+    n:Node;
+
+    modify {
+        eval {
+            n.visited[0] = true;
+        }
+    }
+}

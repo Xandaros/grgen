@@ -1,0 +1,19 @@
+using attrib_model_001;
+
+rule r {
+	<-- :Node;
+	--> :Node;
+	:Node <--;
+	:Node -->;
+	<-- :Node -->;
+	<-- :Node <--;
+	--> :Node -->;
+	--> :Node <--;
+	--> :Node <-- :Node <--;
+	-->;
+
+	modify {
+	}
+}
+
+

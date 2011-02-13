@@ -1,0 +1,12 @@
+node class Font {
+	fontname   : string  = "Verdana";
+	height     : int     = 10;
+	bold       : boolean;
+	italic     : boolean;
+	underlined : boolean;
+
+	Font(height, fontname="Arial", bold=false, italic=false, underlined=false);
+	Font(fontname);
+	Font(bold, fontname);
+	Font(italic, fontname="Arial");  // Constructor with boolean, string as positional part already defined
+}
