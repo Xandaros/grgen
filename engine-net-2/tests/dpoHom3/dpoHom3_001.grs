@@ -1,0 +1,10 @@
+new graph "dpoHom3\dpoHom3" "DpoHom graph"
+
+show num nodes
+show num edges
+xgrs init1
+show num nodes
+show num edges
+xgrs [?deleteAll]
+
+quit

@@ -1,0 +1,12 @@
+using enum_model_006;
+
+rule switch {
+	goto:struct -float:Edge-> int:struct;
+
+    modify {
+        eval {
+            goto.for_ = bool::FileNotFound;
+            int.for_ = bool::else;
+        }
+    }
+}

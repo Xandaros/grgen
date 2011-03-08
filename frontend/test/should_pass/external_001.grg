@@ -1,0 +1,10 @@
+using external_model_001;
+
+rule extTest
+{
+	a:A --> b:B;
+
+    replace {
+        c:B --> a --> b --> d:A;
+    }
+}

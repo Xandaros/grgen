@@ -1,0 +1,10 @@
+dpo rule r:(Node) {
+	x: Node;
+	y: Node;
+	hom(x, y);
+
+	replace {
+		x;
+		return(x);
+	}
+}

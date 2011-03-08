@@ -1,0 +1,10 @@
+using attrib_model_001;
+
+rule r {
+	a:NINT;
+
+	replace {
+		b:NFLOAT<a>;
+	}
+}
+
