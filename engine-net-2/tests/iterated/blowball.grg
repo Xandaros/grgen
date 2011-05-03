@@ -1,0 +1,124 @@
+using blowball;
+
+rule init
+{
+	modify
+	{
+		head:RootNode --> .;
+		head --> .;
+		head --> .;
+	}
+}
+
+rule initMulti
+{
+	modify
+	{
+		head:RootNode -:AttrEdge-> .;
+		head -:AttrEdge-> n:Node;
+		head -:AttrEdge-> n;
+	}
+}
+
+rule initStem : (Node)
+{
+	modify
+	{
+		stem:Node --> head:RootNode;
+		head --> .;
+		head --> .;
+		
+		return(stem);
+	}
+}
+
+test blowball
+{
+	head:Node;
+	iterated {
+		head --> .;
+	}
+}
+
+test blowballRoot
+{
+	head:RootNode;
+	iterated {
+		head --> .;
+	}
+}
+
+test blowballRootReversed(stem:Node)
+{
+	stem <-- head:RootNode;
+	iterated {
+		head <-- .;
+	}
+}
+
+rule blowballRoot42
+{
+	head:RootNode;
+	iterated {
+		head -e:AttrEdge-> .;
+		modify {
+			eval {
+				e.attr = 42;
+			}
+		}
+	}
+	
+	modify {
+	}
+}
+
+test edge42
+{
+	-e:AttrEdge->;
+	if {
+		e.attr == 42;
+	}
+}
+
+rule blowballDouble
+{
+	head:RootNode;
+	iterated {
+		head --> .;
+		
+		modify {
+			head --> .;
+		}
+	}
+	
+	modify { }
+}
+
+pattern bb(head:Node)
+{
+	iterated {
+		head --> .;
+	}
+}
+
+test stemBlowball(stem:Node)
+{
+	stem --> head:Node;
+	:bb(head);
+}
+
+rule BlowballReverse(stem:Node)
+{
+	stem --> head:RootNode;
+	iterated {
+		head --> n:Node;
+		
+		replace {
+			head <-- n;
+		}
+	}
+	
+	replace { 
+		stem <-- head;
+	}
+}

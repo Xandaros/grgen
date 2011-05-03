@@ -1,0 +1,12 @@
+using attrib_model_001;
+
+rule r {
+	x: NBOOL;
+
+	modify {
+		eval {
+			x.a = a;
+		}
+	}
+}
+

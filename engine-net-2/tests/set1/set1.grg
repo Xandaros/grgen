@@ -1,0 +1,79 @@
+using set1;
+
+test aWithFoo
+{
+	na:A\B;
+
+	if { "foo" in na.a; }
+}
+
+rule addFooNoEffect()
+{
+    na:A\B;
+	
+	modify {
+		eval {
+			na.a = na.a | { "foo" };
+		}
+	}
+}
+
+rule addFoo()
+{
+    nb:B;
+	modify {
+		eval {
+			nb.b = nb.b | { "foo" };
+		}
+	}
+}
+
+test bWithBar
+{
+	nb:B;
+	if { "bar" in nb.a; }
+}
+
+rule removeBar()
+{
+    nb:B;
+
+	modify {
+		eval {
+			nb.a = nb.a \ { "bar" };
+		}
+	}
+}
+
+rule removeBarNoEffect()
+{
+    nb:B;
+	
+	modify {
+		eval {
+			nb.a = nb.a \ { "bar" };
+		}
+	}
+}
+
+test anonymousSet
+{
+	na:A;
+	if { na.val in { "foo", "argl" }; }
+}
+
+test anonymousSetNA
+{
+	nb:B;
+	if { nb.val in { "aha","oho","uh?"}; }
+}
+
+rule useSetVar(ref niceSet:set<string>)
+{
+    if { "Hallo" in niceSet; }
+    
+    modify {
+        emit("1 value of attribute 5 6 " + ("Handtuch" in niceSet ? "yes" : "no") + "\n");
+    }
+}
+

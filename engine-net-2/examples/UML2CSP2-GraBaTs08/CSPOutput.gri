@@ -1,0 +1,158 @@
+//
+// Initialize file output and create helper nodes
+//
+
+rule InitOutput
+{
+  :CspContainer -:processAssignments-> curPa:ProcessAssignment;
+  lastPa:ProcessAssignment;
+  negative { lastPa -:processAssignments->; }
+
+  modify {
+    counter:Counter;
+    lastPa -:processAssignments-> dummyPa:ProcessAssignment;
+    
+    exec(x:ProcessAssignment=curPa && ((x)=PAWriteProcess(x)[+]
+        | (x)=PAWritePrefix(x)[+]
+        | (x)=PAWriteConditionStart(x)
+        | (x)=PAWriteConcurrencyStart(x)
+        )[*] | FinishOutput(dummyPa));
+  }
+}
+
+//
+// Process
+//
+
+rule PAWriteProcess(curPa:ProcessAssignment) : (ProcessAssignment)
+{
+  procID:Process <-:processIdentifier- curPa -:process-> proc:Process;
+  curPa -:processAssignments-> nextPa:ProcessAssignment;
+
+  modify {
+    return (nextPa);
+    emit(procID.name, " = ", proc.name, "\n");
+  }
+}
+
+//
+// Prefix
+//
+
+rule PAWritePrefix(curPa:ProcessAssignment) : (ProcessAssignment)
+{
+  procID:Process <-:processIdentifier- curPa -:process-> pre:Prefix;
+  pre -:targetProcess-> tgt:Process;
+  pre -:event-> ev:Event;
+  curPa -:processAssignments-> nextPa:ProcessAssignment;
+
+  modify {
+    return (nextPa);
+    emit(procID.name, " = ", ev.name, " -> ", tgt.name, "\n");
+  }
+}
+
+//
+// Condition
+//
+
+rule PAWriteConditionStart(curPa:ProcessAssignment) : (ProcessAssignment)
+{
+  procID:Process <-:processIdentifier- curPa -:process-> cond:Condition;
+  curPa -:processAssignments-> nextPa:ProcessAssignment;
+
+  modify {
+    return (nextPa);
+    emit(procID.name, " = ");
+    exec((PAWriteConditionNext(cond) || PAWriteConditionLast(cond)) | PAWriteConditionEnd[*]);
+    emit("\n");
+  }
+}
+
+rule PAWriteConditionNext(curCond:Condition)
+{
+  thenProc:Process <-:leftHandSide- curCond -:rightHandSide-> nextCond:Condition;
+  counter:Counter;
+
+  modify {
+    eval {
+      counter.value = counter.value + 1;
+    }
+    emit((counter.value > 1 ? "(" : "") + thenProc.name + " <| " + curCond.expression + " |> ");
+    exec(PAWriteConditionNext(nextCond) || PAWriteConditionLast(nextCond));
+  }
+}
+
+rule PAWriteConditionLast(curCond:Condition)
+{
+  thenProc:Process <-:leftHandSide- curCond -:rightHandSide-> elseProc:Process;
+  counter:Counter;
+
+  modify {
+    emit((counter.value > 1 ? "(" : "") + thenProc.name + " <| " + curCond.expression + " |> " + elseProc.name);
+  }
+}
+
+rule PAWriteConditionEnd
+{
+  counter:Counter;
+  if { counter.value > 0; }
+
+  modify {
+    eval {
+      counter.value = counter.value - 1;
+    }
+    emit(")");
+  }
+}
+
+//
+// Concurrency
+//
+
+rule PAWriteConcurrencyStart(curPa:ProcessAssignment) : (ProcessAssignment)
+{
+  procID:Process <-:processIdentifier- curPa -:process-> conc:Concurrency
+    -:leftHandSide-> forkProc:Process;
+  curPa -:processAssignments-> nextPa:ProcessAssignment;
+
+  modify {
+    return (nextPa);
+    emit(procID.name, " = ", forkProc.name);
+    exec(PAWriteConcurrencyNext(conc) || PAWriteConcurrencyLast(conc));
+    emit("\n");
+  }
+}
+
+rule PAWriteConcurrencyNext(curConc:Concurrency)
+{
+  curConc -:rightHandSide-> nextConc:Concurrency -:leftHandSide-> forkProc:Process;
+
+  modify {
+    emit(" || ", forkProc.name);
+    exec(PAWriteConcurrencyNext(nextConc) || PAWriteConcurrencyLast(nextConc));
+  }
+}
+
+rule PAWriteConcurrencyLast(curConc:Concurrency)
+{
+  curConc -:rightHandSide-> forkProc:Process;
+
+  modify {
+    emit(" || ", forkProc.name);
+  }
+}
+
+//
+// Remove helper nodes
+//
+
+rule FinishOutput(dummyPa:ProcessAssignment)
+{
+  counter:Counter;
+
+  modify {
+    delete(dummyPa);
+    delete(counter);
+  }
+}

@@ -1,0 +1,22 @@
+using expressionCount;
+
+rule outgoing : (int,int,int)
+{
+	n:N;
+	def var numOutEN:int;
+	if { incoming(n).size() == 0; }
+	yield { 
+		yield numOutEN = outgoing(n, E, N).size();
+	}
+	
+	modify {
+		def var numOutE:int;
+		def var numOut:int;
+		eval {
+			yield numOutE = outgoing(n, E).size();
+			yield numOut = outgoing(n).size();
+		}
+		return (numOutEN,numOutE,numOut);
+	}
+}
+

@@ -1,0 +1,109 @@
+using TuringModel;
+
+rule readZeroRule {
+  s:State -h:rwHead-> tp:TapePosition -:zero-> tp;
+  s -:zero-> wv:WriteValue;
+
+	modify {
+		delete(h);
+		wv -:rwHead-> tp;
+	}
+}      
+
+rule readOneRule {
+  s:State -h:rwHead-> tp:TapePosition -:one-> tp;
+  s -:one-> wv:WriteValue;
+
+	modify {
+		delete(h);
+		wv -:rwHead-> tp;
+	}
+}
+
+rule readEmptyRule {
+  s:State -h:rwHead-> tp:TapePosition -:empty-> tp;
+  s -:empty-> wv:WriteValue;
+
+	modify {
+		delete(h);
+		wv -:rwHead-> tp;
+	}
+}
+
+rule writeZeroRule {
+	wv:WriteZero -rw:rwHead-> tp:TapePosition -:value-> tp;
+
+	replace {
+		wv -rw-> tp -:zero-> tp;
+	}	
+}
+
+rule writeOneRule {
+	wv:WriteOne -rw:rwHead-> tp:TapePosition -:value-> tp;
+
+	replace {
+		wv -rw-> tp -:one-> tp;
+	}	
+}
+
+rule writeEmptyRule {
+	wv:WriteEmpty -rw:rwHead-> tp:TapePosition -:value-> tp;
+
+	replace {
+		wv -rw-> tp -:empty-> tp;
+	}	
+}
+
+rule moveLeftRule {
+  wv:WriteValue -:moveLeft-> s:State;
+  wv -h:rwHead-> tp:TapePosition <-r:right- ltp:TapePosition;
+
+	modify {
+		delete(h);
+		s -:rwHead-> ltp;
+	}
+}
+
+rule moveRightRule {
+  wv:WriteValue -:moveRight-> s:State;
+  wv -h:rwHead-> tp:TapePosition -r:right-> rtp:TapePosition;
+
+	modify {
+		delete(h);
+		s -:rwHead-> rtp;
+	}
+}
+
+rule dontMoveRule {
+	wv:WriteValue -:dontMove-> s:State;
+	wv -h:rwHead-> tp:TapePosition;
+
+	modify {
+		delete(h);
+		s -:rwHead-> tp;
+	}
+}
+
+rule ensureMoveLeftValidRule {
+  wv:WriteValue -:moveLeft-> :State;
+  wv -:rwHead-> tp:TapePosition;
+  negative {
+    tp <-:right-;
+  }
+
+	modify {
+		tp <-:right- ltp:TapePosition -:empty-> ltp;
+	}
+}
+
+rule ensureMoveRightValidRule {
+  wv:WriteValue -:moveRight-> :State;
+  wv -:rwHead-> tp:TapePosition;
+  negative {
+    tp -:right->;
+  }
+
+	modify {
+		tp -:right-> rtp:TapePosition -:empty-> rtp;
+	}
+}

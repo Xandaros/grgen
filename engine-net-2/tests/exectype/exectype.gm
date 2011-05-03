@@ -1,0 +1,36 @@
+node class A
+{
+	f:foo;
+	i:int;
+	b:boolean;
+	st:string;
+	s:set<foo>;
+	m:map<int,string>;
+	a:array<foo>;
+	fl:float;
+	d:double;
+}
+
+node class AA extends A;
+
+node class B;
+
+edge class H
+{
+	f:foo;
+	i:int;
+	b:boolean;
+	st:string;
+	s:set<foo>;
+	m:map<int,string>;
+	a:array<string>;
+	fl:float;
+	d:double;
+}
+
+edge class HH extends H;
+
+edge class I;
+
+enum foo { Bar, Bla }
+

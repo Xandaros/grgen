@@ -1,0 +1,7 @@
+exact rule r {
+	x: Node -:Edge-> x;
+
+	replace {
+	}
+}
+

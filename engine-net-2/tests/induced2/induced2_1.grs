@@ -1,0 +1,8 @@
+new graph "induced2\induced2" "Nice Graph"
+
+xgrs init1
+xgrs [?inducedRule1]
+xgrs [?inducedRule2]
+xgrs [?inducedRule3]
+
+quit

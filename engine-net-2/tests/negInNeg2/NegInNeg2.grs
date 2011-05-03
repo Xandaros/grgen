@@ -1,0 +1,11 @@
+new graph negInNeg2\NegInNeg2.grg
+
+show num nodes
+show num edges
+xgrs init
+show num nodes
+show num edges
+xgrs [neginneg]
+show num nodes
+show num edges
+quit

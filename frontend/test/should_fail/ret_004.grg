@@ -1,0 +1,9 @@
+rule r : (Node, Node) {
+	x: Node;
+	y: Node;
+
+	replace {
+		return(x, a);
+	}
+}
+

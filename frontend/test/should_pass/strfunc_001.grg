@@ -1,0 +1,37 @@
+using attrib_model_001;
+
+rule r1
+{
+	str:NSTRING;
+	str2:NSTRING;
+	b:NBOOL;
+
+	if {
+		str.a.indexOf("test") != -1;
+		str.a.lastIndexOf("test") == str.a.indexOf("test");
+		str2.a.indexOf("test") != -1;
+		str2.a.lastIndexOf("test") == str2.a.indexOf("test");
+		
+		(str2.a + 8).length() != (str.a + str2.a).indexOf("blub");
+
+		str.a.substring(0, str.a.indexOf("test"))
+				+ "rules"
+				+ str.a.substring(str.a.indexOf("test") + "test".length(),
+					str.a.length() - str.a.indexOf("test") - 4)
+		==
+		str2.a.replace(str2.a.indexOf("test"), 4, "rules");
+	}
+
+	modify {
+		eval {
+			str.a = str.a.substring(0, str.a.indexOf("test")).length()
+				+ "rules"
+				+ str.a.substring(str.a.indexOf("test") + "test".length(),
+					str.a.length() - str.a.indexOf("test") - 4);
+
+			str2.a = str2.a.replace(str2.a.indexOf("test"), 4, "rules");
+
+			b.a = str.a == str2.a;
+		}
+	}
+}

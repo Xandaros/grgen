@@ -1,0 +1,10 @@
+// empty enum declarations are not allowed (see enum_model_002.gm)
+
+using enum_model_002;
+
+rule r {
+
+	modify {
+	}
+}
+

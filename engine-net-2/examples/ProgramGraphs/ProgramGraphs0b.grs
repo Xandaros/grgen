@@ -1,0 +1,24 @@
+# graph rewrite shell script file, shows how to improve the readability of the original graph 
+#  by using different colors for the different node and edge types, and another layout algorithm
+# before was ProgramGraphs0a.grs, next is ProgramGraphs0c.grs
+
+new graph "ProgramGraphs0"
+
+debug set layout Hierarchic
+
+dump set node MethodSignature color pink
+dump set node MethodBody color orchid
+dump set node Attribute color cyan
+dump set node Expression color green
+dump set node Class color yellow
+
+dump set edge uses color blue
+dump set edge writesTo color red
+dump set edge calls color black
+
+xgrs createProgramGraphExample
+
+validate strict
+
+debug enable
+
