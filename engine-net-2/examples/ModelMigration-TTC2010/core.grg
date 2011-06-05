@@ -1,0 +1,298 @@
+// This is the GrGen.NET solution to the Model Migration case of Transformation Tool Contest 2010.
+
+using original_minimal_metamodel__ecore, evolved_metamodel__ecore, dump_helper, export;
+
+// Rules for beautify the graph
+#include "dump_helper.gri"
+
+// Rules for node transformation
+
+rule transform_FinalState {
+	state:minuml1_FinalState;
+
+	modify {
+		final:uml_ActivityFinalNode<state>;
+
+		eval {
+			final._name = state._name;
+		}
+	}
+}
+
+rule transform_ActionState {
+	state:minuml1_ActionState;
+
+	modify {
+		opaque:uml_OpaqueAction<state>;
+
+		eval {
+			opaque._name = state._name;
+		}
+	}
+}
+
+rule transform_PseudoState {
+	state:minuml1_Pseudostate;
+
+	alternative {
+		Initial {
+			if { state._kind == minuml1_PseudostateKind::_initial; }
+
+			modify {
+				initial:uml_InitialNode<state>;
+
+				eval { initial._name = state._name; }
+			}
+		}
+		Join {
+			if { state._kind == minuml1_PseudostateKind::_join; }
+
+			modify {
+				join:uml_JoinNode<state>;
+
+				eval { join._name = state._name; }
+			}
+		}
+		Fork {
+			if { state._kind == minuml1_PseudostateKind::_fork; }
+
+			modify {
+				fork:uml_ForkNode<state>;
+
+				eval { fork._name = state._name; }
+			}
+		}
+		Junction {
+			if { state._kind == minuml1_PseudostateKind::_junction; }
+
+			modify {
+				decision:uml_DecisionNode<state>;
+
+				eval { decision._name = state._name; }
+			}
+		}
+	}
+
+	modify {}
+}
+
+rule transform_ObjectFlowState {
+	state:minuml1_ObjectFlowState;
+
+	modify {
+		pin:uml_Pin<state>;
+
+		eval { pin._name = state._name; }
+	}
+}
+
+// Alternative transformation
+rule transform_ObjectFlowState2 {
+	state:minuml1_ObjectFlowState;
+	s1:minuml1_StateVertex <-:minuml1_Transition_source- t1:minuml1_Transition -:minuml1_Transition_target-> state;
+	state <-:minuml1_Transition_source- t2:minuml1_Transition -:minuml1_Transition_target-> s2:minuml1_StateVertex;
+	state <-:minuml1_Partition_contents- p:minuml1_Partition;
+
+	modify {
+		delete(state, t2);
+
+		flow:uml_ObjectFlow<t1>;
+		flow -:uml_ActivityEdge_target-> s2;
+		flow <-:uml_ActivityNode_incoming- s2;
+		flow -:uml_ActivityEdge_inPartition-> p;
+		flow <-:uml_ActivityPartition_edge- p;
+
+		eval { flow._name = state._name; }
+	}
+}
+
+rule transform_CompositeState {
+	state:minuml1_CompositeState;
+
+	modify {
+		delete(state);
+	}
+}
+
+rule transform_Partition {
+	partition:minuml1_Partition;
+
+	modify {
+		ap:uml_ActivityPartition<partition>;
+
+		eval { ap._name = partition._name; }
+	}
+}
+
+rule transform_Transition {
+	transition:minuml1_Transition;
+	
+	alternative {
+		incomingObjectFlow {
+			transition <-:minuml1_StateVertex_incoming- :uml_Pin;
+
+			modify {
+				of:uml_ObjectFlow<transition>;
+
+				eval { of._name = transition._name; }
+			}
+		}
+		outgoingObjectFlow {
+			transition <-:minuml1_StateVertex_outgoing- :uml_Pin;
+
+			modify {
+				of:uml_ObjectFlow<transition>;
+
+				eval { of._name = transition._name; }
+			}
+		}
+		controlFlow {
+			negative {
+				transition <-:minuml1_StateVertex_incoming- :uml_Pin;
+			}
+			negative {
+				transition <-:minuml1_StateVertex_outgoing- :uml_Pin;
+			}
+
+			modify {
+				cf:uml_ControlFlow<transition>;
+
+				eval { cf._name = transition._name; }
+			}
+		}
+	}
+
+	modify {}
+}
+
+rule transform_Guard {
+	guard:minuml1_Guard -:minuml1_Guard_expression-> expr:minuml1_BooleanExpression;
+
+	modify {
+		opaque:uml_OpaqueExpression<guard>;
+		delete(expr);
+
+		eval {
+			opaque._body = expr._body;
+			opaque._language = expr._language;
+			opaque._name = guard._name;
+		}
+	}
+}
+
+rule transform_ActivityGraph {
+	graph:minuml1_ActivityGraph;
+
+	modify {
+		activity:uml_Activity<graph>;
+
+		eval {
+			activity._name = graph._name;
+		}
+	}
+}
+
+// Rules for edge transformation
+
+rule transform_StateVertex_incoming {
+	-e:minuml1_StateVertex_incoming->;
+
+	modify {
+		-:uml_ActivityNode_incoming<e>->;
+	}
+}
+
+rule transform_StateVertex_outgoing {
+	-e:minuml1_StateVertex_outgoing->;
+
+	modify {
+		-:uml_ActivityNode_outgoing<e>->;
+	}
+}
+
+rule transform_StateMachine_transitions {
+	-e:minuml1_StateMachine_transitions->;
+
+	modify {
+		-:uml_Activity_edge<e>->;
+	}
+}
+
+rule transform_CompositeState_subvertex {
+	state:minuml1_CompositeState;
+	activity:uml_Activity -:minuml1_StateMachine_top-> state;
+	state -e:minuml1_CompositeState_subvertex-> n:uml_ActivityNode;
+
+	modify {
+		activity -:uml_Activity_node-> n;
+	}
+}
+
+rule transform_Transition_source {
+	-e:minuml1_Transition_source->;
+
+	modify {
+		-:uml_ActivityEdge_source<e>->;
+	}
+}
+
+rule transform_Transition_target {
+	-e:minuml1_Transition_target->;
+
+	modify {
+		-:uml_ActivityEdge_target<e>->;
+	}
+}
+
+rule transform_Transition_guard {
+	-e:minuml1_Transition_guard->;
+
+	modify {
+		-:uml_ActivityEdge_guard<e>->;
+	}
+}
+
+rule transform_ActivityGraph_partition {
+	-e:minuml1_ActivityGraph_partition->;
+
+	modify {
+		-:uml_Activity_group<e>->;
+	}
+}
+
+rule transform_Partition_contents {
+	p: uml_ActivityPartition -e:minuml1_Partition_contents->;
+
+	alternative {
+		ActivityNode {
+			-e-> n:uml_ActivityNode;
+
+			modify {
+				p <-:uml_ActivityNode_inPartition- n;
+			}
+		}
+		ActivityEdge {
+			-e-> n:uml_ActivityEdge;
+
+			modify {
+				p <-:uml_ActivityEdge_inPartition- n;
+			}
+		}
+	}
+
+	modify {
+		-:uml_ActivityPartition_node<e>->;
+	}
+}
+
+// Rules to clean up
+
+rule clean_up {
+	modify {
+		exec(transform_CompositeState*);
+	}
+}
+
+// Rules for exporting the graph
+#include "export.gri"
+

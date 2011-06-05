@@ -1,0 +1,13 @@
+rule ruleWithUnknownNodeParameterType(n:UnknownNodeType<Node>) {
+	modify {
+	}
+}
+
+test testWithUnknownNodeParameterType(n:UnknownNodeType<Node>) { }
+
+rule ruleWithUnknownEdgeParameterType(-e:UnknownEdgeType<Edge>->) {
+	modify {
+	}
+}
+
+test testWithUnknownEdgeParameterType(-n:UnknownEdgeType<Edge>->) { }

@@ -1,0 +1,8 @@
+// empty enum declarations are not allowed
+
+enum te { }
+
+node class A {
+	a : int;
+}
+

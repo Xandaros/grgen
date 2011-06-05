@@ -1,0 +1,116 @@
+rule init1
+{
+
+    replace
+    {
+        x:Node;
+        y:Node;
+        z:Node;
+        
+        x --> y;
+        y --> z;
+    }
+}
+
+rule init2
+{
+
+    replace
+    {
+        x:Node;
+        y:Node;
+        
+        x --> y;
+        y --> y;
+    }
+}
+
+rule init3
+{
+
+    replace
+    {
+        x:Node;
+        y:Node;
+        
+        x --> x;
+        x --> y;
+    }
+}
+
+rule init4
+{
+
+    replace
+    {
+        x:Node;
+        y:Node;        
+        z:Node;
+                
+        x --> y;
+        y <-- z;
+    }
+}
+
+rule init5
+{
+
+    replace
+    {
+        x:Node;
+        y:Node;
+        z:Node;
+                
+        x --> y;
+        x --> y;
+        y --> z;
+    }
+}
+
+dpo rule deleteRightNode
+{
+    x:Node;
+    y:Node;
+    
+    x --> y;
+
+    replace
+    {
+        x;
+    }
+}
+
+dpo rule deleteDanglingIncomingEdge
+{
+    x:Node;
+    
+     --> x;
+
+    replace
+    {
+    }
+}
+
+dpo rule deleteDanglingOutgoingEdge
+{
+    x:Node;
+    
+    x --> ;
+
+    replace
+    {
+    }
+}
+
+dpo rule deleteLeftNode
+{
+    x:Node;
+    y:Node;
+    
+    x --> y;
+
+    modify
+    {
+        delete(x);
+    }
+}

@@ -1,0 +1,9 @@
+node class NN
+{
+	id:int;
+}
+
+edge class EE
+{
+	id:int;
+}

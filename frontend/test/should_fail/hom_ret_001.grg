@@ -1,0 +1,15 @@
+
+// should fail, because x is homomorphic with y, and y is deleted, so returned
+// node x might be a deleted one
+
+rule r:(Node) {
+	x: Node;
+	y: Node;
+	hom(x, y);
+
+	replace {
+		x;
+		return(x);
+	}
+}
+

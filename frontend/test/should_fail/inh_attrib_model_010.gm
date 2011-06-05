@@ -1,0 +1,19 @@
+// A multiply inherited edge attribute should be
+// rejected when it comes from different super classes
+
+edge class Type1 {
+}
+
+edge class Type2 extends eType1 {
+	a : float;
+}
+
+
+edge class Type3 extends Type1 {
+	a : float;
+}
+
+edge class Type4  extends Type2, Type3 {
+}
+
+

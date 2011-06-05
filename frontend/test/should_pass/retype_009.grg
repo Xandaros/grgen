@@ -1,0 +1,13 @@
+using attrib_model_001;
+
+rule r {
+	x: Node;
+	y: Node;
+	
+	x -e:EINT-> y;
+	-f:EBOOL->;
+
+	modify {
+		x - ee:typeof(f)<e> -> y;
+	}
+}

@@ -1,0 +1,11 @@
+using attrib_model_001, enum_model_003;
+
+rule r {
+	k:A -l:B-> k;
+
+	modify {
+		eval {
+			l.e = (te2) k.e;
+		}
+	}
+}

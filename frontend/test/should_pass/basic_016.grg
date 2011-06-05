@@ -1,0 +1,11 @@
+rule r {
+	x : Node;
+	negative {
+		x --> y : Node;
+	}
+
+	replace {
+		x --> y : Node;
+	}
+}
+

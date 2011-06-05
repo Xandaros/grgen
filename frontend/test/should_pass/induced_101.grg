@@ -1,0 +1,8 @@
+rule r {
+    x:Node;
+    induced(x);
+
+	replace {
+	}
+}
+
