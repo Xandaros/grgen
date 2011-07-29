@@ -1,0 +1,13 @@
+using attrib_model_001;
+
+rule r (nby : NBYTE, nsh : NSHORT, ni : NINT, nl : NLONG, nb : NBOOL, nf : NFLOAT, nd : NDOUBLE, ns : NSTRING) : (NINT, NINT, NSTRING) {
+	zi : NINT;
+
+	replace {
+		xi : NINT;
+		ns;
+		zi;
+		return (xi, zi,  ns);
+	}
+}
+

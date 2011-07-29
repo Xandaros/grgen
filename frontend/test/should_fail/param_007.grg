@@ -1,0 +1,10 @@
+using attrib_model_001;
+
+rule r(a:string)
+{
+    b:NSTRING;
+    if { a == b.a; }
+
+    replace {
+    }
+}

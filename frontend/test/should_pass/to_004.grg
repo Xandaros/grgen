@@ -1,0 +1,12 @@
+using test_model_002;
+
+rule to_1 {
+	a : A;
+    b : AB;
+	c : typeof(a);
+    d : typeof(b);
+
+	replace{
+		a --> b <-- c --> d --> x:typeof(d);
+	}
+}

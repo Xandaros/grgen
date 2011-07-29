@@ -1,0 +1,19 @@
+using attrib_model_001;
+
+rule r1 {
+  x:NINT;
+  negative { x <-- ; }
+  modify{
+    emit("(", x.a, ")");
+    exec(r2(x));
+  }
+}
+
+rule r2(x:Node) {
+  x -e:ESTRING-> y:NINT;
+  modify {
+    delete(x);
+    emit(" -", e.a, "-> (", y.a, ")");
+    exec(r2(y));
+  }
+}

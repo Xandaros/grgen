@@ -1,0 +1,7 @@
+import helloworld.ecore HelloWorld.grg
+
+xgrs createHelloWorld
+
+show graph ycomp
+
+quit

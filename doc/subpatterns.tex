@@ -1,0 +1,1259 @@
+\chapter{Nested and Subpatterns}\indexmain{rule set language nested and subpatterns}
+\label{cha:nestedsub}
+
+The extension of the rule set language described in the chapter \ref{chaprulelang} by nested patterns and subpatterns greatly enhances the flexibility and expressiveness of pattern matching and rewriting.
+The following patterns to match a simplified abstract syntax tree give a rough picture of the language of nested and subpatterns:
+  \begin{example} \label{ex:proggraph}
+    \begin{grgen}
+test method
+{
+  m:Method <-- n:Name; // signature of method consisting of name
+  iterated { // and 0-n parameters
+    m <-- :Variable;
+  }  
+  
+  :AssignmentList(m); // body consisting of a list of assignment statements
+}
+
+pattern AssignmentList(prev:Node)
+{
+  optional { // nothing or a linked assignment and again a list
+    prev --> a:Assign; // assignment node 
+    a -:target-> v:Variable; // which has a variable as target 
+    :Expression(a);  // and an expression which defines the left hand side 
+    :AssignmentList(a); // next one, plz
+  }
+}
+
+pattern Expression(root:Expr)
+{
+  alternative { // expression may be
+    Binary { // a binary expression of an operator and two expresions
+      root <-- expr1:Expr;
+      :Expression(expr1);
+      root <-- expr2:Expr;
+      :Expression(expr2);
+      root <-- :Operator;
+    }
+    Unary { // or a unary expression which is a variable (reading it)
+      root <-- v:Variable;
+    }
+  }
+}
+    \end{grgen}
+  \end{example}\label{introexample}
+
+
+Until now we have seen rules and tests with one left hand side static pattern specification in a direct 1:1 correspondence with its dynamic match in the host graph on a successful application.
+From now on we will increase the expressiveness of the pattern language, and dependent on it the rewrite language, to describe much finer and more flexible what patterns to accept.
+This will be done by pattern specifications built up from multiple static pattern piece specifications, where the pieces may be matched dynamically zero, one, or multiple times, or are forbidden to exists for the entire pattern to be matched.
+These rule set language constructs can be split into nested patterns (negative application condition, positive application condition, nested pattern with cardinality, alternative patterns) and subpatterns (subpattern declaration and subpattern entity declaration, subrule declaration and usage), we will start with the nested patterns:
+
+\begin{rail}  
+  NestedPattern: 
+    NegativeApplicationCondition |
+    PositiveApplicationCondition |
+    NestedPatternWithCardinality |
+    AlternativePatterns 
+    ;
+\end{rail}\ixnterm{NestedPattern}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Negative Application Condition (NAC)}
+\indexmain{negative application condition}\indexmainsee{NAC}{negative application condition}\label{nac}
+
+\begin{rail}  
+  NegativeApplicationCondition: 
+    'negative' lbrace (()+PatternStatement) rbrace;
+\end{rail}\ixkeyw{negative}\ixnterm{NegativeApplicationCondition}
+
+With negative application conditions (keyword \texttt{negative}) we can specify graph patterns which forbid the application of a rule if any of them is present in the host graph (cf.~\cite{adam}). 
+NACs possess a \indexed{scope} of their own, i.e. names defined within a NAC do not exist outside the NAC. 
+Identifiers from surrounding scopes must not be redefined.
+If they are not explicitely mentioned, the NAC gets matched independent from them, i.e. elements inside a negative are \texttt{hom(everything from the outside)} by default.
+But referencing the element from the outside within the negative pattern causes it to get matched isomorphically/distinct to the other elements in the negative pattern. 
+This is a bit unintuitive if you think of extending the pattern by negative elements, but cleaner and more powerful: 
+just think of NACs to simply specify a pattern which should not be in the graph, with the possibility of forcing elements to be the same as in the enclosing pattern by name equality.
+
+  \begin{example}
+    We specify a variable which is not badly typed, i.e. a node \texttt{x} of type \texttt{Variable} which must not be target of an edge of type \text{type} with a source node of type \texttt{BadType}:
+    \begin{grgen}
+  x:Variable;
+  negative {
+    x <-:type- :BadType;
+  }
+    \end{grgen}
+  \end{example}
+ 
+Because NACs have their ``own'' binding, using NACs leads to specifications which might look a bit redundant.
+
+  \begin{example}
+    Let's check the singleton condition, meaning there's exactly one node of the type to check, for the type \texttt{RootNamespace}.
+    The following specification is \emph{wrong} (it will never return a match):
+    \begin{grgen}
+  x:RootNamespace;
+  negative {
+    y:RootNamespace;
+  }
+    \end{grgen}
+	
+    Instead we have to specify the \emph{complete} forbidden pattern inside the NAC. This is done by:
+    
+	\begin{grgen}
+  x:RootNamespace;
+  negative {
+    x;
+    y:RootNamespace; // now it is ensured that y must be different from x
+  }
+    \end{grgen}
+	
+	Btw: the \texttt{x;} is not a special construct, it's a normal graphlet (cf. \ref{sct:graphlets}).
+	
+  \end{example} 
+
+If there are several patterns which should not occur, use several negatives.
+If there are exceptions to the forbidden pattern, use nested negatives.
+As a straight-forward generalization of negatives within positive patterns, negatives may get nested to an arbitrary depth.
+Matching of the nested negative pattern causes the matching of the nesting pattern to fail.
+
+\begin{example}
+  A fabricated example using parallel as well as nested \texttt{negative}s:
+  \begin{grgen}
+test onlyOneChildOrAllChildrenHaveExactlyOneCommonChild
+{
+  root:Class;
+  negative {
+    root -:extending-> :Class; // root does not extend another class
+  }
+  root <-:extending- c1:Class; // a class c1 extends root
+  negative {
+    c1;
+    root <-:extending- c2:Class; // there is no c2 which extends root
+    negative {
+      c1 <-:extending- child:Class -:extending-> c2; // except c1 and c2 have a common child
+      negative { // and c1 has no further children
+        child;
+        c1 <-:extending- :Class;
+      }
+      negative { // and c2 has no further children
+        child;
+        c2 <-:extending- :Class; 
+      }
+    }
+  }
+}
+  \end{grgen}
+\end{example}
+
+%negative pattern elements get matched independent from the subpatterns utilizing them
+%(explicit patternpath/pattern statement in the negative/independent needed for old behaviour)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Positive Application Condition (PAC)}
+\indexmain{positive application condition}\indexmainsee{PAC}{positive application condition} \label{pac}
+
+\begin{rail}  
+  PositiveApplicationCondition: 
+    'independent' lbrace (()+PatternStatement) rbrace;
+\end{rail}\ixkeyw{independent}\ixnterm{PositiveApplicationCondition}
+
+With positive application conditions (keyword \texttt{independent}) we can specify graph patterns which, in contrast to negative application conditions, must be present in the host graph to cause the matching of the enclosing pattern to succeed.
+Together with NACs they share the property of opening a \indexed{scope}, with elements being independent from the surrounding scope (i.e. a host graph element can easily get matched to a pattern element and a PAC element with a different name, unless the pattern element is referenced in the PAC). 
+They are used to improve the logical structure of rules by separating a pure condition from the main pattern of the rule amenable to rewriting.
+They are really needed if subpatterns want to match elements which were already matched during the subpattern derivation.
+
+\begin{example}
+  A further fabricated example rather giving the intention using \texttt{independent} patterns to check some conditions with only the main pattern available to rewriting:
+
+  \begin{grgen}
+rule moveMethod
+{
+  c:Class --> m:Method;
+  csub -:extending-> c;
+  csub:Class -e:Edge-> msub:Method;
+  
+  independent {
+    // a complicated pattern to find out that m and msub have same signatures
+  }
+  independent {
+    // a complicated pattern to find out that msub is only using variables available in c
+  }
+  independent {
+    // a complicated pattern to find out that m is not used
+  }
+ 
+  modify { // move method upwards
+    delete(m);
+    delete(e);
+    c --> msub;
+  }
+}
+  \end{grgen}
+\end{example}
+
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Pattern Cardinality (iterated / multiple / optional)}
+\indexmainsee{cardinality}{pattern cardinality}\indexmain{pattern cardinality}\label{cardinality}
+
+\begin{rail}  
+  NestedPatternWithCardinality: 
+    ('iterated' | 'multiple' | 'optional') lbrace NestedBody rbrace;
+  NestedBody: (PatternStatement+) NestedRewriting?;
+\end{rail}\ixkeyw{iterated}\ixkeyw{multiple}\ixkeyw{optional}\ixnterm{NestedPatternWithCardinality}
+
+The \indexmain{pattern cardinality} blocks allow to specify how often the nested pattern -- opening a scope -- is to be matched.
+Matching will be carried out eagerly, i.e. if the construct is not limiting the number of matches and a further match is possible it will be done.
+(The nested body will be explained in Section~\ref{sec:nestedrewrite}.)
+
+\subsection*{The iterated block} 
+The iterated block is matching the contained subpattern as often as possible, succeeding even in the case the contained pattern is not available (thus it will never fail).
+It was included in the language to allow for matching breadth-splitting structures, as in capturing all methods of a class in a program graph.
+
+\begin{example}
+  \begin{grgen}
+test methods
+{
+  c:Class;
+  iterated {
+    c --> m:Method;
+  }  
+}
+  \end{grgen}
+\end{example}
+
+\subsection*{The multiple block}
+The multiple block is working like the iterated block, but expects the contained subpattern to be available at least once; if it is not, matching of the multiple block and thus its enclosing pattern fails.
+
+\begin{example}
+  \begin{grgen}
+test oneOrMoreMethods
+{
+  c:Class;
+  multiple {
+    c --> m:Method;
+  }
+}
+  \end{grgen}
+\end{example}
+
+\subsection*{The optional block}
+The optional block is working like the iterated block, but matches the contained subpattern at most once; further occurences of the subpattern are left unmatched.
+If the nested pattern is available, it will get matched, otherwise it won't; matching of the optional block will succeed either way.
+
+\begin{example}
+  \begin{grgen}
+test variableMaybeInitialized
+{
+  v:Variable; // match variable
+  optional { // and an initialization with a different one if available
+    v <-- otherV:Variable;
+  }
+}
+  \end{grgen}
+\end{example}
+
+\subsection*{Iteration breaking} 
+If an application condition inside an iteration block fails, then that potential match of the iterated pattern is thrown away and matching continues trying to find further matches.
+Sometimes a different behaviour is wanted, with an application condition terminating the iteration and causing it to fail.
+This would allow to check with a single rule that "every pattern X must also satisfy Y" holds.
+This behaviour is supported with the \indexmain{break}\texttt{break} keyword prepended to an application condition, transforming it into an iteration breaking condition.
+
+\begin{example}
+If the \texttt{negative} matches, not only the current iteration instance is prevented from matching, but the entire \texttt{iterated} (and thus the \texttt{test}) is failing to match:
+  \begin{grgen}
+test forEachXMustNotBeTheCaseY
+{
+  iterated {
+    <X>;
+    break negative { 
+      <Y>;
+    }
+  }
+}
+  \end{grgen}
+
+If the \texttt{independent} does not match, not only the current iteration instance is prevented from matching, but the entire \texttt{iterated} (and thus the \texttt{test}) is failing to match:
+  \begin{grgen}
+test forEachXMustBeTheCaseY
+{
+  iterated {
+    <X>;
+    break independent { 
+      <Y>;
+    }
+  }
+}
+  \end{grgen}
+\end{example}
+
+\begin{warning}
+Pattern cardinality constructs are match/rewrite-all enumeration blockers.
+For every pattern instance, the iterated/... yields only one match, even if in all mode (used in/from all-bracketed rules).
+\end{warning} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Alternative Patterns}
+\indexmain{alternative patterns}\label{alternative}
+
+\begin{rail}  
+  AlternativePatterns: 
+    'alternative' lbrace ((CaseName lbrace NestedBody rbrace)+()) rbrace;
+\end{rail}\ixkeyw{alternative}\ixnterm{AlternativePattern}
+
+With the alternative block you can specify several nested alternative patterns. One of them must get matched for the matching of the alternative (and thus its directly nesting pattern) to succeed, and only one of them is matched per match of the alternative / overall pattern.
+The order of matching the alternative patterns is unspecified, especially it is not guaranteed that a case gets matched before the case textually following -- if you want to ensure that a case cannot get matched if another case could be matched, you must explicitely prevent that from happening by adding negatives to the cases.
+In contrast to the iterated which locally matches everything available and inserts this combined match into the current match, the alternative decides for one case match which it inserts into the current match tree, ignoring other possible matches by other cases. 
+
+\begin{example}
+  \begin{grgen}
+test feature(c:Class)
+{
+  alternative // a feature of the class is either
+  {
+    FeatureMethod { // a method
+      c --> :Method;
+    }
+    FeatureVariable { // or a variable
+      c --> :Variable;
+    }
+    FeatureConstant { // or a constant
+      c ---> :Constant;
+    }
+  }
+}  
+  \end{grgen}
+\end{example}
+
+\begin{example}
+  \begin{grgen}
+test variableMaybeInitialized
+{
+  v:Variable; // match variable
+  alternative { // and an initialization with a different one if available
+    Empty {
+      // the empty pattern matches always
+      negative { // so prevent it to match if initialization is available
+        v <-- otherV:Variable;
+      }
+    }
+    Initialized { // initialization
+      v <-- otherV:Variable;
+    }
+  }
+}
+  \end{grgen}
+\end{example}
+
+\begin{example} \label{ex:retypelhs}
+When working with the subtyping hierarchy one may be interested in matching in a first step an abstract base class,
+specifying the rewriting behaviour for this base class once,
+and in a refinement step in an alternative the different possible subtypes, 
+then being able to access their specific attributes and being able of giving different additional rewrite parts.
+	\begin{grgen}
+test refineFeature
+{
+  f:Feature; // match abstract base class Feature
+
+  alternative {
+    Variable {
+      v:Variable<f>; // try to cast to concrete Variable, if succeeds we can access the Variable attributes
+    }
+    Method {
+      m:Method<f>; // try to cast to a concrete Method, if succeeds we can access the Method attributes
+    }
+  }
+  
+  modify {
+    // do stuff common to a Feature here
+  }
+}
+	\end{grgen}
+\end{example}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Subpattern Declaration and Subpattern Entity Declaration}
+\indexmain{subpattern}\label{sec:subpattern}
+
+Subpatterns were introduced to factor out a common recurring pattern -- a shape -- into a named subpattern type, ready to be reused at points the pattern should get matched.
+The common recurring pattern is specified in a subpattern declaration and used by a subpattern entity declaration.
+
+\begin{rail}  
+  SubpatternDeclaration: 
+    'pattern' IdentDecl Parameters? (('modify'|'replace') Parameters)? \\
+	lbrace SubpatternBody rbrace ;
+  SubpatternBody: (PatternStatement+) SubpatternRewriting?;
+\end{rail}\ixkeyw{pattern}\ixkeyw{modify}\ixkeyw{replace}\ixnterm{SubpatternDeclaration}\ixnterm{SubpatternBody}\label{subpatterndecl}\indexmain{subpattern declaration}
+
+Subpattern declarations define a subpattern type denoting the specified shape in the global namespace;
+the parameters specify some context elements the pattern may refer to, but which are not part of the pattern itself. 
+So they are only syntactically the same as test/rule-parameters (which are members of the pattern part).
+A further difference is the lack of ReturnTypes; they are not actions, just a helper in constructing complex patterns.
+In order to get values out they employ the language construct of def entites which are yielded to (cf. \ref{sec:localvarorderedevalyield} later in this chapter).
+Subpatterns can receive additional rewrite parameters in contrast to the actions; they can be used to hand in nodes which are created in the rewrite part of the action or subpattern which contains the subpattern entity.
+(The nested body will be explained in Section~\ref{sec:subrule}.)
+
+\begin{rail}  
+  SubpatternEntityDeclaration: 
+    Ident ':' SubpatternType '(' (Ident * ',') ')' ';' ;
+\end{rail}\ixnterm{SubpatternEntityDeclaration}\indexmain{subpattern entity declaration}
+
+Subpattern entity declarations instantiate an entity of the subpattern type (i.e. specified shape), which means the subpattern must get matched for the matching of the enclosing pattern to succeed.
+The arguments given are bound to the corresponding parameters of the subpattern.
+If you prefer a syntactical point of view, you may see the subpattern entity as a placeholder, which gets substituted in place by the textual body of the subpattern declaration under renaming of the parameters to the arguments.
+If you prefer an operational point of view, you may see the subpattern entity as a call to the matcher routine searching for the specified pattern from the given arguments on.
+
+%TODO:remove
+%Termersetzung mit Termen die Graphen beschreiben.
+%Mehrelementige Graphsprachen als Zwischenschritt zu den rekursiven bereits mit alternative... eingeführt -- dort auch so erklärt, wirklich eingeführt? vor rekursiv trotzdem noch ein  Zwischenschritt: pattern mit alternative, statt action mit alternative
+
+\begin{example}
+  \begin{grgen}
+pattern TwoParameters(mp:Method)
+{
+  mp <-- :Variable;
+  mp <-- :Variable;
+}
+test methodAndFurther
+{
+  m:Method <-- n:Name;
+  tp:TwoParameters(m);
+}
+  \end{grgen}
+
+  In the given example a subpattern \texttt{TwoParameters} is declared, connecting the context element \texttt{mp} via two edges to two variable nodes.
+  The test \texttt{methodAndFurther} is using the subpattern via the declaration of the entity \texttt{tp} of type \texttt{TwoParameters}, binding the context element to its local node \texttt{m}.
+  The resulting test after subpattern derivation is equivalent to the test \texttt{methodWithTwoParameters}.
+
+  \begin{grgen}
+test methodWithTwoParameters
+{
+  m:Method <-- n:Name;
+  m <-- :Variable;
+  m <-- :Variable;
+}
+  \end{grgen}
+\end{example}
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Recursive Patterns}\indexmain{recursive pattern}\indexmain{structural recursion}
+
+Subpatterns can be combined with alternative patterns or the cardinality patterns into recursive subpatterns, i.e. subpatterns which may contain themselves.
+Subpatterns containing themselves alone -- directly or indirectly -- would never yield a match.
+
+\begin{example}
+  \begin{grgen}
+test iteratedPath
+{
+  root:Assign;
+  negative { --> root; }
+  :IteratedPath(root); // match iterated path = assignment list
+}
+
+pattern IteratedPath(prev:Node)
+{
+  optional { // nothing or a linked assignment and again a list
+    prev --> a:Assign; // assignment node 
+    :IteratedPath(a); // next one, plz
+  }
+}
+  \end{grgen}
+  
+Searches an iterated path from the root node on, here an assignment list. 
+The iterated path with the optional is equivalent to the code below (note the negative which ensures you get a longest match -- without it the empty case may be chosen lazily just in the beginning)
+
+  \begin{grgen}
+pattern IteratedPath(prev:Node)
+{
+  alternative {
+    Empty {
+      negative {
+        prev --> a:Assign;
+      }
+    }
+    Further {
+      prev --> a:Assign;
+      :IteratedPath(a);
+    }
+  }
+}
+  \end{grgen}
+\end{example}
+
+
+\begin{example}
+  \begin{grgen}
+rule removeMiddleAssignment
+{
+  a1:Assign --> a2:Assign --> a3:Assign;
+  independent {
+    :IteratedPath(a1,a3)
+  }
+  
+  replace {
+    a1; a3;
+  }
+}
+
+pattern IteratedPath(begin:Assign, end:Assign)
+{
+  alternative { // an iterated path from begin to end is either
+    Found { // the begin assignment directly linked to the end assignment (base case)
+      begin --> end;
+    }
+    Further { // or an iterated path from the node after begin to end (recursive case)
+      begin --> intermediate:Assign;
+      :IteratedPath(intermediate, end);
+    }
+  }
+}
+  \end{grgen}
+
+This is once more a fabricated example, for an iterated path from a source node to a distinctive target node, and an example for the interplay of subpatterns and positive application conditions to chech complex conditions independent from the pattern already matched.
+Here, three nodes \texttt{a1},\texttt{a2},\texttt{a3} of type \texttt{Assign} forming a list connected by edges are searched, and if found, \texttt{a2} gets deleted, but only if there is an iterated path of directed edges from \texttt{a1} to \texttt{a3}.
+The path may contain the host graph node matched to \texttt{a2} again.
+Without the \texttt{independent} this would not be possible, as all pattern elements -- including the ones originating from subpatterns -- get matched isomorphically. 
+The same path specified in the pattern of the rule -- not in the independent -- would not get matched if it would go through the host graph node matched to b, as it is locked by the isomorphy constraint.
+
+\end{example}
+
+With recursive subpatterns you can already capture neatly structures extending into depth (as iterated paths)
+and also structures extending into breadth (as forking patterns, although the cardinality statements are often much better suited to this task).
+But combined with an iterated block, you may even match structures extending into breadth and depth,
+like e.g. a hierarchy of classes (i.e. match a \indexed{spanning tree} in the graph)
+giving you a very powerful and flexible notation to capture large, complex patterns
+built up in a structured way from simple, connected pieces (as e.g. abstract syntax trees of programming languages).
+
+\begin{note}
+If you are working with hierarchic structures like that, 
+you might be interested in the capablities of GrShell/yComp for nested layout
+as described and shown in \ref{sub:visual}/\ref{note:visual}).
+\end{note}
+
+\begin{example}
+  \begin{grgen}
+pattern SpanningTree(root:Class)
+{
+  iterated {
+    root <-:extending- next:Class;
+    :SpanningTree(next);
+  }
+}
+  \end{grgen}
+\end{example}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Nested Pattern Rewriting}
+\indexmain{nested pattern rewrite}\label{sec:nestedrewrite}
+
+Until now we focused on the pattern matching of nested and subpatterns -- but we're not only interested in finding patterns combined from several pattern pieces, we want to rewrite the pattern pieces, too.
+So we will extend the language of the structure parser introduced so far into a language for a structure transducer.
+This does not hold for the application conditions, which are pure conditions, but for all the other language constructs introduced in this chapter.
+
+\begin{rail}  
+  NestedRewriting: ('replace' | 'modify') lbrace (()+ReplaceStatement) rbrace;
+\end{rail}\ixnterm{NestedRewriting}\ixkeyw{replace}\ixkeyw{modify}
+
+Syntactically the rewrite is specified by a modify or replace clause nested directly within the scope of each nested pattern;
+in addition to the rewrite clause nested within the top level pattern.
+Semantically for every instance of a pattern piece matched its dependent rewrite is applied. 
+So in the same manner the complete pattern is assembled from pattern pieces, the complete rewrite gets assembled from rewrite pieces
+(or operationally: rewriting is done along the match tree by rewriting one pattern piece after the other).
+Note that \texttt{return} statements are not available as in the top level rewrite part of a rule, and the \texttt{exec} statements are slightly different.
+
+For a static pattern specification like the iterated block yielding dynamically a combined match of zero to many pattern matches, every submatch is rewritten, according to the rewrite specification applied to the host graph elements of the match bound to the pattern elements
+(if the pattern was matched zero times, no dependent rewrite will be triggered - but note that zero matches still means success for an iterated, so the dependent rewrite piece of the enclosing pattern will be applied).
+This allows e.g. for reversing all edges in the iterated-example (denoting containment in the class), as it is shown in the first of the following two examples.
+For the alternative construct the rewrite is specified directly at every nested pattern, i.e. alternative case as shown in the second of the following two examples); the rewrite of the matched case will be applied.
+
+Nodes and edges from the pattern containing the nested pattern containing the nested rewrite are only available for deletion or retyping inside the nested rewrite if it can be statically determined this is unambigous, i.e. only happening once.
+So only the rewrites of alternative cases, optional patterns or subpatterns may contain deletions or retypings of elements not declared in their pattern (in contrast to iterated and multiple pattern rewrites).
+
+\begin{example}
+%This is an example for a rewrite part nested within an iterated block. - without the comment the two examples fit on one page
+  \begin{grgen}
+rule methods
+{
+  c:Class;
+  iterated {
+    c --> m:Method;
+
+    replace {
+      c <-- m;
+    }
+  } 
+
+  replace {
+    c;
+  }  
+}
+  \end{grgen}
+\end{example}
+
+\begin{example}
+%This is an example for a rewrite parts nested within alternative cases. - without the comment the two examples fit on one page
+  \begin{grgen}
+rule methodWithTwoOrThreeParameters(m:Method)
+{
+  alternative {
+    Two {
+      m <-- n:Name;
+      m <-e1:Edge- v1:Variable;
+      m <-e2:Edge- v2:Variable;
+      negative {
+        v1; v2; m <-- :Variable;
+      }
+
+      modify {
+        delete(e1); m --> v1;
+        delete(e2); m --> v2;	    
+      }
+    }
+    Three {
+      m <-- n:Name;
+      m <-e1:Edge- v1:Variable;
+      m <-e2:Edge- v2:Variable;
+      m <-e3:Edge- v3:Variable;
+
+      modify {
+        delete(e1); m --> v1;
+        delete(e2); m --> v2;
+        delete(e3); m --> v3;
+      }
+    }
+
+  //modify { can be omitted - see below
+  //}
+}
+  \end{grgen}
+\end{example}
+
+\begin{note} \label{omitmodify}
+In case you got a \texttt{rule} or \texttt{pattern} with an empty \texttt{modify} clause, with all the real work going on in an \texttt{alternative} or an \texttt{iterated}, you can omit the empty \texttt{modify} clause.
+This is a small syntactic convenience reducing noise which is strictly restricted to the top level pattern --- omitting rewrite parts of nested patterns specifies the entire pattern to be match-only (like a \texttt{test}; this must be consistent for all nested patterns).
+\end{note}
+
+\begin{example}
+This is an example which shows how to decide with an alternative on the target type of a retyping depending on the context.
+Please note the omitted rewrite (cf. \ref{omitmodify}).
+
+  \begin{grgen}
+rule alternativeRelabeling
+{
+  m:Method;
+  
+  alternative {
+    private {
+      if { m.access == Access::private; }
+
+      modify {
+        pm:PrivateMethod<m>;
+      }
+    }
+    static {
+      negative {
+        m <-- c;
+      }
+
+      modify {
+        sm:StaticMethod<m>;
+      }
+    }
+  } 
+}
+  \end{grgen}
+\end{example}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Subpattern rewriting}
+\indexmain{subrule}\label{sec:subrule}
+
+Alongside the separation into subpattern declaration and subpattern entity declaration, 
+subpattern rewriting is separated into a nested rewrite specification given within the subpattern declaration defining how the rewrite looks like 
+and a subpattern rewrite application given within the rewrite part of the pattern containing the subpattern entity declaration requesting the rewrite to be actually applied.
+
+\begin{rail}  
+  SubpatternRewriting: ('replace' | 'modify') lbrace (()+ReplaceStatement) rbrace;
+\end{rail}\ixnterm{SubpatternRewriting}\ixkeyw{replace}\ixkeyw{modify}
+
+The subpattern rewriting specifications within the subpattern declaration looks like a nested rewriting specification,
+but additionally there may be rewrite parameters given in the subpattern header (cf. \ref{subpatterndecl}) which can be referenced in the rewrite body.
+(Most elements can be handed in with normal parameters, but elements created in the rewrite part of the user of the subpattern can only be handed in at rewrite time.) 
+
+\begin{rail}  
+  SubpatternRewriteApplication: 
+    Ident '(' (Ident * ',') ')' ';' |
+    SubpatternOccurence |
+    SubpatternExecEmit
+	;
+\end{rail}\ixnterm{SubpatternRewriteApplication}
+
+\noindent The \emph{SubpatternRewriteApplication} is part of the \emph{ReplaceStatement} already introduced (cf. \ref{replstmt}).
+The subpattern rewrite application is given within the rewrite part of the pattern containing the subpattern entity declaration,
+in call notation on the declared subpattern identifier.
+It causes the rewrite part of the subpattern to get used; if you leave it out, the subpattern is simply kept untouched.
+The \emph{SubpatternOccurence} is explained in the next subsection \ref{sub:delpressub}.
+The \emph{SubpatternExecEmit} is explained in chapter \ref{cha:imperativeandstate}.
+
+\begin{example}
+This is an example for a subpattern rewrite application.
+
+  \begin{grgen}
+pattern TwoParametersAddDelete(mp:Method)
+{
+  mp <-- v1:Variable;
+  mp <-- :Variable;
+
+  modify {
+    delete(v1);
+    mp <-- :Variable;
+  }
+}
+rule methodAndFurtherAddDelete
+{
+  m:Method <-- n:Name;
+  tp:TwoParametersAddDelete(m);
+
+  modify {
+    tp(); // trigger rewriting of the TwoParametersAddDelete instance
+  }
+}
+  \end{grgen}
+\end{example}
+
+
+\begin{example}
+This is another example for a subpattern rewrite application,
+reversing the direction of the edges on an iterated path.
+
+  \begin{grgen}
+pattern IteratedPathReverse(prev:Node)
+{
+  optional {
+    prev --> next:Node;
+    ipr:IteratedPathReverse(next);
+    
+    replace {
+      prev <-- next;
+      ipr();
+    }
+  }
+
+  replace {
+  }
+}
+  \end{grgen}
+\end{example}
+
+\begin{example}
+This is an example for rewrite parameters, connecting every node on an iterated path to a common node (i.e. the local rewrite graph to the containing rewrite graph).
+It can't be simulated by subpattern parameters which get defined at matching time because the common element is only created later on, at rewrite time.
+
+  \begin{grgen}
+pattern ChainFromToReverseToCommon(from:Node, to:Node) replace(common:Node)
+{
+  alternative {
+    rec {
+      from --> intermediate:Node;
+      cftrtc:ChainFromToReverseToCommon(intermediate, to);
+
+      replace {
+        from <-- intermediate;
+        from --> common;
+        cftrtc(common);
+      }
+    }
+    base {
+      from --> to;
+
+      replace {
+        from <-- to;
+        from --> common;
+        to --> common;
+      }
+    }
+  }
+
+  replace {
+    from; to;
+  }
+}
+  \end{grgen}
+
+  \begin{grgen}  
+rule chainFromToReverseToCommon()
+{
+  from:Node; to:Node;
+  cftrtc:ChainFromToReverseToCommon(from, to);
+
+  modify {
+    common:Node;
+    cftrtc(common);
+  }
+}
+  \end{grgen}
+\end{example}
+
+%-----------------------------------------------------------------------------------------------
+\subsection{Deletion and Preservation of Subpatterns}\label{sub:delpressub}
+
+In addition to the fine-grain dependent replacement, subpatterns may get deleted or kept as a whole.
+
+\begin{rail}  
+  SubpatternOccurence: 
+    Ident ';' |
+    'delete' '(' (Ident + ',') ')' ';';
+\end{rail}\ixkeyw{SubpatternOccurence}\ixkeyw{delete}
+
+In modify mode, they are kept by default, but deleted if the name of the declared subpattern entity is mentioned within a delete statement.
+In replace mode, they are deleted by default, but kept if the name of the declared subpattern entity is mentioned (using occurence, same as with nodes or edges).
+
+\begin{example}
+  \begin{grgen}
+rule R {
+  m1:Method; m2:Method;
+  tp1:TwoParameters(m1);
+  tp2:TwoParameters(m2);
+
+  replace {
+    tp1; // is kept
+    // tp2 not included here - will be deleted
+    // tp1(); or tp2(); -- would apply dependent replacement
+    m1; m2;
+  }
+}
+  \end{grgen}
+\end{example}
+
+\begin{note}
+You may even give a SubpatternEntityDeclaration within a rewrite part which causes the subpattern to be created; 
+but this employment has several issues which can only be overcome by introducing explicit creation-only subpatterns
+-- so you better only use it if you think it should obviously work (examples for the issues are alternatives -- which case to instantiate? -- and abstract node or edge types -- what concrete type to choose?). 
+
+  \begin{grgen}
+pattern ForCreationOnly(mp:Method)
+{
+  // some complex pattern you want to instantiate several times 
+  // connecting it to the mp handed in
+}
+rule createSubpattern
+{
+  m:Method;
+  
+  modify {
+    :ForCreationOnly(m); // instantiate pattern ForCreationOnly
+  }
+}
+  \end{grgen}
+\end{note}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Local variables, ordered evaluation, and yielding outwards} \label{sec:localvarorderedevalyield}\indexmain{local variable}\indexmainsee{evalhere}{ordered evaluation}\indexmain{yielding outwards}
+
+\subsection*{Local variables and ordered evaluation} 
+Sometimes attribute evaluation becomes easier with temporary variables;
+such local variables can be introduced on a right hand side employing the known variable syntax \texttt{var name:type}, prefixed with the \texttt{def}\indexmain{def} keyword.
+From then on they can be read and assigned to in eval statements of the RHS, or used as variable parameters in subpattern rewrite calls.
+In addition, on their introduction an initializing expression may be given.
+
+\begin{example}
+  \begin{grgen}
+rule R {
+  n1:N; n2:N; n3:N; n4:N; n5:N;
+  
+  modify {
+    def var mean:double = (n1.v + n2.v + n3.v + n4.v + n5.v)/5;
+    eval {
+    	n1.variance = (n1.v - mean)*(n1.v - mean); 
+    	n2.variance = (n2.v - mean)*(n2.v - mean); 
+    	n3.variance = (n3.v - mean)*(n3.v - mean); 
+    	n4.variance = (n4.v - mean)*(n4.v - mean); 
+    	n5.variance = (n5.v - mean)*(n5.v - mean); 
+    }
+  }
+}
+  \end{grgen}
+\end{example}
+
+
+Normally the rewrite order is as given in table \ref{table:executionorderrewriting}:
+\begin{table}[htbp]
+  \centering
+  \begin{tabularx}{\linewidth}{|l|X|} \hline
+    \texttt{ 1. } & \texttt{ Extract elements needed from match } \\
+    \texttt{ 2. } & \texttt{ Create new nodes } \\
+    \texttt{ 3. } & \texttt{ Call rewrite code of used subpatterns} \emph{and more...} \\ 
+	  \texttt{ 4. } & \texttt{ Call rewrite code of nested iterateds } \\
+    \texttt{ 5. } & \texttt{ Call rewrite code of nested alternatives } \\
+    \texttt{ 6. } & \texttt{ Redirect edges } \\  
+    \texttt{ 7. } & \texttt{ Retype (and merge) nodes } \\  
+    \texttt{ 8. } & \texttt{ Create new edges } \\
+    \texttt{ 9. } & \texttt{ Retype edges } \\  
+    \texttt{ 10. } & \texttt{ Create subpatterns } \\
+    \texttt{ 11. } & \texttt{ Attribute reevaluation } \\
+    \texttt{ 12. } & \texttt{ Remove edges } \\ 
+	  \texttt{ 13. } & \texttt{ Remove nodes } \\
+    \texttt{ 14. } & \texttt{ Remove subpatterns } \\
+    \texttt{ 15. } & \texttt{ Emit / Exec } \\  
+    \texttt{ 16. } & \texttt{ Return } \\ \hline
+	\end{tabularx}
+	{\small \emph{and more...} at \texttt{3.} are \texttt{evalhere}, \texttt{emithere}, \texttt{alternative} Name, \texttt{iterated} Name}
+  \caption{Execution order rewriting}
+  \label{table:executionorderrewriting}
+\end{table}
+
+So first the subpatterns rewrites, then the iterated rewrites, then the alternative rewrits are executed, and finally the local eval statements.
+This might be sufficient in some cases, but in other cases when you want to compute an attributation over a tree/a graph, you want to have local computations influenced by attributes in nested/called children or its siblings, and attributes in nested/called children influenced by its parents or siblings.
+So we need a language device which allows us to intermingle attribute computations in between the rewrite part executions of nested patterns and subpattern rewrite calls.
+And a language device which allows us to give the execution oder of the alternative and iterated statements relative to the subpattern rewrite calls and attribute evaluations.
+
+To achieve attribute evaluation in a defined order in between the subpattern rewrite calls, we use ordered evaluation statements, introduced with the keyword \texttt{evalhere}; 
+they get executed in the order in which they are given syntactically
+(a further statement executed in order is \texttt{emithere}, introduced in \ref{sec:deferredexecemithere}).
+
+To achieve iterated/alternative execution in order, we allow names to be given to nested patterns, and reuse this name in a nested pattern rewrite order specification.
+Naming nested patterns is done with the following syntax, as the already introduced syntax remains valid, on aggregate we extend the nested patterns with optional names to form \indexed{named nested pattern}.
+
+\begin{rail}  
+  NamedNestedPattern: 
+    ('negative' | 'independent') IdentDecl lbrace etc rbrace;
+    ('iterated' | 'multiple' | 'optional') IdentDecl etc rbrace;
+    'alternative' IdentDecl lbrace etc rbrace;
+\end{rail}
+
+Alternatives and iterateds named this way can then be referenced in the rewrite part with an alternative rewrite order specification or an iterated rewrite order specification.
+
+\begin{rail}  
+  CardinalityRewriteUsage: 
+    ('iterated' | 'multiple' | 'optional') Ident ';';
+  AlternativeRewriteUsage: 
+    'alternative' Ident ';';
+\end{rail}
+
+What we've seen so far is applied in the following example.
+
+\begin{example}
+  \begin{grgen}
+rule R {
+  iterated foo { .; modify { ..read i.. } }
+  alternative bar { case { modify { ..read i.. } } } 
+  sub1:Subpattern1();
+  sub2:Subpattern2();
+
+  modify {
+    def var i:int = 0; // initializes i to 0
+    evalhere { i = i + 1; } // afterwards i==1
+    sub1(i); // input 1 to subpattern rewrite
+    evalhere { i = i + 1; } // afterwards i==2
+    iterated foo; // nested iterated reads i==2 
+    evalhere { i = i + 1; } // afterwards i==3
+    alternative bar; // nested alternative reads i==3
+    evalhere { i = i + 1; } // afterwards i==4
+    sub2(i); // input 4 to subpattern rewrite
+    evalhere { i = i + 1; } // afterwards i==5
+    eval { j = i + 1; } // assign 6 to j
+  }
+}
+  \end{grgen}
+\end{example}
+
+\begin{note}
+For rewriting the execution order of the parts can be defined, to allow programming attribute evaluation orders of interest, defining when to descend into which part and defining glueing/local computations in between.
+(A depth first run with a defined order in between the siblings, comparable to an LAG/RAG run in compiler construction, but with an explicitely defined sequence of children visits, instead of a temperal succession implicitely induced by the syntactical left-to-right ordering).
+In contrast to rewriting, the \emph{matching} order of the pattern parts can \emph{not} be defined, to allow the compiler/the runtime to use the evaluation order it estimates to be the best.
+So we can't access attributes from sibling elements, we can only compute attributes top down from local elements or elments handed in on matching, and later on bottom up from local elements or elements bubbleing up at match object tree construction.
+Top down attribute evaluation operates on the already matched elements and attribute values or the ones received as inputs, which are handed down implicitely into nested patterns or explicitely via subpattern parameters into subpattern instances. (A depth first run too, but without a defined order in between the siblings, comparable to an IAG run in compiler construction computed during matching while descending).
+Bottom up attribute evalutaion operates on the matched elements and attribute values locally available or the ones received into def elements yielded implicitely upwards from the nested patterns or explicitely accumulating iterated results or with assigning out parameters of subpatterns. (The same depth first run, but with attributes computed while ascending, comparable to an SAG run in compiler construction.)
+\end{note}
+
+\subsection*{Yielding outwards during rewriting} 
+
+Sometimes one needs to bring something matched within a nested or subpattern to an outer pattern containing it (nested patterns) or calling it (subpatterns).
+So that one can do there (in the using pattern) operations on it, e.g. attaching a further edge to an end node of a chain matched with recursive patterns (thus modularizing the graph rewrite specification into chain matching patterns and patterns using chains doing things on the chain ends), or summing attributes matched in iterated pattern instances. 
+
+The first thing one needs to bring something outwards is a target in a nesting or calling pattern. 
+This is achieved by nodes, edges, and variables declared with the \texttt{def} keyword in a rewrite part, marking them as output entities;
+variables were already introduced in previous paragraphs, but in addition to them nodes and edges are allowed, too.
+Furthermore subpattern rewrite parameters may be declared as def parameters,
+marking them as output parameters.
+These elements are then yielded to from within \texttt{eval} or \texttt{evalhere} statements, subpattern rewrite usages, and \texttt{exec} statements.
+While the latter will be covered in chapter \ref{cha:imperativeandstate}, the former will be explained in the following.
+
+Yielding is specified by prepending the \texttt{yield}\indexmain{yield} keyword to the entity yielded to,
+in an assignment to a variable or a method call on a variable,
+inside an \texttt{eval} or \texttt{evalhere}-statement, or a change assignment; 
+the target of the assignment may be a node or edge (if declared as output variable).
+The yield must be prepended to the argument for a subpattern def rewrite parameter, too.
+
+\begin{example}
+  \begin{grgen}
+pattern Chain(begin:Node) modify(def end:Node)
+{
+  alternative {
+    Further {
+      begin --> intermediate:Node;
+      c:Chain(intermediate);
+      
+      modify {
+        c(yield end);
+      }
+    }
+    Done {
+      negative {
+        begin --> ;
+      }
+      
+      modify {
+        eval {
+          yield end = begin;
+        }
+      }
+    }
+  }
+  
+  modify { }
+}
+
+rule R(begin:Node) : (Node) {
+  c:Chain(begin);
+
+  modify {
+    def end:Node;
+    c(yield end); // end is filled with chain end
+    return(end);
+  }
+}
+  \end{grgen}
+  First example for RHS yielding: returning the end node of a chain.
+\end{example}
+
+\begin{example}
+  \begin{grgen}
+rule outCount(head:Node) : (int)
+{
+  iterated {
+    head --> .;
+    modify {
+      eval { yield count = count + 1; }
+    }
+  }
+
+  modify {
+    def var count:int = 0;
+    return (count);
+  }
+}
+  \end{grgen}
+  Second example for RHS yielding: counting the number of edges matched with an iterated.
+\end{example}
+
+\subsection*{Yielding outwards during match object construction} 
+
+Bubbeling up the elements from nested patterns and called patterns during rewriting might be too late or inconvenient.
+Luckily it can be done before, at the end pattern matching when the match object tree gets constructed.
+
+As for RHS yielding the targets of the yielding must be nodes, edges, or variables declared with the \texttt{def} keyword prepended, marking them as output entities; but this time in the pattern part.
+Furthermore subpattern parameters may be declared as def parameters in the subpattern definition header, marking them as output parameters.
+
+These elements can then be yielded to from within \texttt{eval} statements inside a \texttt{yield} block
+(maybe with iterated accumulation) and subpattern usages.
+A \texttt{yield} block is a constrained \texttt{eval} block which can be given in the pattern part;
+it does not allow to assign to or change non-\texttt{def} variables.
+Yielding is specified by prepending the \texttt{yield}\indexmain{yield} keyword to the entity yielded to,
+in the assignment or method call.
+The \texttt{yield} must be prepended to the argument for a subpattern def parameter, too.
+
+\begin{warning}
+A def entity from the pattern part can't be yielded to from the rewrite part, they are constant after matching.
+\end{warning}
+
+Let's have a look at two examples for yielding:
+
+\begin{example}
+  \begin{grgen}
+pattern Chain(begin:Node, def end:Node)
+{
+	alternative {
+		further {
+			begin --> next:Node;
+			:Chain(next, yield end);
+		}
+		done {
+		  negative {
+		    begin --> ;
+		  }
+			yield {
+				yield end = begin;
+			}
+		}
+	}
+}
+
+pattern LinkChainTo(begin:Node) modify(n:Node)
+{
+	alternative {
+		further {
+			begin --> next:Node;
+			o:LinkChainTo(next);
+
+			modify {
+			  next --> n;
+			  o(n);
+			}
+		}
+		done {
+		  negative {
+		    begin --> ;
+		  }
+		  
+			modify {
+			}
+		}
+	}
+
+	modify { }
+}
+
+rule linkChainEndToStartIndependent(begin:Node) : (Node)
+{
+	def end:Node;
+	
+	independent {
+		c:Chain(begin, yield end);
+	}
+  o:LinkChainTo(begin);
+  	
+	modify {
+	  o(end);
+		return(end);
+	}
+}
+  \end{grgen}
+\end{example}
+
+The first example for LHS yielding follows within an independent a chain piece by piece to some a priori unknown end node, and yields this end node chain piece by chain piece again outwards to the chain start. There it is used as input to another chain (maybe the same chain, maybe overlapping due to the independent), linking all the nodes of this chain to the end node of the former.
+
+When yielding from an iterated pattern there's the problem that each yielding assignment from an iterated instance would overwrite the one def variable from outside the iterated, while one is interested most of the time in some accumulation of the values, e.g. summing integers or concatenating strings.
+This can be achieved with a \texttt{for} loop iterating a def variable inside an iterated for all the matches of the iterated pattern referenced by name, allowing to assign to an outside def variable a value computed from the def variable and the value of the iterated def variable.
+
+This is shown in the second example for LHS yielding, summing the integer attribute \texttt{a} of nodes of type \texttt{N} adjacent to a start node, matched with an iterated.
+
+\begin{example}
+  \begin{grgen}
+test sumOfWeight(start:Node) : (int,int)
+{
+	def var sum:int = 0;
+	def var v:int = 0;
+	
+	iterated it {
+		def var i:int;
+		
+		start --> n:N; // node class N { a:int; }
+		
+		yield {
+			yield i = n.a;
+			yield v = 42; // v is assigned 42 multiple times
+		}
+	} 
+
+	yield {
+		for{i in it; yield sum = sum + i};
+	}
+
+	return (sum,v);
+}
+  \end{grgen}
+\end{example}
+
+
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Regular Expression Syntax and Locking}\indexmainsee{EBNF}{regular expression syntax}\indexmain{regular expression syntax}
+
+In addition to the already introduced syntax for the nested patterns with the keywords 
+\texttt{negative}, \texttt{independent}, \texttt{alternative}, \texttt{iterated}, \texttt{multiple} and \texttt{optional},
+there is a more lightweight syntax resembling regular expressions; 
+using it together with the subpatterns gives graph rewrite specifications which look like EBNF-grammars with embedded actions. 
+Exceeding the more verbose syntax they offer constructs for matching the pattern a bounded number of times (same notation as the one for the bounded iteration in the xgrs).
+%Table \ref{keywordregexpsyntax} lists the corresponding (/equivalent) language constructs; 
+%Example \ref{introexampleregexp} is a version of the introductionary example \ref{introexample} modified to use the new syntax. commented out to get better layout
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabularx}{\linewidth}{|l|X|} \hline
+    \texttt{ iterated \{ P \} } & \texttt{ (P)* } \\
+    \texttt{ multiple \{ P \} } & \texttt{ (P)+ } \\
+    \texttt{ optional \{ P \} } & \texttt{ (P)? } \\ 
+	\texttt{ alternative \{ l1 \{ P1 \} .. lk \{ Pk \} \} } & \texttt{ (P1|..|Pk) } \\
+    \texttt{ negative \{ P \} } & \texttt{ $\sim$(P) } \\
+    \texttt{ independent \{ P \} } & \texttt{ \&(P)} \\ \hline 
+    \texttt{ modify \{ R \} } & \texttt{  \{+ R \} } \\
+    \texttt{ replace \{ R \} } & \texttt{ \{- R \} } \\ \hline 
+    \texttt{ - } & \texttt{ (P)[k] / (P)[k:l] / (P)[k:*] } \\ \hline 
+	\end{tabularx}
+  \caption{Map of nested patterns in keyword syntax to regular expression syntax}
+  \label{keywordregexpsyntax}
+\end{table}
+
+
+  \begin{example}
+    \begin{grgen}
+test method
+{
+  m:Method <-- n:Name; // signature of method consisting of name
+  ( m <-- :Variable; )* // and 0-n parameters
+  
+  :AssignmentList(m); // body consisting of a list of assignment statements
+}
+
+pattern AssignmentList(prev:Node)
+{
+  ( // nothing or a linked assignment and again a list
+    prev --> a:Assign; // assignment node 
+    a -:target-> v:Variable; // which has a variable as target 
+    :Expression(a);  // and an expression which defines the left hand side 
+    :AssignmentList(a); // next one, plz
+  )?
+}
+
+pattern Expression(root:Expr)
+{
+  ( // expression may be a binary expression of an operator and two expresions
+      root <-- expr1:Expr;
+      :Expression(expr1);
+      root <-- expr2:Expr;
+      :Expression(expr2);
+      root <-- :Operator;
+  | // or a unary expression which is a variable (reading it)
+      root <-- v:Variable;
+  )
+}
+    \end{grgen}
+  \end{example}\label{introexampleregexp}
+
+\subsubsection*{Isomorphy locking} \label{locking}
+When matching a program graph as in the introductory example \ref{ex:proggraph} one might be satisfied with matching a tree structure.
+But on other occasions one wants to match \emph{backlinks} and especially the targets of the backlinks, too, 
+from \emph{uses} nested somewhere in the syntax graph to \emph{definitions} whose nodes were already matched earlier in the subpattern derivation (subpatterns can be seen as an equivalent of grammar rules known from parser generators).
+Unfortunately these elements are already matched and thus isormorphy locked following the default semantics of isomorphic matching.
+And unfortunately these elements can't be declared \texttt{hom}omorphic as they are unknown in the nested subpattern.
+Handing them in as parameters and then declaring them \texttt{hom}omorphic is only possible if they are of a statically fixed number (as the number of parameters is fixed at compile time), which is normally not the case for e.g. the attributes of a class in a syntax graph.
+In order to handle this case the \texttt{independent} \emph{operator} (cf. \ref{rule:homspec}) was added to the rule language
+--- when you declare the backlink target node \texttt{n} as \texttt{independent(n)} it can be matched once again.
+Thus it is possible to match e.g. a class attribute definition node which was already matched when collecting the attributes of the class again later on in a subpattern when matching an expression containing a usage of that attribute, allowing to e.g. add further edges to it.
+
+\subsubsection*{Patternpath locking} 
+As stated in the sections on the negative and independent constructs (\ref{nac}, \ref{pac}), they get matched homomorphically to all already matched elements. By referencing an element from outside you can isomorphy lock that element to prevent it to get matched again.
+
+Maybe you want to lock all elements from the directly enclosing pattern, in this case you can just insert \texttt{pattern;} in the position of a graphlet into the NAC or PAC.
+
+Maybe you want to lock all elements from the patterns dynamically containing the NAC/PAC of interest, i.e. all subpattern usages and nesting patterns on the path leading to the NAC/PAC of interest (but not their siblings). In this case you can insert \texttt{patternpath;} in the position of a graphlet into the NAC or PAC. You might be interested in this construct when matching a piecewise constructed pattern, e.g. a chain, which requires to check for another chain (iterated path) which is not allowed to cross (include an element of) the original one.
+
+

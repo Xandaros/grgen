@@ -1,0 +1,10 @@
+rule r : (Node, Node) {
+	x: Node;
+	y: Node;
+
+	modify {
+		delete(x);
+		return(x, y);
+	}
+}
+

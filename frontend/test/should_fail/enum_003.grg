@@ -1,0 +1,12 @@
+using enum_model_001;
+
+rule r {
+	a:A -b:B-> a;
+
+	modify {
+		eval {
+			a.e = b.i;
+		}
+	}
+}
+

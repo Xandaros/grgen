@@ -1,0 +1,7 @@
+new graph "induced1\induced1" "Nice Graph"
+
+xgrs init1
+xgrs [makeUndirected]
+xgrs [makeUndirected]
+
+quit

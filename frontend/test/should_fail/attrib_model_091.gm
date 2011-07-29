@@ -1,0 +1,9 @@
+enum AAA {
+	e1,
+	e2
+}
+
+node class AAB {
+  value:AAA;
+}
+

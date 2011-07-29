@@ -1,0 +1,9 @@
+using attrib_model_001;
+
+rule r (ni : NINT) : (NINT) {
+
+	replace {
+		return (ni);
+	}
+}
+

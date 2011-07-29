@@ -1,0 +1,15 @@
+using basic_model_002, inh_attrib_model_002;
+
+rule r : (A, AB, Type1, N) {
+	x : A;
+	y : AB;
+	z : C;
+	n : N;
+
+	modify {
+		delete(z);
+		x -type3:Type3-> y;
+		return (x, y, type3, n);
+	}
+}
+

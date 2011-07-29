@@ -1,0 +1,11 @@
+using deep_model_001;
+
+rule r {
+	x:A -e:Edge-> y:Ac -f:Edge-> z:B <-:Edge- zz:AB;
+	hom(x, y, zz);
+
+	replace {
+		x <-:Edge- y <-- z;
+	}
+}
+
