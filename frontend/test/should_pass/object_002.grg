@@ -1,0 +1,16 @@
+using object_model_001;
+
+rule test1 {
+    a:A -x:e-> b:A;
+    if {
+        b.obj == x.obj;
+        b.obj == null && null == null;
+	}
+
+    modify {
+        eval {
+            a.obj = null;
+            b.obj = a.obj==null?b.obj:null;
+        }
+    }
+}

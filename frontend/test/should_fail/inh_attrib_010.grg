@@ -1,0 +1,8 @@
+using inh_attrib_model_010;
+
+rule r {
+
+	replace {
+	}
+}
+

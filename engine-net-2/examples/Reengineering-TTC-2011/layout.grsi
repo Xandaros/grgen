@@ -1,0 +1,133 @@
+debug set layout Hierarchic
+
+# Nesting
+dump add node containers_CompilationUnit group by hidden outgoing containers_CompilationUnit_classifiers
+dump add node containers_CompilationUnit group by hidden outgoing imports_ImportingElement_imports
+dump add node classifiers_Classifier group by hidden outgoing members_MemberContainer_members
+dump add node classifiers_Class group by outgoing classifiers_Class_extends
+dump add node classifiers_Class group by outgoing classifiers_Class_defaultExtends
+dump add node classifiers_Class group by outgoing classifiers_Implementor_implements
+dump add node classifiers_Class group by outgoing modifiers_AnnotableAndModifiable_annotationsAndModifiers
+dump add node classifiers_Interface group by outgoing classifiers_Interface_extends
+dump add node classifiers_Interface group by outgoing classifiers_Interface_defaultExtends
+dump add node classifiers_Interface group by outgoing modifiers_AnnotableAndModifiable_annotationsAndModifiers
+dump add node classifiers_Enumeration group by hidden outgoing classifiers_Enumeration_constants
+dump add node classifiers_Enumeration group by hidden outgoing members_MemberContainer_defaultMembers
+dump add node classifiers_Enumeration group by outgoing modifiers_AnnotableAndModifiable_annotationsAndModifiers
+dump add node members_Field group by hidden outgoing types_TypedElement_typeReference
+dump add node members_Field group by hidden outgoing instantiations_Initializable_initialValue
+dump add node members_Field group by outgoing modifiers_AnnotableAndModifiable_annotationsAndModifiers
+dump add node parameters_OrdinaryParameter group by hidden outgoing types_TypedElement_typeReference
+dump add node parameters_OrdinaryParameter group by outgoing modifiers_AnnotableAndModifiable_annotationsAndModifiers
+dump add node parameters_VariableLengthParameter group by hidden outgoing types_TypedElement_typeReference
+dump add node parameters_VariableLengthParameter group by outgoing modifiers_AnnotableAndModifiable_annotationsAndModifiers
+dump add node members_Method group by hidden outgoing parameters_Parametrizable_parameters
+dump add node members_Method group by hidden outgoing members_MemberContainer_members
+dump add node members_ClassMethod group by hidden outgoing types_TypedElement_typeReference
+dump add node members_ClassMethod group by hidden outgoing members_ExceptionThrower_exceptions
+dump add node members_ClassMethod group by outgoing modifiers_AnnotableAndModifiable_annotationsAndModifiers
+dump add node members_InterfaceMethod group by outgoing modifiers_AnnotableAndModifiable_annotationsAndModifiers
+dump add node members_Constructor group by hidden outgoing parameters_Parametrizable_parameters
+dump add node members_Constructor group by hidden outgoing members_MemberContainer_members
+dump add node members_Constructor group by outgoing modifiers_AnnotableAndModifiable_annotationsAndModifiers
+dump add node statements_StatementContainer group by outgoing statements_StatementContainer_statement
+dump add node statements_StatementListContainer group by outgoing statements_StatementListContainer_statements
+dump add node statements_ExpressionStatement group by hidden outgoing statements_ExpressionStatement_expression
+dump add node statements_Switch group by outgoing statements_Switch_cases
+dump add node statements_Switch group by outgoing statements_Switch_variable
+dump add node statements_Condition group by outgoing statements_Conditional_condition
+dump add node statements_Condition group by outgoing statements_Condition_elseStatement
+dump add node statements_NormalSwitchCase group by outgoing statements_Conditional_condition
+dump add node statements_TryBlock group by outgoing statements_TryBlock_catcheBlocks
+dump add node statements_CatchBlock group by outgoing statements_CatchBlock_parameter
+dump add node statements_SynchronizedBlock group by outgoing statements_SynchronizedBlock_lockProvider
+dump add node statements_Return group by hidden outgoing statements_Return_returnValue
+dump add node statements_Throw group by hidden outgoing statements_Throw_throwable
+dump add node types_NamespaceClassifierReference group by outgoing types_NamespaceClassifierReference_classifierReferences
+
+dump add node statements_ExpressionStatement group by hidden outgoing contains
+dump add node statements_Condition group by hidden outgoing contains
+dump add node statements_Return group by hidden outgoing contains
+
+# Hiding
+dump add node classifiers_Annotation exclude
+dump add node annotations_AnnotationAttribute exclude
+dump add node annotations_AnnotationInstance exclude
+dump add node annotations_AnnotationParameter exclude
+dump add node arrays_ArrayDimension exclude
+dump add node generics_QualifiedTypeArgument exclude
+
+# Appearance/color
+dump set node containers_CompilationUnit color lightgrey
+dump set node classifiers_Enumeration color orange
+dump set node members_Constructor color orchid
+dump set node parameters_OrdinaryParameter color orchid
+dump set node parameters_VariableLengthParameter color orchid
+dump set node members_Method color pink
+dump set node members_Field color cyan
+dump set node statements_Switch color darkgreen
+dump set node statements_SwitchCase color darkgreen
+dump set node statements_Condition color darkgreen
+dump set node statements_Return color darkgreen
+dump set node statements_Throw color darkgreen
+dump set node statements_Break color darkgreen
+dump set node statements_Block color darkgreen
+dump set node statements_TryBlock color darkgreen
+dump set node statements_CatchBlock color darkgreen
+dump set node statements_SynchronizedBlock color darkgreen
+dump set node statements_ExpressionStatement color darkgreen
+dump set node expressions_Expression color green
+dump set node operators_Operator color green
+dump set node literals_This color green
+dump set node arrays_ArraySelector color green
+dump set node types_NamespaceClassifierReference color darkyellow
+dump set node modifiers_Modifier color lightgrey
+
+dump set edge modifiers_AnnotableAndModifiable_annotationsAndModifiers color lightgrey
+dump set edge classifiers_Class_extends color red
+dump set edge classifiers_Implementor_implements color red
+dump set edge classifiers_Interface_extends color red
+dump set edge types_ClassifierReference_target color orange
+dump set edge types_TypedElement_typeReference color orange
+dump set edge references_ElementReference_target color grey
+
+# Appearance/infotags
+dump add node members_Method shortinfotag _name
+dump add node members_Constructor shortinfotag _name
+dump add node members_Field shortinfotag _name
+dump add node classifiers_Class shortinfotag _name
+dump add node classifiers_Enumeration shortinfotag _name
+dump add node containers_CompilationUnit shortinfotag _name
+
+# Layout for state machine
+dump add node statemachine_StateMachine group by hidden outgoing statemachine_StateMachine_states
+dump add node statemachine_StateMachine group by hidden outgoing statemachine_StateMachine_transitions
+dump set node statemachine_StateMachine color darkred
+dump set node statemachine_State shape circle
+dump set node statemachine_State color black
+dump set node statemachine_State textcolor white
+dump add node statemachine_State shortinfotag _name
+dump set node statemachine_Transition color white
+dump set node statemachine_Transition textcolor black
+dump set node statemachine_Transition color white
+dump add node statemachine_Transition infotag _action
+dump add node statemachine_Transition infotag _trigger
+dump set edge link color red
+dump set edge link linestyle dashed
+dump set edge statemachine_Transition_src color white
+dump set edge statemachine_Transition_dst color black
+dump set edge statemachine_State_out color black
+dump set edge statemachine_State_in color white
+
+# Debugging configuration
+debug set node mode matched color black
+debug set node mode matched textcolor lightred
+debug set node mode matched bordercolor red
+debug set edge mode matched thickness 5
+debug set edge mode matched color lightred
+debug set node mode created color lightgreen
+debug set node mode created textcolor darkgreen
+debug set node mode created bordercolor turquoise
+debug set edge mode created thickness 5
+debug set edge mode created color lightgreen
+

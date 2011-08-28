@@ -1,0 +1,19 @@
+node class N
+{
+	stringVal:string;
+}
+
+node class NN
+{
+	stringVal:string;
+}
+
+node class NNN
+{
+	stringVal:string;
+}
+
+edge class E
+{
+	intVal:int;
+}

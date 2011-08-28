@@ -1,0 +1,38 @@
+using hom2Model;
+
+rule homtest1 {
+	hom(a,b);
+	a:A;
+	b:A;
+	c:B;
+
+	modify {}
+}
+
+rule homtest2 {
+	hom(a,b,c);
+	a:A;
+	b:B;
+	c:A;
+	d:B;
+
+	modify {}
+}
+
+rule homtest3 {
+	hom(a,b,c,d);
+	a:A;
+	b:A;
+	c:A;
+	d:A;
+	e:B;
+
+	modify {}
+}
+
+rule test1 {
+	a:A;
+	b:B;
+
+	modify {}
+}

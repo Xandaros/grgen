@@ -1,0 +1,19 @@
+using attrib_model_001;
+
+rule r {
+	nb : NBOOL;
+	ns : NSTRING;
+	-eb:EBOOL->;
+	-es:ESTRING->;
+
+	modify {
+		eval {
+			ns.a = "";
+			es.a = "Hi!";
+
+			nb.a = ns.a == es.a;
+			nb.a = ns.a != es.a;
+		}
+	}
+}
+

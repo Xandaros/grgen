@@ -1,0 +1,361 @@
+rule CFG_handle_statements
+{
+	block:dom_Block;
+	block -e1:dom_Block_statements-> st1:dom_Statement;
+	block -e2:dom_Block_statements-> st2:dom_Statement;
+
+	if { e1.index + 1 == e2.index; }
+
+	modify {
+		st1 -:org_amma_cfg_AbstractNode_toNode-> st2;
+	}
+}
+
+rule CFG_handle_IfStatement
+{
+	iff:dom_IfStatement -:org_amma_cfg_AbstractNode_toNode->;
+	iff -then_edge:dom_IfStatement_thenStatement-> then:dom_Statement;
+	iff -else_edge:dom_IfStatement_elseStatement-> else:dom_Statement;
+
+	modify {
+		delete(then_edge, else_edge);
+
+		iff -:org_amma_cfg_ConditionalNode_trueConditionNode-> then;
+		iff -:org_amma_cfg_ConditionalNode_falseConditionNode-> else;
+		then -:org_amma_cfg_AbstractNode_toNode-> iff;
+		else -:org_amma_cfg_AbstractNode_toNode-> iff;
+	}
+}
+
+rule CFG_handle_IfStatement_Block
+{
+	block:dom_Block;
+	block <-cfg:Edge- iff:dom_IfStatement;
+	block -endif:org_amma_cfg_AbstractNode_toNode-> iff;
+	iff -:org_amma_cfg_AbstractNode_toNode-> next:dom_Statement;
+
+	hom(first, last);
+	hom(st1, st2);
+	block -st1:dom_Block_statements-> first:dom_Statement;
+	block -st2:dom_Block_statements-> last:dom_Statement;
+
+	if { st1.index == 0; }
+	negative {
+		block -st:dom_Block_statements->;
+		if { st.index > st2.index; }
+	}
+
+	modify {
+		delete(cfg);
+		delete(endif);
+
+		iff -:typeof(cfg)-> first;
+		last -:org_amma_cfg_AbstractNode_toNode-> next;
+	}
+}
+
+rule CFG_handle_WhileStatement
+{
+	while:dom_WhileStatement -cfgfalse:org_amma_cfg_AbstractNode_toNode->;
+	while -:dom_WhileStatement_body-> body:dom_Statement;
+
+	modify {
+		-:org_amma_cfg_IterativeNode_falseConditionNode<cfgfalse>->;
+		while -:org_amma_cfg_IterativeNode_trueConditionNode-> body;
+		body -:org_amma_cfg_AbstractNode_toNode-> while;
+	}
+}
+
+rule CFG_handle_WhileStatement_Block
+{
+	block:dom_Block;
+	block <-cfgtrue:org_amma_cfg_IterativeNode_trueConditionNode- while:dom_WhileStatement;
+	block -endwhile:org_amma_cfg_AbstractNode_toNode-> while;
+
+	hom(first, last);
+	hom(st1, st2);
+	block -st1:dom_Block_statements-> first:dom_Statement;
+	block -st2:dom_Block_statements-> last:dom_Statement;
+
+	if { st1.index == 0; }
+	negative {
+		block -st:dom_Block_statements->;
+		if { st.index > st2.index; }
+	}
+
+	modify {
+		delete(cfgtrue);
+		delete(endwhile);
+
+		while -:org_amma_cfg_IterativeNode_trueConditionNode-> first;
+		last -:org_amma_cfg_AbstractNode_toNode-> while;
+	}
+}
+
+rule CFG_handle_EmptyStatement {
+	a:dom_Statement;
+	b:dom_EmptyStatement;
+	c:dom_Statement;
+	a -e:Edge-> b -f:Edge-> a -g:org_amma_cfg_AbstractNode_toNode-> c;
+
+	modify {
+		delete(e, f, g);
+
+		a -:typeof(e)-> c;
+	}
+}
+
+rule CFG_sweep_graph {
+	modify {
+		exec(CFG_sweep_graph_step1* && CFG_sweep_graph_step2*);
+	}
+}
+
+rule CFG_sweep_graph_step1
+{
+	n:Node\HelperNode;
+	negative {
+		n <-:org_amma_cfg_AbstractNode_toNode->;
+	}
+	negative {
+		n <-:org_amma_cfg_ConditionalNode_trueConditionNode->;
+	}
+	negative {
+		n <-:org_amma_cfg_ConditionalNode_falseConditionNode->;
+	}
+
+	negative {
+		n -:HelperEdge->;
+	}
+
+	replace {}
+}
+
+rule CFG_sweep_graph_step2
+{
+	exact(n);
+	n:Node -:HelperEdge-> helper:HelperNode;
+
+	replace {}
+}
+
+rule AST_nodes_2_CFG {
+	modify {
+		exec((ExpressionStatement_2_CFG || IfStatement_2_CFG ||
+		      WhileStatement_2_CFG ||
+		      SimpleName_2_CFG || NumberLiteral_2_CFG || Assignment_2_CFG ||
+		      InfixExpression_2_CFG ||
+		      PrefixExpression_2_CFG || PostfixExpression_2_CFG ||
+		      MethodInvocation_2_CFG || ExpressionEdge_2_CFG)*);
+	}
+}
+
+rule ExpressionStatement_2_CFG {
+	stmt:dom_ExpressionStatement -:dom_ExpressionStatement_expression-> expr:dom_Expression;
+	expr -:HelperEdge-> helper:HelperNode;
+
+	modify {
+		cfg_node:org_amma_cfg_Node<stmt>;
+
+		eval {
+			cfg_node._name = helper.name;
+		}
+	}
+}
+
+rule IfStatement_2_CFG {
+	stmt:dom_IfStatement -:dom_IfStatement_expression-> expr:dom_Expression;
+	expr -:HelperEdge-> helper:HelperNode;
+
+	modify {
+		cfg_node:org_amma_cfg_ConditionalNode<stmt>;
+
+		eval {
+			cfg_node._name = "If(" + helper.name + ")";
+		}
+	}
+}
+
+rule WhileStatement_2_CFG {
+	stmt:dom_WhileStatement -:dom_WhileStatement_expression-> expr:dom_Expression;
+	expr -:HelperEdge-> helper:HelperNode;
+
+	modify {
+		cfg_node:org_amma_cfg_IterativeNode<stmt>;
+
+		eval {
+			cfg_node._name = "While(" + helper.name + ")";
+		}
+	}
+}
+
+rule SimpleName_2_CFG {
+	expr:dom_SimpleName -:HelperEdge-> helper:HelperNode;
+
+	replace {
+		cfg_expr:org_amma_cfg_Expression<expr>;
+
+		eval {
+			cfg_expr._expressionName = helper.operator;
+			cfg_expr._isIdentifier = true;
+		}
+	}
+}
+
+rule NumberLiteral_2_CFG {
+	expr:dom_NumberLiteral -:HelperEdge-> helper:HelperNode;
+
+	replace {
+		cfg_expr:org_amma_cfg_Expression<expr>;
+
+		eval {
+			cfg_expr._expressionName = helper.operator;
+			cfg_expr._isIdentifier = false;
+		}
+	}
+}
+
+rule Assignment_2_CFG {
+	expr:dom_Assignment -:HelperEdge-> helper:HelperNode;
+	expr -lhs:dom_Assignment_leftHandSide->;
+	expr -rhs:dom_Assignment_rightHandSide->;
+
+	modify {
+		delete(helper);
+
+		cfg_expr:org_amma_cfg_Expression<expr>;
+		-cfg_lhs:org_amma_cfg_Expression_innerExpression<lhs>->;
+		-cfg_rhs:org_amma_cfg_Expression_innerExpression<rhs>->;
+
+		eval {
+			cfg_expr._expressionName = helper.operator;
+			cfg_expr._isIdentifier = false;
+			cfg_lhs.index = 0;
+			cfg_rhs.index = 1;
+		}
+	}
+}
+
+rule InfixExpression_2_CFG {
+	expr:dom_InfixExpression -:HelperEdge-> helper:HelperNode;
+	expr -lhs:dom_InfixExpression_leftOperand->;
+	expr -rhs:dom_InfixExpression_rightOperand->;
+
+	modify {
+		delete(helper);
+
+		cfg_expr:org_amma_cfg_Expression<expr>;
+		-cfg_lhs:org_amma_cfg_Expression_innerExpression<lhs>->;
+		-cfg_rhs:org_amma_cfg_Expression_innerExpression<rhs>->;
+
+		eval {
+			cfg_expr._expressionName = helper.operator;
+			cfg_expr._isIdentifier = false;
+			cfg_lhs.index = 0;
+			cfg_rhs.index = 1;
+		}
+	}
+}
+
+rule PrefixExpression_2_CFG {
+	expr:dom_PrefixExpression -:HelperEdge-> helper:HelperNode;
+	expr -op:dom_PrefixExpression_operand->;
+
+	modify {
+		delete(helper);
+
+		cfg_expr:org_amma_cfg_Expression<expr>;
+		-cfg_op:org_amma_cfg_Expression_innerExpression<op>->;
+
+		eval {
+			cfg_expr._expressionName = helper.operator;
+			cfg_expr._isIdentifier = false;
+			cfg_op.index = 0;
+		}
+	}
+}
+
+rule PostfixExpression_2_CFG {
+	expr:dom_PostfixExpression -:HelperEdge-> helper:HelperNode;
+	expr -op:dom_PostfixExpression_operand->;
+
+	modify {
+		delete(helper);
+
+		cfg_expr:org_amma_cfg_Expression<expr>;
+		-cfg_op:org_amma_cfg_Expression_innerExpression<op>->;
+
+		eval {
+			cfg_expr._expressionName = helper.operator;
+			cfg_expr._isIdentifier = false;
+			cfg_op.index = 0;
+		}
+	}
+}
+
+rule MethodInvocation_2_CFG {
+	expr:dom_MethodInvocation -:HelperEdge-> helper:HelperNode;
+	expr -arg:dom_MethodInvocation_arguments->;
+
+	// name is already transformed
+	expr -:dom_MethodInvocation_name-> name:org_amma_cfg_Expression;
+
+	modify {
+		delete(name, helper);
+
+		cfg_expr:org_amma_cfg_Expression<expr>;
+		-cfg_arg:org_amma_cfg_Expression_innerExpression<arg>->;
+
+		eval {
+			cfg_expr._expressionName = helper.operator;
+			cfg_expr._isIdentifier = false;
+			cfg_arg.index = 1;
+		}
+	}
+}
+
+rule ExpressionEdge_2_CFG {
+	:org_amma_cfg_AbstractNode -e:Edge\org_amma_cfg_AbstractNode_expression-> :org_amma_cfg_Expression;
+
+	modify {
+		-cfg_edge:org_amma_cfg_AbstractNode_expression<e>->;
+	}
+}
+
+rule CFG_add_Enter_and_Exit {
+	replace {
+		enter:CFG_Enter;
+		exit:CFG_Exit;
+
+		eval {
+			enter._name = "Enter";
+			exit._name = "Exit";
+		}
+	}
+}
+
+rule CFG_connect_Enter {
+	enter:CFG_Enter;
+	n:org_amma_cfg_AbstractNode;
+
+	negative {
+		--> n;
+	}
+
+	modify {
+		enter -:org_amma_cfg_AbstractNode_toNode-> n;
+	}
+}
+
+rule CFG_connect_Exit {
+	exit:CFG_Exit;
+	n:org_amma_cfg_AbstractNode;
+
+	negative {
+		n -:Edge\org_amma_cfg_AbstractNode_expression->;
+	}
+
+	modify {
+		n -:org_amma_cfg_AbstractNode_toNode-> exit;
+	}
+}

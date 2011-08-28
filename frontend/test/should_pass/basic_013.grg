@@ -1,0 +1,8 @@
+rule r {
+	x : Node;
+
+	modify {
+		x --> y : Node;
+	}
+}
+

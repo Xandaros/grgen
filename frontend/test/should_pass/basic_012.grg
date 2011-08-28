@@ -1,0 +1,8 @@
+rule r {
+	x : Node;
+
+	replace {
+		y : Node;
+	}
+}
+

@@ -1,0 +1,9 @@
+exact rule r {
+	x:Node --> y:Node;
+	x --> z:Node;
+	y --> y;
+
+	replace {
+	}
+}
+

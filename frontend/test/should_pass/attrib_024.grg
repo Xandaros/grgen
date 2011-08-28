@@ -1,0 +1,30 @@
+using attrib_model_001;
+
+rule r {
+	nd : NDOUBLE;
+	ni : NINT;
+	-ed:EDOUBLE->;
+
+	modify {
+		eval {
+			nd.a = 1.0;
+			ni.a = 1;
+			ed.a = 2.0;
+
+			nd.a = +nd.a;
+			nd.a = -nd.a;
+			nd.a = +nd.a + ed.a;
+			nd.a = -nd.a + ed.a;
+			nd.a = nd.a + +ed.a;
+			nd.a = nd.a + -ed.a;
+
+			nd.a = + + ni.a;
+			nd.a = - - ni.a;
+			nd.a = + + + ni.a;
+			nd.a = - - - ni.a;
+
+			nd.a = + + + + - +-+- - - + +-+- +- nd.a;
+		}
+	}
+}
+

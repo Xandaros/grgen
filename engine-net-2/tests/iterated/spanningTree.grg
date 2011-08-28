@@ -1,0 +1,144 @@
+rule initTree : (Node)
+{
+	modify
+	{
+		root:Node -- left:Node;
+		left -- .;
+		left -- .;
+		left -- .;
+		root -- right:Node;
+		right -- rightleft:Node;
+		rightleft -- .;
+		rightleft -- .;
+		rightleft -- .;
+		right -- .;
+		
+		return(root);
+	}
+}
+
+rule initUndirected : (Node)
+{
+	modify
+	{
+		root:Node -- .;
+		root -- . -- .;
+		root -- n:Node -- root;
+		n -- . -- . -- n;
+		
+		return(root);
+	}
+}
+
+rule initDirected : (Node)
+{
+	modify
+	{
+		root:Node --> .;
+		root --> . --> .;
+		root --> n:Node <-- root;
+		n --> . --> . --> n;
+		
+		return(root);
+	}
+}
+
+rule spanningTree(root:Node)
+{
+	sptr:SpanningTree(root);
+	
+	modify {
+		sptr();
+		eval {
+			root.visited = true;
+		}
+	}
+}
+
+pattern SpanningTree(root:Node)
+{
+	iterated {
+		root -e:UEdge- next:Node;
+		sptr:SpanningTree(next);
+		
+		modify {
+			eval {
+				e.visited = true;
+				next.visited = true;
+			}
+			sptr();
+		}
+	}
+	
+	modify {
+	}
+}
+
+test edgesVisited
+{
+	-e:UEdge-;
+	
+	if {
+		e.visited;
+	}
+}
+
+test nodesVisited
+{
+	n:Node;
+	
+	if {
+		n.visited;
+	}
+}
+
+rule spanningTreeReverse(root:Node)
+{
+	sptrr:SpanningTreeReverse(root);
+		
+	modify {
+		sptrr();
+	}
+}
+
+pattern SpanningTreeReverse(root:Node)
+{
+	iterated {
+		root --> next:Node;
+		sptrr:SpanningTreeReverse(next);
+		
+		replace {
+			root <-- next;
+			sptrr();
+		}
+	}
+	
+	modify { }
+}
+
+
+test spanningTreeOutgoing(root:Node)
+{
+	:SpanningTreeOutgoing(root);
+}
+
+pattern SpanningTreeOutgoing(root:Node)
+{
+	iterated {
+		root --> next:Node;
+		:SpanningTreeOutgoing(next);		
+	}
+}
+
+test spanningTreeIncoming(root:Node)
+{
+	:SpanningTreeIncoming(root);
+}
+
+pattern SpanningTreeIncoming(root:Node)
+{
+	iterated {
+		root <-- next:Node;
+		:SpanningTreeIncoming(next);		
+	}
+}

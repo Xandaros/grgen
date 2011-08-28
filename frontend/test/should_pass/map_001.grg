@@ -1,0 +1,160 @@
+using map_model_001;
+
+rule addToMap {
+	a:A;
+
+	modify {
+		eval {
+			a.niceMap = a.niceMap | map<int,string>{ 5->"yeah" };
+			a.niceMap = a.niceMap | { 5->"yeah" };
+		}
+	}
+}
+
+rule containedInMap {
+	a:A;
+
+	if { 5 in a.niceMap; }
+
+	modify {
+		eval {
+			a.val = (6 in a.niceMap) ? 2489 : -23488;
+		}
+	}
+}
+
+rule copyMap {
+	a:A;
+
+	modify {
+		b:A;
+		eval {
+			b.niceMap = b.niceMap | map<int,string>{ 0->a.niceMap[0] };
+			b.niceMap = b.niceMap | { 0->a.niceMap[0] };
+		}
+	}
+}
+
+rule mapIndexedMap {
+	a:A;
+	if { a.shiceMap[a.spiceMap["blubb"]] != null; }
+
+	modify {
+		b:A;
+		eval {
+			a.spiceMap = a.spiceMap | map<string,float>{ b.niceMap[0]->3.141f };
+			a.spiceMap = a.spiceMap | { b.niceMap[0]->3.141f };
+		}
+	}
+}
+
+rule removeFromMap {
+	a:A;
+
+	modify {
+		eval {
+			a.niceMap = a.niceMap \ a.constNiceMap;
+			a.niceMap = a.niceMap \ set<int>{ 0 };
+		}
+	}
+}
+
+rule emitFromMap {
+	a:A;
+	if { 5 in a.niceMap; }
+
+	modify {
+		emit("entry for \"5\" = " + a.niceMap[5] + ", mapsize = " + a.niceMap.size());
+	}
+}
+
+rule emitFromMap2 {
+	a:A;
+	if { 5 in a.niceMap; }
+
+	modify {
+		emit("is \"5\" contained? " + (5 in a.niceMap ? "yes" : "no") + ", mapsize = " + a.niceMap.size());
+	}
+}
+
+rule mapVarContains(ref m:map<string, int>) {
+	if { "yeah" in m; }
+
+	modify {
+		emit("entry for \"yeah\" = " + m["yeah"] + ", mapsize = " + m.size());
+	}
+}
+
+// This clones the maps
+rule assignMapToMap {
+	a:A -e:E-> a;
+
+	modify {
+		eval {
+			a.niceMap = e.niceMap;
+			e.spiceMap = a.spiceMap;
+			e.niceMap = a.niceMap;
+		}
+	}
+}
+
+rule useEnumMap {
+	a:A -e:E-> a;
+
+	if { "another c" in e.enumMap2
+		&& e.enumMap2["another c"] in a.enumMap
+		&& a.enumMap[e.enumMap2["another c"]].replace(0, 3, "another") in e.enumMap2; }
+
+	modify {
+		eval {
+			e.enumMap2 = e.enumMap2 | map<string, et>{ a.enumMap[e.enumMap2["another c"]].replace(0, 3, "another")->et::a };
+		}
+		eval {
+			e.enumMap2 = e.enumMap2 | { a.enumMap[e.enumMap2["another c"]].replace(0, 3, "another")->et::a };
+		}
+	}
+}
+
+test anonymousMap {
+	a:A -e:E-> a;
+
+	if { a.val in map<int,string>{ 1->"foo", 3->"bar", 5->"blubb", 7->"f***", 11->"that", 13->"stupid", 17->"shit" }; }
+	if { a.val in { 1->"foo", 3->"bar", 5->"blubb", 7->"f***", 11->"that", 13->"stupid", 17->"shit" }; }
+	if { map<string,string>{ "a"->"b", "b"->"c", "c"->"a" }["a"]=="b"; }
+	if { { "a"->"b", "b"->"c", "c"->"a" }["a"]=="b"; }
+}
+
+rule evalAndEmitFromAnonymousMap {
+	a:A;
+	if { 5 in map<int,string>{5->"foo"}; }
+
+	modify {
+		eval { a.val = map<int,int>{ 1->2, 2->3, 3->1 }[2]; }
+		eval { a.val = { 1->2, 2->3, 3->1 }[2]; }
+		emit("entry for \"5\" = " + map<int,string>{5->"foo"}[5] + ", mapsize = " + map<int,string>{5->"foo"}.size());
+		emit("entry for \"5\" = " + {5->"foo"}[5] + ", mapsize = " + {5->"foo"}.size());
+	}
+}
+
+rule constantMapContainedInPatternAndRewrite {
+	a:A;
+
+	if { a.constNiceMap[42]=="foo"; }
+
+	modify {
+		eval {
+			a.val = (int)a.constSpiceMap["bar"];
+		}
+	}
+}
+
+test mapOperatorsInCondition {
+	a1:A; a2:A;
+
+	if {
+		1 in (a1.niceMap | a2.niceMap)
+		|| 2 in (a1.niceMap & a2.niceMap)
+		|| 3 in (a1.niceMap \ a2.niceMap)
+		|| 4 in (a1.niceMap \ { 0 });
+	}
+}

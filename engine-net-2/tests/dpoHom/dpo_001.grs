@@ -1,0 +1,13 @@
+new graph "dpoHom\dpoHom" "DpoHom graph"
+
+show num nodes
+show num edges
+xgrs init
+show num nodes
+show num edges
+xgrs [DPOdeleteRightNode]
+xgrs [deleteRightNode]
+show num nodes
+show num edges
+
+quit

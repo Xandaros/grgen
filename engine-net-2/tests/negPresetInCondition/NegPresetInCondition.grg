@@ -1,0 +1,10 @@
+using NegPresetInConditionModel;
+
+rule test1 {
+	:N -e1:E-> :N;
+	negative {
+		if {e1.a==1;}
+	}
+
+	modify {}
+}

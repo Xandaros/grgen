@@ -1,0 +1,10 @@
+using test_model_002;
+
+rule to_6 (p:AB) {
+	a : A;
+    b : typeof(p);
+
+	replace{
+	    x:typeof(p)<a> --> b;
+	}
+}
