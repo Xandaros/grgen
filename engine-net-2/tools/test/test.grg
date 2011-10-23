@@ -1,0 +1,17 @@
+using complModel;
+
+rule testRule
+{
+    a:D231_4121 --> f:B21 --> m:D2211_2222_31;
+    
+    modify {
+        are:D2211_2222_31<a>;
+        fre:D231_4121<f>;
+        mre:D11_2221<m>;
+        eval {
+            are.d2211_2222_31 = 1234;
+            fre.d231_4121 = 5678;
+            mre.d11_2221 = 9012;
+        }
+    }
+}

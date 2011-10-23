@@ -1,0 +1,13 @@
+using basic_model_002;
+
+rule r {
+	x : AC;
+
+	replace {
+		eval {
+			x.ia = 42;
+			x.ic = 42;
+		}
+	}
+}
+

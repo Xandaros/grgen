@@ -1,0 +1,15 @@
+enum et
+{
+	aloah, burgs, crorr = 7
+}
+
+node class A
+{
+    m:map<string, int>;
+	haha:map<et,et> = { et::aloah->et::crorr, et::burgs->et::aloah };
+}
+
+node class C
+{
+    a:map<string, int> = { "foo"->1, "bar"->2, "bla"->3 };
+}

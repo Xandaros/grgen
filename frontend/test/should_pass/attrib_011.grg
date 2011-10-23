@@ -1,0 +1,16 @@
+using attrib_model_001;
+
+rule r {
+	ns : NSTRING;
+	-es:ESTRING->;
+
+	modify {
+		eval {
+			ns.a = "";
+			es.a = "Hi!";
+
+			ns.a = ns.a + es.a;
+		}
+	}
+}
+

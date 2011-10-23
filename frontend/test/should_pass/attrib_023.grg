@@ -1,0 +1,28 @@
+using attrib_model_001;
+
+rule r {
+	nf : NFLOAT;
+	-ef:EFLOAT->;
+
+	modify {
+		eval {
+			nf.a = 1.0f;
+			ef.a = 2.0f;
+
+			nf.a = +nf.a;
+			nf.a = -nf.a;
+			nf.a = +nf.a + ef.a;
+			nf.a = -nf.a + ef.a;
+			nf.a = nf.a + +ef.a;
+			nf.a = nf.a + -ef.a;
+
+			nf.a = + + nf.a;
+			nf.a = - - nf.a;
+			nf.a = + + + nf.a;
+			nf.a = - - - nf.a;
+
+			nf.a = + + + + - +-+- - - + +-+- +- nf.a;
+		}
+	}
+}
+

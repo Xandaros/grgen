@@ -1,0 +1,17 @@
+using attrib_model_001;
+
+rule r {
+	:Node;
+	:NINT;
+
+	-:Edge->;
+	<-:Edge-;
+
+	-:EINT->;
+	<-:EINT-;
+
+	-->;
+	<--;
+
+	modify {}
+}

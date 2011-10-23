@@ -1,0 +1,12 @@
+rule r {
+    x:Node;
+    y:Node;
+    z:Node;
+    induced(x);
+    induced(x,y);
+    induced(x,y,z);
+
+	replace {
+	}
+}
+

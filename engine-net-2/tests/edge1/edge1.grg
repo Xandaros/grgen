@@ -1,0 +1,79 @@
+rule init {
+	replace {
+		x:Node;
+		y:Node;
+		z:Node;
+		
+		x -- y -- z;
+		y --> y;
+	}
+}
+
+rule init2 {
+	replace {
+		. --> . <-- .;
+	}
+}
+
+rule init3 {
+	replace {
+		x:Node;
+		y:Node;
+		z:Node;
+		
+		x -- y -- z -- x;
+	}
+}
+
+test findUndirectedEdge {
+	x:Node;
+	y:Node;
+	
+	x -- y;
+}
+
+test findArbitraryEdge {
+	x:Node;
+	y:Node;
+	
+	x ?--? y;
+}
+
+test findArbitraryDirectedEdge {
+	x:Node;
+	y:Node;
+	
+	x <--> y;
+}
+
+test findArbitraryDirectedReflexiveEdge {
+	x:Node;
+	
+	x <--> x;
+}
+
+test findArbitraryDirectedReflexiveEdgeAfterUndirectedOne {
+	x:Node;
+	y:Node;
+	
+	x -- y <--> y;
+}
+
+test findArbitraryDirectedTriple {	
+	. <--> . <--> .;
+}
+
+test findDirectedEdge {
+	x:Node;
+	y:Node;
+	
+	x --> y;
+}
+
+test findTripleCircle {
+	x:Node;
+	y:Node;
+	z:Node;
+		
+	x -- y -- z -- x;
+}

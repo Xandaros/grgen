@@ -1,0 +1,48 @@
+rule init1
+{
+
+    replace
+    {
+        a:Node;
+        b:Node;
+        
+        a -e:Edge-> b;
+        a -f:Edge-> b;
+    }
+}
+
+rule init2
+{
+
+    replace
+    {
+        a:Node;
+        b:Node;
+        
+        a -e:Edge-> b;
+        a -f:Edge-> b;
+        a -g:Edge-> a;
+    }
+}
+
+induced rule inducedTest1
+{
+    a:Node;
+    
+    a -->;
+
+    replace
+    {
+    }    
+}
+
+induced rule inducedTest2
+{
+    a:Node;
+    
+    --> a;
+
+    replace
+    {
+    }    
+}

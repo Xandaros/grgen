@@ -1,0 +1,19 @@
+using attrib_model_001;
+
+rule r {
+	nd : NDOUBLE;
+	-ed:EDOUBLE->;
+
+	modify {
+		eval {
+			nd.a = 1.0;
+			ed.a = 2.0;
+
+			nd.a = nd.a + ed.a;
+			nd.a = nd.a - ed.a;
+			nd.a = nd.a * ed.a;
+			nd.a = nd.a / ed.a;
+		}
+	}
+}
+
