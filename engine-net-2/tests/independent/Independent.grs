@@ -1,0 +1,11 @@
+new graph independent/Independent
+
+xgrs create
+
+xgrs [find]
+
+xgrs [findIndependent]
+
+xgrs [findMultiNested]
+
+quit

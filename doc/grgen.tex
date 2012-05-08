@@ -1,0 +1,307 @@
+\documentclass[a4paper,final,11pt]{book}
+
+\include{packages}
+
+\selectlanguage{english}
+\lstset{breaklines=true, breakautoindent=true, breakatwhitespace=true}
+
+\lstdefinelanguage{LANGgrgen}
+{morekeywords={actions,using,rule,test,pattern,replace,if,for,eval,negative,independent,node,edge,graph,modify,delete,class,model,connect,extends,enum,abstract,const,exec,emit,alternative,multiple,iterated,optional,yield,copy,sequence,def,evalhere,emithere,break},
+sensitive=true,
+morecomment=[l]{//},
+morecomment=[s]{/*}{*/},
+morestring=[b]",
+escapeinside={/*@}{@*/},
+}
+\lstnewenvironment{grgen}[1][]
+    {\lstset{language=LANGgrgen, basicstyle=\ttfamily\small, keywordstyle=\itshape,
+        basewidth=1.1ex, numbers=left, numberstyle=\tiny, stepnumber=1,
+        numbersep=5pt, tabsize=3, frame=single, #1}}
+    {}
+\lstnewenvironment{grgenlet}[1][]
+    {\lstset{language=LANGgrgen, basicstyle=\ttfamily, keywordstyle=\itshape,
+        basewidth=1.1ex, numbers=none, tabsize=3, #1}}
+    {}
+
+\lstnewenvironment{csharp}[1][]
+    {\lstset{language=[Sharp]C, basicstyle=\ttfamily\small, keywordstyle=\itshape,
+        basewidth=1.1ex, numbers=left, numberstyle=\tiny, stepnumber=1,
+        numbersep=5pt, tabsize=3, frame=single, #1}}
+    {}
+\lstnewenvironment{csharplet}[1][]
+    {\lstset{language=[Sharp]C, basicstyle=\ttfamily, keywordstyle=\itshape,
+        basewidth=1.1ex, numbers=none, tabsize=3, #1}}
+    {}
+\lstnewenvironment{bash}[1][]
+    {\lstset{language=bash, basicstyle=\ttfamily\small, keywordstyle=\itshape,
+        basewidth=1.1ex, numbers=none, tabsize=3, frame=single #1}}
+    {}
+
+
+% todo: shell keywords
+\lstdefinelanguage{LANGgrshell}
+{morekeywords={},
+sensitive=true,
+morecomment=[l]{\#},
+morestring=[b]",
+}
+\lstnewenvironment{grshell}[1][]
+    {\lstset{language=LANGgrshell, basicstyle=\ttfamily\small, keywordstyle=\itshape,
+        basewidth=1.1ex, numbers=left, numberstyle=\tiny, stepnumber=1,
+        numbersep=5pt, tabsize=3, frame=single, #1}}
+    {}
+\lstnewenvironment{grshelllet}[1][]
+    {\lstset{language=LANGgrshell, basicstyle=\ttfamily, keywordstyle=\itshape,
+        basewidth=1.1ex, numbers=none, tabsize=3, #1}}
+    {}
+
+
+
+
+\providecommand{\GrG}{{\scshape GrGen.NET}}
+\providecommand{\GrShell}{{\scshape GrShell}}
+\providecommand{\LibGr}{{\scshape libGr}}
+\providecommand{\yComp}{{\scshape yComp}}
+\providecommand{\yFiles}{{\scshape yFiles}}
+
+% general index
+\newcommand{\newterm}[1]{\emph{#1}\index{#1}}
+\newcommand{\newtermsee}[2]{\emph{#1}\index{#1|see{#2}}}
+\newcommand{\indexed}[1]{#1\index{#1}}
+\newcommand{\indexedsee}[2]{#1\index{#1|see{#2}}}
+\newcommand{\indexmain}[1]{\index{#1}}
+\newcommand{\indexmainsee}[2]{\index{#1|see{#2}}}
+
+%todo: split index of shell language keywords/nonterminals off from the rest
+%todo: without operators the index is incomplete
+%todo: how to handle literals? - keywords or nonterminals (true vs. Number)
+% index section keywords
+\newcommand{\keyw}[1]{\texttt{#1}}
+\newcommand{\ixkeyw}[1]{\index{...#1@\protect\keyw{#1}}}
+% index section nonterminal
+\newcommand{\nterm}[1]{\emph{#1}}
+\newcommand{\ixnterm}[1]{\index{..#1@\protect\nterm{#1}}}
+
+\newcommand{\TODO}[1]{\texttt{\huge #1 }}
+
+\newcommand{\lined}{\hfill \hrule\hfill\vspace{1mm} \\}
+\reversemarginpar
+
+% Pimped example environment
+\newlength\sidebar
+\newlength\envrule
+\newlength\envborder
+\setlength\sidebar{1.5mm}
+\setlength\envrule{0.4pt}
+\setlength\envborder{6mm}
+
+\definecolor{exampleborder}{rgb}{0,0,.7}
+\definecolor{examplebg}{rgb}{.9,.9,1}
+\definecolor{statementborder}{rgb}{0,.8,0}
+\definecolor{statementbg}{rgb}{.9,1,.9}
+\definecolor{warningborder}{rgb}{.8,0,0}
+\definecolor{warningbg}{rgb}{1,.9,.9}
+\newsavebox\envbox
+\newcounter{example}
+\newenvironment{example}[1][EXAMPLE]{%
+  \par
+  \refstepcounter{example}%
+  \SpecialEnv{#1}{exampleborder}{examplebg}{}{\theexample}%
+}{%
+  \endSpecialEnv
+}
+\newcounter{note}
+\newenvironment{note}[1][NOTE]{%
+  \par
+  \refstepcounter{note}%
+  \SpecialEnv{#1}{statementborder}{statementbg}{}{\thenote}%
+}{%
+  \endSpecialEnv
+}
+\newenvironment{warning}[1][NOTE]{%
+  \par
+  \refstepcounter{note}%
+  \SpecialEnv{#1}{warningborder}{warningbg}{}{\thenote}%
+}{%
+  \endSpecialEnv
+}
+\newenvironment{statement}[1][]{% Default statement has no title
+  \par
+  \SpecialEnv{#1}{statementborder}{statementbg}{statementborder}{}%
+}{%
+  \endSpecialEnv
+}
+
+\def\Empty{}
+
+% #1 title (if any)
+% #2 sidebar (and title bg) color
+% #3 background color
+% #4 border color (or null for no border)
+% #5 Counter, if any.
+\newenvironment{SpecialEnv}[5]{%
+  \par
+  \def\EnvSideC{#2}% To use later (in end)
+  \def\EnvBackgroundC{#3}%
+  \def\EnvFrameC{#4}%
+  \flushleft
+  \setlength\leftskip{-\sidebar}%
+  \addtolength\leftskip{-\envborder}%
+  \noindent \nobreak
+  % Check if title is null:
+  \ifx\delimiter#1\delimiter\else
+  % If a title is specified, then typeset it in reverse color
+   \colorbox{\EnvSideC}{%
+     \hspace{-\leftskip}% usually positive
+     \hspace{-\fboxsep}%
+     % insert counter, if any:
+     \footnotesize\sffamily\bfseries\textcolor{white}{#1 \ifx\delimiter#5\delimiter\else(#5)\enspace\fi}%
+     \hspace{\envborder}}%
+   \par\nobreak
+   \setlength\parskip{-0.2pt}% Tiny overlap to counter pixel round-off errors
+   \nointerlineskip
+  \fi
+  % Make side-bar
+  \textcolor{\EnvSideC}{\vrule width\sidebar}%
+  % collect body in \envbox:
+  \begin{lrbox}\envbox
+  \begin{minipage}{\linewidth}%
+  \ignorespaces
+}{\par
+  \end{minipage}\end{lrbox}%
+  % body is collected. Add background color
+  \setlength\fboxsep\envborder
+  \ifx\EnvFrameC\Empty % no frame
+    \colorbox{\EnvBackgroundC}{\usebox\envbox}%
+  \else % frame
+    \setlength\fboxrule\envrule
+    \addtolength\fboxsep{-\envrule}%
+    \fcolorbox{\EnvFrameC}{\EnvBackgroundC}{\usebox\envbox}%
+  \fi
+  \nobreak \hspace{-2\envborder}\null
+  \endflushleft
+}
+
+
+\makeindex
+
+\begin{document}
+
+% dirty, to be replaced by sed
+\index{...AAA}
+\index{..AAA}
+\index{..ZZZ}
+
+\pagenumbering{roman}
+\begin{titlepage}
+  \newlength{\saveparindent}
+  \setlength{\saveparindent}{\parindent}
+  \setlength{\parindent}{0cm}
+
+  \sf
+  \center
+	\vspace*{1cm}
+	\mbox{
+	  \parbox{4cm}{
+			\begin{tikzpicture}[scale=0.5]
+				\path[fill=black, join=round] (1,1)--(2,2)--(2,5)--(5,5)--(6,6)--(1,6)--(1,1)--(2,0)--(5,0)--(7,2)--(7,5)--(6,6)--(6,1)--cycle;
+				\clip (6,6)--(5,5)--(5,2)--(2,2)--(1,1)--(6,1)--(6,6)--(5,7)--(2,7)--(0,5)--(0,2)--(1,1)--(1,6)--cycle;
+				\shade[inner color=green, outer color=black] (3,4) circle(5.5cm);
+			\end{tikzpicture}
+	  }
+	  \parbox{8cm}{
+	    \LARGE Universität Karlsruhe (TH)\\
+	    \large Forschungsuniversität $\cdot$ gegründet 1825\\[0.5cm]
+	    \large Fakultät für Informatik\\
+	    \large Institut für Programmstrukturen\\ und Datenorganisation\\
+	    \large Lehrstuhl Prof. Goos
+		}
+	}
+
+  \vspace*{2.5cm}
+  \Huge The \GrG\ User Manual\\[1ex]
+  \LARGE Refers to \GrG\ Release 3.1 beta 4\\[1ex]
+  \LARGE ---DRAFT---\\[1ex]
+  \LARGE www.grgen.net\\[6ex]
+  \includegraphics[width=0.9\linewidth]{fig/title}\\[6ex]
+  \LARGE Jakob Blomer \qquad Rubino Gei\ss\\ \qquad Edgar Jakumeit\\[3ex]
+  \large \today\\
+
+%  \vfill
+%	\large Technical Report 2007-5\\
+%	\large ISSN 1432-7864
+
+  \setlength{\parindent}{\saveparindent}
+\end{titlepage}
+\clearpage
+
+\chapter*{Abstract}
+
+\parpic[l] {
+\includegraphics[width=45mm]{fig/grgen-256.png}
+}
+
+\noindent \textsc{GrGen.NET}: transformation of structures made easy
+-- with languages for graph modeling, pattern matching, and rewriting, as well as rule control;
+brought to life by a compiler and a rapid prototyping environment offering graphical and step-wise debugging.
+The Graph Rewrite Generator is a tool enabling elegant and convenient development of graph rewriting applications with comparable performance to conventionally developed ones.
+This user manual contains both, normative statements in the sense of a reference manual as well as an informal guide to the features and usage of \GrG.\\[6ex]
+
+\vspace{13cm}
+
+\parpic[l] {
+\includegraphics{fig/by-sa.png}
+}
+\noindent This manual is licensed under the terms of the \emph{Creative Commons Attribution-Share Alike 3.0 Germany}
+license.  The license is available at
+\url{http://creativecommons.org/licenses/by-sa/3.0/de/}
+
+\include{foreword}
+
+\clearpage
+
+\tableofcontents
+
+\include{overview}
+
+\include{quick}
+
+\include{modellang}
+
+\include{rulelang}
+
+\include{typexpr}
+
+\include{subpatterns}
+
+\include{sequences}
+
+\include{rulelangadvanced}
+
+\include{storagevisited}
+
+\include{imperative}
+
+\include{grshell}
+
+\include{debugger}
+
+\include{examples}
+
+\include{api}
+
+\include{extensions}
+
+\include{developing}
+
+\appendix
+
+\bibliographystyle{alpha}
+\bibliography{diss}
+
+\printindex
+
+\end{document}
+
+
+

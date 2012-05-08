@@ -1,0 +1,23 @@
+using attrib_model_001;
+
+rule r {
+	nb : NBOOL;
+	nf : NFLOAT;
+	-eb:EBOOL->;
+	-ef:EFLOAT->;
+
+	modify {
+		eval {
+			nf.a = 1.0f;
+			ef.a = 2.0f;
+
+			nb.a = nf.a == ef.a;
+			nb.a = nf.a != ef.a;
+			nb.a = nf.a <  ef.a;
+			nb.a = nf.a >  ef.a;
+			nb.a = nf.a <= ef.a;
+			nb.a = nf.a >= ef.a;
+		}
+	}
+}
+

@@ -1,0 +1,26 @@
+new graph AntWorld_GrowWithFirst
+
+debug set layout Organic
+dump set node Ant color red
+dump add node Ant infotag hasFood
+dump add edge NextAnt exclude
+dump add node GammelFix exclude
+
+randomseed 13
+
+exec (::firstAnt)=InitWorld
+
+exec doAntWorld(::firstAnt)
+
+#exec (curAnt:Ant=::firstAnt &&                                                                                                                \
+#    ((                                                                                                                                  \
+#        (TakeFood(curAnt) && true) | (GoHome(curAnt) && true) ||                                                                        \
+#        DropFood(curAnt) | ($[SearchAlongPheromones(curAnt)] || $[SearchAimless(curAnt)])                                               \
+#            | ((first:GridNode, cur:GridNode)=ReachedEndOfWorld(curAnt)                                                                                           \
+#                && ((cur, curOuter:GridNode)=GrowWorldFirstNotAtCorner(cur) || (cur, curOuter)=GrowWorldFirstAtCorner(cur))                      \
+#                && ((cur, curOuter)=GrowWorldNextNotAtCorner(cur, curOuter, first) || (cur, curOuter)=GrowWorldNextAtCorner(cur, curOuter, first))*   \
+#                && GrowWorldEnd(cur, curOuter))                                                                                         \
+#    ) && (curAnt)=GetNextAnt(curAnt))*                                                                                                  \
+#    | (curAnt)=Food2Ant(curAnt)*                                                                                                        \
+#    | [EvaporateWorld]                                                                                                                  \
+#    )[200]

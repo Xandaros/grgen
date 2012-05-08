@@ -1,0 +1,37 @@
+# solution to encapsulate field of RefactoringCase of Grabats
+
+include InstanceGraph.grsi
+include InstanceGraphLayout.grsi
+
+redirect emit program.txt
+exec emitSpanningTree
+
+exec InsertHelperEdgesForNestedLayout
+
+debug enable
+
+# encapsulate field - create getters/setters for variable in class, use it only with getters/setters
+# option: replace getters/setters in class itself - yes/no
+
+# ask for class and variable to refactor
+# debug ::cl=$%(Class)
+# debug ::va=$%(Variable)
+# or use this one / set them in shell
+c = I176 # class Node
+v = I350 # variable _name
+getterName = "getName"
+setterName = "setName"
+
+exec c:Class=::c ;> v:Variable=::v ;> getterName:string=::getterName ;> setterName:string=::setterName \
+	;> (isStatic:boolean) = variableInClass(c, v) \
+	&& (!((getter:Operation) = methodExists(c, getterName)) || sameStaticness(v, getter)) \
+	&& (!((setter:Operation) = methodExists(c, setterName)) || sameStaticness(v, setter)) \
+	&& ((getter) = methodExists(c, getterName) || (getter) = insertMethodGetter(c, v, getterName, isStatic)) \
+	&& ((setter) = methodExists(c, setterName) || (setter) = insertMethodSetter(c, v, setterName, isStatic)) \
+	&& changeVisibility(v) \
+	&& adaptAccess(c, v, getter)* \
+	&& adaptUpdate(c, v, setter)*
+
+redirect emit programafter.txt
+exec emitSpanningTree
+

@@ -1,0 +1,59 @@
+using execModel;
+
+rule Init
+{
+    replace {
+        c:Center --> :A --> :B;
+        c --> a2:A --> :B --> a2;
+        c --> :B;
+        c --> ab4:AB --> :A --> ab4;
+    }
+}
+
+rule R1 {
+    :Center --> a:A;
+    modify {
+        exec(b:boolean=(R2(a)) | R3(a) | (b && R4(a)));
+    }
+}
+
+test R2(a:A) {
+    a <-- :Node \ (Center);
+}
+
+rule R3(a:A) {
+    replace {
+        a --> a;
+    }
+}
+
+rule R4(a:A) {
+    modify {
+        a -:eee-> a;
+    }
+}
+
+rule R5 : (A) {
+    modify {
+        a:A;
+		return(a);
+    }
+}
+
+rule RTestCodeGen
+{
+	a:A;
+	modify {
+		exec(R2(a)* => b:boolean ;> R3(a) |> b ;> !R4(a) &> b ;> (R2(a) || R3(a)) => b);
+	}
+}
+
+test existingPattern()
+{
+	:Center;
+}
+
+test notExistingPattern()
+{
+	:Center --> :B --> :B;
+}

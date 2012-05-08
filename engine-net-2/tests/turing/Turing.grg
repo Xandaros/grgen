@@ -1,0 +1,115 @@
+using TuringModel;
+
+rule readZeroRule {
+	s:State -:rwhead-> bp:BandPosition -zv:zero-> bp;
+	s -zr:zero-> wv:WriteValue;
+
+	replace {
+		s -zr-> wv;
+		bp -zv-> bp;
+		wv -:rwhead-> bp;
+	}
+}
+
+rule readOneRule {
+	s:State -:rwhead-> bp:BandPosition -ov:one-> bp;
+	s -or:one-> wv:WriteValue;
+
+	replace {
+		s -or-> wv;
+		bp -ov-> bp;
+		wv -:rwhead-> bp;
+	}
+}
+
+rule readEmptyRule {
+	s:State -:rwhead-> bp:BandPosition -ev:empty-> bp;
+	s -er:empty-> wv:WriteValue;
+
+	replace {
+		s -er-> wv;
+		bp -ev-> bp;
+		wv -:rwhead-> bp;
+	}
+}
+
+rule writeZeroRule {
+	wv:WriteZero -rw:rwhead-> bp:BandPosition -:value-> bp;
+
+	replace {
+		wv -rw-> bp -:zero-> bp;
+	}
+}
+
+rule writeOneRule {
+	wv:WriteOne -rw:rwhead-> bp:BandPosition -:value-> bp;
+
+	replace {
+		wv -rw-> bp -:one-> bp;
+	}
+}
+
+rule writeEmptyRule {
+	wv:WriteEmpty -rw:rwhead-> bp:BandPosition -:value-> bp;
+
+	replace {
+		wv -rw-> bp -:empty-> bp;
+	}
+}
+
+rule ensureMoveLeftValidRule {
+	wv:WriteValue -m:moveLeft-> s:State;
+	wv -rw:rwhead-> bp:BandPosition;
+	negative {
+		bp <-:right- lbp:BandPosition;
+	}
+
+	replace {
+		wv -m-> s;
+		wv -rw-> bp <-:right- lbp:BandPosition -:empty-> lbp;
+	}
+}
+
+rule ensureMoveRightValidRule {
+	wv:WriteValue -m:moveRight-> s:State;
+	wv -rw:rwhead-> bp:BandPosition;
+	negative {
+		bp -:right-> rbp:BandPosition;
+	}
+
+	replace {
+		wv -m-> s;
+		wv -rw-> bp -:right-> rbp:BandPosition -:empty-> rbp;
+	}
+}
+
+rule moveLeftRule {
+	wv:WriteValue -m:moveLeft-> s:State;
+	wv -:rwhead-> bp:BandPosition <-r:right- lbp:BandPosition;
+
+	replace {
+		wv -m-> s;
+		s -:rwhead-> lbp -r-> bp;
+	}
+}
+
+rule moveRightRule {
+	wv:WriteValue -m:moveRight-> s:State;
+	wv -:rwhead-> bp:BandPosition -r:right-> rbp:BandPosition;
+
+	replace {
+		wv -m-> s;
+		s -:rwhead-> rbp <-r- bp;
+	}
+}
+
+rule dontMoveRule {
+	wv:WriteValue -m:dontMove-> s:State;
+	wv -:rwhead-> bp:BandPosition;
+
+	replace {
+		bp;
+		wv -m-> s;
+		s -:rwhead-> bp;
+	}
+}

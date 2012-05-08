@@ -1,0 +1,14 @@
+# graph rewrite shell script file, used for simulating the run of a nfa, the interesting changes are in the rule file
+# before was simulate4.grs
+
+new graph simulate5.grg "StateMachine"
+
+include NFA.grsi
+include NFALayout.grsi
+
+exec checkStartState && !checkDoublettes \
+&& (forwardTransition* ;> addStartFinalState ;> addFinalState* ;> removeEpsilonTransition* ;> removeLonelyStates* ;> true) \
+&& !epsilonTransition
+
+input="abc"
+debug exec (state:State)=getStartState && (state)=accept(state, ::input) && isFinalState(state)

@@ -1,0 +1,12 @@
+using basic_model_002;
+
+rule r {
+	x : BB;
+
+	replace {
+		eval {
+			x.ib = 42;
+		}
+	}
+}
+

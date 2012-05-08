@@ -1,0 +1,11 @@
+using attrib_model_001, enum_model_001;
+
+rule r {
+	x: A;
+
+	modify {
+		eval {
+			x.e = (NINT) x.e;
+		}
+	}
+}

@@ -1,0 +1,37 @@
+rule WhileStatement_to_IfStatement_then {
+	while:dom_WhileStatement;
+	while -e:dom_WhileStatement_expression-> expr:dom_Expression;
+	while -f:dom_WhileStatement_body-> then:dom_Statement;
+
+	modify {
+		iff:dom_IfStatement<while>;
+		-:dom_IfStatement_expression<e>->;
+		-:dom_IfStatement_thenStatement<f>->;
+		iff -:dom_IfStatement_elseStatement-> :dom_EmptyStatement;
+	}
+}
+
+rule WhileStatement_to_IfStatement_else {
+	while:dom_WhileStatement;
+	while -e:dom_WhileStatement_expression-> expr:dom_Expression;
+	while -f:dom_WhileStatement_body-> then:dom_Statement;
+
+	modify {
+		iff:dom_IfStatement<while>;
+		-:dom_IfStatement_expression<e>->;
+		-:dom_IfStatement_elseStatement<f>->;
+		iff -:dom_IfStatement_thenStatement-> :dom_EmptyStatement;
+	}
+}
+
+rule rename_prod_2_k {
+	id:dom_SimpleName;
+
+	if { id._identifier == "prod"; }
+
+	modify {
+		eval {
+			id._identifier = "k";
+		}
+	}
+}

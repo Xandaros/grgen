@@ -1,0 +1,19 @@
+// A multiply inherited node attribute should be
+// rejected when it comes from different super classes
+
+node class Type1 {
+}
+
+node class Type2 extends Type1 {
+	a : int;
+}
+
+
+node class Type3 extends Type1 {
+	a : int;
+}
+
+node class Type4  extends Type2, Type3 {
+}
+
+

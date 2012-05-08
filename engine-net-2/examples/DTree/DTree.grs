@@ -1,0 +1,16 @@
+new graph "DTree.grg"
+
+exec init
+
+#debug enable
+dump set edge SE color red
+dump add edge NE infotag v
+
+exec (extAR+ || extBR+)[12]
+
+# fast alternative
+exec p12M
+
+# slow alternative
+# exec p12E
+

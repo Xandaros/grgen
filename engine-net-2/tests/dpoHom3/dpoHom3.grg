@@ -1,0 +1,48 @@
+rule init1
+{
+
+    replace
+    {
+        w:Node;
+        x:Node;
+        y:Node;
+        z:Node;
+        
+        x --> y;
+        x --> z;
+    }
+}
+
+rule init2
+{
+
+    replace
+    {
+        v:Node;
+        w:Node;
+        x:Node;
+        y:Node;
+        z:Node;
+        
+        x --> w;
+        x --> y;
+        x --> z;
+    }
+}
+
+dpo rule deleteAll
+{
+    w:Node;
+    x:Node;
+    y:Node;
+    z:Node;
+    
+    w -e:Edge-> x;
+    y -f:Edge-> z;
+    
+	hom(w,y);
+
+    replace
+    {
+    }
+}

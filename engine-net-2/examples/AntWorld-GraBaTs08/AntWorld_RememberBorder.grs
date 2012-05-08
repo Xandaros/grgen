@@ -1,0 +1,43 @@
+new graph AntWorld_RememberBorder
+
+debug set layout Organic
+dump set node Ant color red
+dump add node Ant infotag hasFood
+dump add edge NextAnt exclude
+dump add node GammelFix exclude
+
+randomseed 13
+
+exec (::firstAnt, ::outer)=InitWorld
+
+exec doAntWorld(::firstAnt, ::outer)
+
+#debug exec curOuter:GridNode=::outer && (curAnt:Ant=::firstAnt && \
+#    (( \
+#        TakeFood(curAnt) | GoHome(curAnt) || \
+#        DropFood(curAnt) | ($[SearchAlongPheromones(curAnt)] || \
+#                            $[SearchAimless(curAnt)]) \
+#    ) && (curAnt)=GetNextAnt(curAnt))* \
+#    | (cur:GridNode=curOuter && (cur)=ReachedEndOfWorldAt(cur, curOuter)* \
+#        && FieldHasAnt(cur) \
+#        && ((cur, curOuter)=GrowWorldFirstNotAtCorner(cur) \
+#            || (cur, curOuter)=GrowWorldFirstAtCorner(cur)) \
+#        && ((cur, curOuter)=GrowWorldNextNotAtCorner(cur, curOuter) \
+#            || (cur, curOuter)=GrowWorldNextAtCorner(cur, curOuter))* \
+#        && GrowWorldEnd(cur, curOuter)) \
+#    | (curAnt)=Food2Ant(curAnt)* \
+#    | [EvaporateWorld] \
+#    )[250]
+
+#exec (curAnt:Ant=::firstAnt &&                                                                                                                \
+#    ((                                                                                                                                  \
+#        (TakeFood(curAnt) && true) | (GoHome(curAnt) && true) ||                                                                        \
+#        DropFood(curAnt) | ($[SearchAlongPheromones(curAnt)] || $[SearchAimless(curAnt)])                                               \
+#            | ((cur:GridNode)=ReachedEndOfWorld(curAnt)                                                                                          \
+#                && ((cur, curOuter:GridNode)=GrowWorldFirstNotAtCorner(cur) || (cur, curOuter)=GrowWorldFirstAtCorner(cur))                      \
+#                && ((cur, curOuter)=GrowWorldNextNotAtCorner(cur, curOuter) || (cur, curOuter)=GrowWorldNextAtCorner(cur, curOuter))*   \
+#                && GrowWorldEnd(cur, curOuter))                                                                                         \
+#    ) && (curAnt)=GetNextAnt(curAnt))*                                                                                                  \
+#    | (curAnt)=Food2Ant(curAnt)*                                                                                                        \
+#    | [EvaporateWorld]                                                                                                                  \
+#    )[200]

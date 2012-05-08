@@ -1,0 +1,12 @@
+new graph "exact\exact" "Exact graph"
+
+show num nodes
+show num edges
+xgrs init3
+show num nodes
+show num edges
+xgrs testHom
+show num nodes
+show num edges
+
+quit
