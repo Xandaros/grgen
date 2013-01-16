@@ -1,0 +1,227 @@
+#include "g2x.grg"
+
+rule findStateMachine : (StateMachine) {  // FIXME use test instead of rule
+  sm : StateMachine;
+  modify {
+    return (sm);
+  }
+}
+
+rule forwardTransition(sm:StateMachine) {
+  sm -:region-> reg:Region;
+  reg -:subvertex-> x:State;
+  reg -:subvertex-> y:State;
+  reg -:subvertex-> z:State;
+  reg -:transition-> xy:Transition;
+  reg -:transition-> yz:Transition;
+
+  hom(x,y,z);
+  x -:source-> xy -:target-> y -:source-> yz -:target-> z;
+  yz -:trigger-> trig:Trigger;            // yz is not an epsilon Transition
+
+  negative {
+    xy -:trigger->;                       // xy is an epsilon Transition
+  }
+
+  /*                                       FIXME nested negative required
+  negative {
+    reg -:transition-> xz:Transition;
+    x -:source-> xz -:target-> z;         // there is no xz Transition that is an epsilon Transition
+    negative {
+      xz -:trigger->;
+    }
+  }
+  */
+
+  modify {
+    reg -:transition-> xz:Transition;
+    x -:source-> xz -:target-> z;
+    yz -:trigger-> trig;                  // same Trigger as for yz
+  }
+}
+
+rule forwardTransitionNoXZ(sm:StateMachine) {
+  sm -:region-> reg:Region;
+  reg -:subvertex-> x:State;
+  reg -:subvertex-> y:State;
+  reg -:subvertex-> z:State;
+  reg -:transition-> xy:Transition;
+  reg -:transition-> yz:Transition;
+
+  hom(x,y,z);
+  x -:source-> xy -:target-> y -:source-> yz -:target-> z;
+
+  negative {
+    xy -:trigger->;
+  }
+  negative {
+    yz -:trigger->;
+  }
+  negative {
+    reg -:transition-> xz:Transition;
+    x -:source-> xz -:target-> z;
+  }
+
+  modify {
+    reg -:transition-> nxz:Transition;
+    x -:source-> nxz -:target-> z;
+  }
+}
+
+rule forwardTransitionNoEpsXZ(sm:StateMachine) {
+  sm -:region-> reg:Region;
+  reg -:subvertex-> x:State;
+  reg -:subvertex-> y:State;
+  reg -:subvertex-> z:State;
+  reg -:transition-> xy:Transition;
+  reg -:transition-> yz:Transition;
+  reg -:transition-> xz:Transition;
+
+  hom(x,y,z);
+  x -:source-> xy -:target-> y -:source-> yz -:target-> z;
+  x -:source-> xz -:target-> z;
+  xz -:trigger-> ;
+
+  negative {
+    xy -:trigger->;
+  }
+  negative {
+    yz -:trigger->;
+  }
+
+  modify {
+    reg -:transition-> nxz:Transition;
+    x -:source-> nxz -:target-> z;
+  }
+}
+
+
+rule forwardTransition3(sm:StateMachine) {
+  sm -:region-> reg:Region;
+  reg -:subvertex-> x:State;
+  reg -:subvertex-> y:State;
+  reg -:subvertex-> z:State;
+  reg -:transition-> xy:Transition;
+  reg -:transition-> yz:Transition;
+  reg -:transition-> xz:Transition;
+
+  hom(x,y,z);
+  x -:source-> xy -:target-> y -:source-> yz -:target-> z;
+  yz -:trigger-> trig:Trigger;
+
+  negative {
+    xy -:trigger->;
+  }
+
+  negative {
+    reg -:transition-> xz:Transition;
+    x -:source-> xz -:target-> z;
+    xz -:trigger-> trig;
+  }
+
+  modify {
+    reg -:transition-> nxz:Transition;
+    x -:source-> nxz -:target-> z;
+    nxz -:trigger-> trig;
+  }
+}
+
+rule propagateFinalState(sm:StateMachine) {
+  sm -:region-> reg:Region;
+  reg -:subvertex-> x:State\FinalState;
+  reg -:subvertex-> f:FinalState;
+  reg -:transition-> xf:Transition;
+
+  x -:source-> xf -:target-> f;
+
+  negative {
+    xf -:trigger->;
+  }
+
+  modify {
+    :FinalState<x>;
+  }
+}
+
+rule removeEpsilonTransition(sm:StateMachine) {
+  sm -:region-> reg:Region;
+  reg -:transition-> xy:Transition;
+
+  negative {
+    reg -:subvertex-> x:Pseudostate;
+    x -:source-> xy;
+  }
+
+  negative {
+    xy -:trigger->;
+  }
+
+  modify {
+    delete(xy);
+  }
+}
+
+
+//============================
+// Create Host Graph
+//============================
+
+rule createGraph {
+  replace {
+    rootpack:Package -:name-> rootpackname:String;
+    eval { rootpackname.value = "Root"; }
+
+    rootpack -:packagedElement-> cv:Package -:name-> cvname:String;
+    eval { cvname.value = "Component View"; }
+
+    cv -: packagedElement -> sm:StateMachine -:name-> smname:String;
+    eval { smname.value = "EpsilonMachine"; }
+
+    // the machine and its region
+    sm -:region-> reg:Region -:stateMachine-> sm;
+
+    qs:Pseudostate; // muss ohne irgenwas angebunden sein: kein trigger etc erlaubt
+    qf:FinalState;
+    q0:State;
+    q1:State;
+    q2:State;
+
+    // embed states to region
+    reg -:subvertex-> qs -:container-> reg;
+    reg -:subvertex-> qf -:container-> reg;
+    reg -:subvertex-> q0 -:container-> reg;
+    reg -:subvertex-> q1 -:container-> reg;
+    reg -:subvertex-> q2 -:container-> reg;
+
+    // make initial state
+    qs -:kind-> qs_kind:PseudostateKind;
+    eval {
+      qs_kind.value = ENUM_PseudostateKind::entryPoint;
+    }
+
+    // create the transitions in region
+    t0:Transition -:container-> reg -:transition-> t0;
+    t1:Transition -:container-> reg -:transition-> t1;
+    t2:Transition -:container-> reg -:transition-> t2;
+    t3:Transition -:container-> reg -:transition-> t3;
+    t4:Transition -:container-> reg -:transition-> t4;
+    t5:Transition -:container-> reg -:transition-> t5;
+    t6:Transition -:container-> reg -:transition-> t6;
+
+    // the triggers
+    t1 -:trigger-> :Trigger -:event-> :CallEvent;
+    t2 -:trigger-> :Trigger -:event-> :CallEvent;
+    t3 -:trigger-> :Trigger -:event-> :CallEvent;
+
+    // the connections
+    qs -:source-> t0 -:target-> q0
+       -:source-> t1 -:target-> q1
+       -:source-> t2 -:target-> q2
+       -:source-> t3 -:target-> qf;
+
+    q0 -:source-> t4 -:target-> q2;
+    q1 -:source-> t5 -:target-> qf;
+    q0 -:source-> t6 -:target-> qf;
+  }
+}
+

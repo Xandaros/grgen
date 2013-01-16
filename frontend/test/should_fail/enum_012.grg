@@ -1,0 +1,10 @@
+using enum_model_006;
+
+rule r {
+
+	replace {
+	}
+}
+
+
+

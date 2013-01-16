@@ -1,0 +1,15 @@
+new graph conference
+
+debug set layout Hierarchic
+
+dump add node Session group
+dump add node Person infotag name
+dump add node Session infotag name
+dump add node Paper infotag name
+
+redirect emit solutions.txt
+
+exec (::last,::c)=init && (::last)=addSlot(::last)[5]
+exec associatePapers*
+exec [solveShow]
+c.counter

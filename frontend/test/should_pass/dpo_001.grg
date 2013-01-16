@@ -1,0 +1,6 @@
+dpo rule r {
+
+	replace {
+	}
+}
+

@@ -1,0 +1,44 @@
+pattern SpanningTree(root:Node)
+{
+	iterated {
+		root -- next:Node;
+		:SpanningTree(next);
+	}
+}
+
+pattern SpanningTreeReverse(root:Node)
+{
+	iterated {
+		root --> next:Node;
+		str:SpanningTreeReverse(next);
+		
+		replace {
+			root <-- next;
+			str();
+		}
+	}
+	
+	modify { }
+}
+
+test blowball
+{
+	head:Node;
+	iterated {
+		head --> .;
+	}
+}
+
+rule blowballDouble
+{
+	head:Node;
+	iterated {
+		head --> .;
+		
+		modify {
+			head --> .;
+		}
+	}
+	
+	modify { }
+}

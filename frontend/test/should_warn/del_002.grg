@@ -1,0 +1,8 @@
+rule r {
+	y: Node;
+
+	modify {
+		x:Node;
+		delete(x);
+	}
+}

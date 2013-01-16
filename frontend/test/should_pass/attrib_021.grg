@@ -1,0 +1,36 @@
+using attrib_model_001;
+
+rule r {
+	ni : NINT;
+	-ei:EINT->;
+
+	modify {
+		eval {
+			ni.a = 1;
+			ei.a = 2;
+
+			ni.a = +ni.a;
+			ni.a = -ni.a;
+			ni.a = ~ni.a;
+			ni.a = +ni.a + ei.a;
+			ni.a = -ni.a + ei.a;
+			ni.a = ~ni.a + ei.a;
+			ni.a = ni.a + +ei.a;
+			ni.a = ni.a + -ei.a;
+			ni.a = ni.a + ~ei.a;
+
+			ni.a = + + ni.a;
+			ni.a = - - ni.a;
+			ni.a = + + + ni.a;
+			ni.a = - - - ni.a;
+
+			ni.a = ~ni.a;
+			ni.a = ~ ~ni.a;
+			ni.a = ~ ~ ~ni.a;
+			ni.a = ~ ~ ~ ~ni.a;
+
+			ni.a = + + + + - +-+- - - + +-+- +- ni.a;
+		}
+	}
+}
+

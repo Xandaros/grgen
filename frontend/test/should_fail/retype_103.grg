@@ -1,0 +1,15 @@
+using retype_model_002;
+
+// forbidden, because y is only temporarily existing object
+
+rule r {
+
+	replace {
+		a:Node;
+		b:Node;
+
+		a -y:TYPE2-> b;
+		a -z:TYPE3<y>-> b;
+	}
+}
+

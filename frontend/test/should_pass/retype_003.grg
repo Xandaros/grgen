@@ -1,0 +1,13 @@
+using attrib_model_001;
+
+rule r {
+	a:NINT;
+
+	replace {
+		b:NFLOAT<a>;
+		eval {
+			b.a = 42.23f * a.a;
+		}
+	}
+}
+

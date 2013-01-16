@@ -1,0 +1,24 @@
+# graph rewrite shell script file, shows nothing new, interesting part is the rule file
+# shows how a complete spanning tree can get matched in a syntax graph
+# before was ProgramGraphs3d.grs, next is ProgramGraphs4b.grs
+
+new graph "ProgramGraphs4"
+
+include ProgramGraphsLayout.grsi
+
+exec createProgramGraphPullUp
+
+validate strict
+
+exec InsertHelperEdgesForNestedLayout
+
+validate strict
+
+debug enable
+
+c = askfor Class
+debug exec matchAll(::c)
+
+validate strict
+
+exec InsertHelperEdgesForNestedLayout

@@ -1,0 +1,16 @@
+new graph "induced3\induced3" "Nice Graph"
+
+
+show num nodes
+show num edges
+xgrs init1
+show num nodes
+show num edges
+xgrs [?inducedTest1]
+show num nodes
+show num edges
+xgrs [?inducedTest2]
+show num nodes
+show num edges
+
+quit

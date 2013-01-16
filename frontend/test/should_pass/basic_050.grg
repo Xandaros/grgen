@@ -1,0 +1,11 @@
+using basic_model_001;
+
+rule r {
+	x : A;
+	y : B;
+	z : C;
+
+	replace {
+	}
+}
+

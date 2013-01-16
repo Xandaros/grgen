@@ -1,0 +1,76 @@
+using attrib_model_001;
+
+rule r
+{
+	modify {
+		def var aby:byte;
+		def var ash:short;
+		def var ai:int;
+		def var al:long;
+		def var ab:boolean;
+		def var as:string;
+		def var af:float;
+		def var ad:double;
+		def var ao:object;
+	}
+}
+
+pattern p
+{
+	modify {
+		def var aby:byte;
+		def var ash:short;
+		def var ai:int;
+		def var al:long;
+		def var ab:boolean;
+		def var as:string;
+		def var af:float;
+		def var ad:double;
+		def var ao:object;
+	}
+}
+
+rule ra
+{
+	alternative
+	{
+		case {
+			modify {
+				def var aby:byte;
+				def var ash:short;
+				def var ai:int;
+				def var al:long;
+				def var ab:boolean;
+				def var as:string;
+				def var af:float;
+				def var ad:double;
+				def var ao:object;
+			}
+		}
+	}
+
+	modify {
+	}
+}
+
+pattern pa
+{
+	iterated
+	{
+		.;
+		modify {
+			def var aby:byte;
+			def var ash:short;
+			def var ai:int;
+			def var al:long;
+			def var ab:boolean;
+			def var as:string;
+			def var af:float;
+			def var ad:double;
+			def var ao:object;
+		}
+	}
+
+	modify {
+	}
+}

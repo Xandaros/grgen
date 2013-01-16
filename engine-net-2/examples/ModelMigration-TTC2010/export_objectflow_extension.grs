@@ -1,0 +1,12 @@
+# This is the GrGen.NET solution to the Model Migration case of Transformation Tool Contest 2010.
+
+include alternative_ObjectFlowState.grs
+
+# Export the graph
+redirect emit migrated_objectflow_model.xmi
+exec (::id) = initial_id
+exec (::id) = number_node(::id)*
+exec XMI_prefix
+exec [emit_activity]
+exec XMI_suffix
+exec finish_dump

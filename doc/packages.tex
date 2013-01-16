@@ -1,0 +1,204 @@
+% We need more TeX registers
+\usepackage{etex}
+\usepackage[utf8]{inputenc}
+
+\usepackage[a4paper, asymmetric, right=2.5cm, left=3.0cm, top=2.5cm, bottom=2.0cm]{geometry}
+
+\usepackage[german, english]{babel}
+\usepackage[left]{eurosym}
+\usepackage{tabularx}
+\newcolumntype{v}[1]{%
+  >{\raggedright\hspace{Opt}}p{#1}%
+}
+\usepackage{slashbox}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\usetikzlibrary{plotmarks}
+\usetikzlibrary{decorations}
+\usetikzlibrary{backgrounds,positioning}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{makeidx}
+%\usepackage{multind}
+\usepackage{tocbibind}
+\usepackage{nicefrac}
+\usepackage{thumbpdf}
+
+
+\usepackage[draft=false, plainpages=false,
+						colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=red,
+						bookmarks, bookmarksopen, bookmarksopenlevel=1, bookmarksnumbered=true,breaklinks=true,
+						pdftitle={The GrGen User Manual},
+						pdfauthor={Jakob Blomer, Rubino Geiss, Edgar Jakumeit},
+						pdfkeywords={
+						graph, graph transformation, graph rewriting, tool, spo, manual, grgen, graph rewrite generator,
+						University of Karlsruhe, IPD Goos},
+						pdfpagelabels
+						]{hyperref}
+
+\usepackage[all]{xy}
+\usepackage{xcolor}
+\definecolor{light}{gray}{0.8}
+\definecolor{tuerkis}{cmyk}{0.5,0.15,0,0.3}
+\usepackage{picins} %wrapfig and floatflt suck deeply
+\usepackage{graphicx}
+\usepackage{calc}
+
+%\usepackage{listings}
+%\lstset{language=C, numbers=left, numberstyle=\tiny, stepnumber=5}
+
+\providecommand{\O}[1]{\ensuremath{\mathcal{O}\left( #1 \right)}}
+
+\providecommand{\N}{\ensuremath{\mathbb{N}}}
+\providecommand{\Z}{\ensuremath{\mathbb{Z}}}
+\renewcommand{\P}{\ensuremath{\mathbb{P}}}
+\providecommand{\F}{\ensuremath{\mathbb{F}}}
+\providecommand{\Q}{\ensuremath{\mathbb{Q}}}
+\providecommand{\R}{\ensuremath{\mathbb{R}}}
+\providecommand{\C}{\ensuremath{\mathbb{C}}}
+
+\providecommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\providecommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\providecommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+\providecommand{\svert}{\; \vert \;}
+
+\DeclareMathOperator{\Abb}{Abb}   % Abbildungsmenge
+\DeclareMathOperator{\Sym}{Sym}   % Bijektionenmenge
+\DeclareMathOperator{\Hom}{Hom}   % Homomorphismenmenge
+\DeclareMathOperator{\End}{End}   % Endomorphismenmenge
+\DeclareMathOperator{\Aut}{Aut}   % Automorphismenmenge
+\DeclareMathOperator{\deF}{def}
+\DeclareMathOperator{\ran}{ran}
+\DeclareMathOperator{\lhs}{lhs}
+\DeclareMathOperator{\rhs}{rhs}
+
+\providecommand{\id}{\ensuremath{\textsf{id}}}  % identische Abbildung
+\DeclareMathOperator{\Kern}{Kern}     % Kern
+\DeclareMathOperator{\Bild}{Bild}     % Bild
+
+\providecommand{\Bin}[2]{\ensuremath{\operatorname{Bin} \left( #1 , #2 \right)}}
+\providecommand{\Hyp}[2]{\ensuremath{\operatorname{Hyp} \left( #1 , #2 \right)}}
+
+\providecommand{\PeroW}[2]{\ensuremath{\text{Per}^{#1}_{#2}\text{(oW)}}}
+\providecommand{\PermW}[2]{\ensuremath{\text{Per}^{#1}_{#2}\text{(mW)}}}
+\providecommand{\KomoW}[2]{\ensuremath{\text{Kom}^{#1}_{#2}\text{(oW)}}}
+\providecommand{\KommW}[2]{\ensuremath{\text{Kom}^{#1}_{#2}\text{(mW)}}}
+
+\makeatletter
+\def\Relbar{\mathrel{\smash=}}
+\def\Leftarrowfill@{\arrowfill@\Leftarrow\Relbar\Relbar}
+\def\Rightarrowfill@{\arrowfill@\Relbar\Relbar\Rightarrow}
+\newcommand{\xRightarrow}[2][]{\ext@arrow 0359\Rightarrowfill@{#1}{#2}}
+\newcommand{\xLeftarrow}[2][]{\ext@arrow 3095\Leftarrowfill@{#1}{#2}}
+\makeatother
+
+\usepackage{rail}
+\railalias{lbrace}{\{}
+\railalias{rbrace}{\}}
+\railalias{underscore}{\_}
+\railalias{dollar}{\$}
+\railalias{percent}{\%}
+%\railalias{ampersand}{<>}
+\railalias{backslash}{\char"5C}
+\railalias{tilde}{$\sim$}
+\railalias{titilde}{$\sim\sim$}
+\railalias{ampersand}{\&}
+\railalias{doubleampersand}{\&\&}
+\railalias{etc}{$\cdots$}
+\railalias{xorhat}{$\wedge$}
+\railalias{railat}{@}
+
+\railalias{analyzegraph}{analyze\_graph}
+\railalias{gensearchplan}{gen\_searchplan}
+\railalias{setmaxmatches}{set\_max\_matches}
+\railalias{dumpsourcecode}{dump\_sourcecode}
+
+\railterm{lbrace,rbrace,dollar,percent,ampersand,backslash,underscore,tilde,ampersand,analyzegraph,gensearchplan,setmaxmatches,dumpsourcecode,doubleampersand,xorhat}
+
+\usepackage[final]{listings}
+
+\usepackage{soul}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{fancyhdr}
+
+% sectionreformatting
+% tableofcontents level == 3 (subsubsection)
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+% Headings
+\pagestyle{myheadings}
+
+\renewcommand{\chaptermark}[1]{\markboth{\it #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection \; \it #1}}
+\lhead[\fancyplain{}{\thepage}]%
+      {\fancyplain{}{\rightmark}}
+\rhead[\fancyplain{}{\leftmark}]%
+  {\fancyplain{}{\thepage}}
+\renewcommand{\headrulewidth}{0pt}
+
+\capsdef{////}{\upshape}{0.125em}{0.4583em}{0.5833em}
+\newcommand{\versal}[1]{\MakeUppercase{\caps{#1}}}
+
+% Other desccription labels, not that ugly bold font
+% And put the description on a line of its own
+\renewcommand\descriptionlabel[1]{%
+  \hspace\labelsep {% local changes only
+    \advance\linewidth\leftmargin
+    \advance\linewidth-\labelsep
+    \makebox[\linewidth][l]{\it #1}}}
+
+% Other TOC headings for chapters \contentslabel{2.3em}}
+%\titlecontents{chapter}[0em]{\sf\vspace*{2ex}}{Kapitel
+%          \thecontentslabel{} --- }
+%          {}{\hfill\contentspage\vspace*{1ex}}
+
+\titlecontents{part}[0em]{\sf\large\vspace*{2ex}}{\contentslabel{2.3em}}
+              {}{\hfill\contentspage\vspace*{1ex}}
+
+\titlecontents{chapter}[0em]{\sf\vspace*{2ex}}{\contentslabel{2.3em}}
+              {}{\hfill\contentspage\vspace*{1ex}}
+
+%\titlecontents{chapter}[1.5em]{\sf}{2.3em}{1pc}{}{}{}
+\dottedcontents{section}[3.8em]{}{2.3em}{1pc}
+
+% Other formatting of chapter and section headings
+\newcommand*\chaptitle[1]{\Large\filleft\versal{#1}}
+
+
+\titleformat{\part}[block]
+    {\LARGE\sf}
+  {\versal{TEIL}\hspace*{2ex}\thepart}
+  {4ex}{\Huge\newline\newline\centering}
+\titleformat{\chapter}[display]
+  {\large\sf}
+  {\filright\versal{\chaptertitlename}\hspace*{2ex}\thechapter}
+  {4ex}{\chaptitle}
+\titleformat{\section}
+  {\large\sf}{\thesection}
+  {1em}{}
+\titleformat{\subsection}
+  {\sf}{\thesubsection}
+  {1em}{}
+\titleformat{\subsubsection}
+  {\sf}{\thesubsubsection}
+  {1em}{}
+\titleformat{\paragraph}
+  {\sf}{\theparagraph}{0em}{}
+\titlespacing*{\paragraph}{0cm}{2.75ex plus 1ex minus .2ex}{.5em}
+
+\makeatletter
+\renewcommand*{\tableofcontents}{%
+  \begingroup
+    \@restonecolfalse
+    \expandafter\chapter\expandafter*\expandafter{\contentsname}%
+    \@mkboth{\contentsname}{\contentsname}%
+    \@starttoc{toc}%
+  \endgroup
+} \makeatother
+
+

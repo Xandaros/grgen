@@ -1,0 +1,34 @@
+new graph Rules
+
+debug set layout Hierarchic
+dump set edge CurrentState textcolor red
+
+dump set node only LuggageSystem color LightGrey
+dump set node only Conveyor color blue
+dump set node only DCV color green
+
+dump set node only Statechart color white
+dump set node only CompoundState color LightGreen
+dump set node only State color Orange
+
+dump add node LuggageSystem group by hidden outgoing Contains
+dump add node CompoundState group by hidden outgoing Contains
+dump add node Statechart group by hidden outgoing Contains
+
+
+exec InitialGraph
+
+debug exec InitStatechart && ((s:State)=CreateCompoundStateAndInit && ((s)=CreateStates(s))*)* && FixupInitialStates*
+
+exec {::flags = valloc()}
+exec i:int=0 ;> ((i)=LableLinks(i))*
+
+exec CreatePredSucc* && CopyPredSucc*
+
+debug exec LuggageInput[5] && (Fire $| FireFinal)*
+
+exec FindCycle
+
+exec {vfree(::flags)}
+
+#show graph ycomp

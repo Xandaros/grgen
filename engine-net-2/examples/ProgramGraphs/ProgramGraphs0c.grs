@@ -1,0 +1,27 @@
+# graph rewrite shell script file, shows how to improve the readability of the original graph
+#  by using nesting along edges with the "dump add group" command
+# result is not really better, cause now everything is nested along the contains edges,
+# only the def-use edges are not used for nesting
+# before was ProgramGraphs0b.grs, next is ProgramGraphs0d.grs
+
+new graph "ProgramGraphs0"
+
+debug set layout Hierarchic
+
+dump set node MethodSignature color pink
+dump set node MethodBody color orchid
+dump set node Attribute color cyan
+dump set node Expression color green
+dump set node Class color yellow
+
+dump set edge uses color blue
+dump set edge writesTo color red
+dump set edge calls color black
+
+dump add node Entity group by hidden outgoing contains
+
+exec createProgramGraphExample
+
+validate strict
+
+debug enable

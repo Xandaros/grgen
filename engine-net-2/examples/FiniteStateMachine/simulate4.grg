@@ -1,0 +1,30 @@
+// graph rewrite rule file, shows how further rules can be included (the included file must not contain the using statement),
+// how rules and tests can receive input parameters and return output parameters,
+//  allowing to process a location by several rules or to process successive locations with one rule,
+// and how a rule or test can expect values of a more concrete type than the type it receives
+// before was removeEpsilons3.grg, next is simulate5.grg
+
+using NFAModel;
+
+#include "removeEpsilons3WithoutUsing.grg"
+
+test getStartState : (StartState)
+{
+	start:StartState;
+	return(start);
+}
+
+dpo rule accept(state:State, var input:string) : (State, string)
+{
+	state -t:Transition\EpsilonTransition-> successor:State;
+	if { input.length()>0 && t.Trigger==input.substring(0, 1); }
+
+	modify {
+		return(successor, input.substring(1,input.length()-1));
+	}
+}
+
+// accecpts State, fails if not FinalState
+test isFinalState(state:FinalState<State>)
+{
+}

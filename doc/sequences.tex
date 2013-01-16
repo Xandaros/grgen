@@ -1,0 +1,276 @@
+\chapter{Rule Application Control Language (XGRS)}\indexmain{rule application language}
+\label{cha:xgrs}
+
+Graph rewrite sequences (GRS)\indexmain{graph rewrite sequence}, better extended graph rewrite sequences XGRS, to distinguish them from the older graph rewrite sequences, are a domain specific \GrG~language used for controlling the application of graph rewrite rules. 
+They are available
+\begin{itemize}
+\item as an imperative enhancement to the rule set language.
+\item for controlled rule application within the \GrShell.
+\item for controlled rule application on the API level out of user programms.
+\end{itemize}
+
+If they appear in rules, they get compiled, otherwise they get interpreted.
+Iff used within \GrShell, they are amenable to debugging.
+
+Graph rewrite sequences are built from a pure \emph{rule control} language,
+written down in a syntax similar to boolean and regular expressions, with rule applications as atoms,
+and a \emph{computations} sublanguage,
+noted down as a sequence of assignments, function calls, or procedure calls.
+A computation is given as an atom of the rule control language, nested in curly braces.
+(The syntactical separation into two sublanguages was carried out in version 3.5, you might be interested in the \texttt{-deprecated} flag available for the generator and the shell in version 3.0.1 in case you got old code; when the flag is set the sequence constructs which were moved to the computations sublanguage employed in your solution are reported.)
+
+The graph rewrite sequences are a means of composing complex graph transformations out of single graph rewrite rules and further computations.
+The control flow in the rule control language is determined by the evaluation order of the operands.
+Graph rewrite sequences have a boolean return value; for a single rule, \texttt{true} means the rule was successfully applied to the host graph.
+A \texttt{false} return value means that the pattern was not found in the host graph. 
+
+In order to store and reuse return values of rewrite sequences and most importantly, 
+for passing return values of rules to other rules, \emph{variables} can be defined.
+A variable is an arbitrary identifier which can hold a graph element or a value of one of the attribute or value types \GrG\ knows.
+There are two kinds of variables available in \GrG,
+i) graph global variables\indexmain{graph global variables}\indexmainsee{variable}{graph global variables} and 
+ii) sequence local variables\indexmain{sequence local variables}\indexmainsee{variable}{sequence local variables}.
+A variable is alive from its first declaration on: graph global variables are implicitely declared upon first usage of their name,
+sequence local variables are explicitely declared with a typed variable declaration of the form \texttt{name:type}.
+Graph global variables must be prefixed with a double colon ::, local variables are referenced just with their name.
+Graph global variables are untyped; their values are typed, though, so type errors cause an exception at runtime.
+They belong to and are stored in the graph processing environment -- if you save the graph in \GrShell\ 
+then the variables are saved, too, and restored next time you load the saved graph.
+Further on, they are nulled if the graph element assigned to them gets deleted (even if this happens due to a transaction rollback),
+thus saving one from debugging problems due to zombie elements (you may use the \texttt{def()} operator to check during execution if this happened).
+Sequence local variables are typed, so type errors are caught at compile time (parsing time for the interpreted sequences); 
+an assignment of an untyped variable to a typed variable is checked at runtime.
+They belong to the sequence they appear in, their life ends when the sequence finishes execution 
+(so there is no persistency available for them as for the graph global variables; neither do they get nulled on element deletion as the graph does not know about them). 
+
+If used in some rule, i.e. within an \texttt{exec}, named graph elements of the enclosing rule are available as read-only variables.
+
+Note that we have two kinds of return values in graph rewrite sequences.
+Every rewrite sequence returns a boolean value, indicating whether the rewriting could be successfully processed, i.e. denoting success or failure.
+Additionally rules may return graph elements.
+These return values can be assigned to variables on the fly (see example \ref{ex:grsreturn}).
+\begin{figure}[htbp]
+\begin{example}
+	\label{ex:grsreturn}
+The graph rewrite sequences
+	\begin{grgen}	 
+(b,c)=R(x,y,z)=>a
+a = ((b,c)=R(x,y,z))
+	\end{grgen}
+assign the two returned graph elements from rule \texttt{R} to variables \texttt{b} and \texttt{c} and the information whether \texttt{R} mached or not to variable \texttt{a}. The first version is recommended.
+\end{example}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Rule Application} \label{sec:ruleapplication}
+
+\begin{rail} 
+  RewriteFactor: RuleExecution
+     | SimpleVariableHandling
+     | ExtendedControl
+     | RewriteComputationUsage
+	; 
+\end{rail}\ixnterm{RewriteFactor}
+
+Rewrite factors are the building blocks of graph rewrite sequences.
+They are split into four major areas: rule (and sequence) application, simple variable handling, extended control, and sequence computation usages.
+Here we start with the most import one, applying rules.
+In section \ref{sec:simplevarhandling} we visit simple variable handling.
+In chapter \ref{cha:transaction} we have a look at advanced control \ref{sec:extctrl} and sequence computations \ref{sec:seqcomp}.
+
+\begin{rail}    
+  RuleExecution: (() | '(' (Variable+',') ')' '=') \\ (() | percent) (() | '?') (Rule | (RandomSelection)? '[' Rule ']');
+  RandomSelection: dollar (percent)? ( Variable | (Variable ',' (Variable | '*')) )?;
+  Rule: RuleIdent (() | '(' (Variable+',') ')') (backslash FilterIdent)?;
+\end{rail}\ixnterm{RuleExecution}\ixnterm{RandomSelection}\ixnterm{Rule}
+
+The \emph{RuleExecution} clause applies a single rule or test.
+In case of a rule, the first found pattern match will be rewritten.
+Application will fail in case no match was found and succeed otherwise. 
+Variables and named graph elements can be passed into the rule.
+The returned graph elements can be assigned to variables again.
+The operator \texttt{?} switches the rule to a test, i.e.\ the rule application does not perform the rewrite part of the rule but only tests if a match exists.
+The operator \texttt{\%} is a multi-purpose flag. 
+In the \GrShell\ (see Chapter~\ref{chapgrshell}) it dumps the matched graph elements to \texttt{stdout};
+in \texttt{debug}-mode (see Chapter~\ref{chapdebugger}) it acts as a \indexed{break point} (which is its main use in fact);
+you are also able to use this flag for your own purposes, when using \GrG\ via its API interface (see Section~\ref{sct:API}).
+The match filter application (which allows e.g. to filter symmetric matches) is explained in \ref{sub:extflt}.
+
+The \emph{RuleExecution} clause can be applied to a defined sequence (cf. \ref{sec:sequencedefinition}), or an external sequence (cf. \ref{sub:extseq}), too.
+Application will succeed or fail depending on the result of the body of the sequence definition called.
+In case of success, the output variables of the sequence definition are written to the destination variables of the assignment. In case of failure, no assignment takes place, so sequence calls behave the same as rule calls.
+The break point \texttt{\%} can be applied to a sequence call, but neither the \texttt{?} operator nor all braces (\texttt{[]}).
+
+The sqare braces (\texttt{[]}) introduce a special kind of multiple rule application:
+Every pattern match produced by the rule will be rewritten;
+if at least one was found, rule application will succeed, otherwise it will fail. 
+Attention: This \indexed{all bracketing} is \textbf{not} equal to \texttt{Rule*}.
+Instead this operator collects all the matches first before starting to rewrite.
+So if one rewrite destroys other matches or creates new match opportunities the semantics differ;
+in particular the semantics is unsafe, i.e.\ one needs to avoid deleting or retyping a graph element that is bound by another match (will be deleted/retyped there). On the other hand this version is more efficient and allows one to get along without marking already handled situations (to prevent a rule matching again and again because the match situation is still there after the rewrite; normally you would need some match preventing device like a negative or visited flags to handle such a situation).
+If \emph{Rule} returns values, the values of \emph{one} of the executed rules will be returned.
+
+The \indexed{random match selector} \texttt{\$v} searches for all matches and then randomly selects \texttt{v} of them to be rewritten (but at most as much as are available), with \texttt{\$[r1]} being equivalent to \texttt{anonymousTempVar=1 \& \$anonymousTempVar[r1]}.
+Rule application will fail in case no match was found and succeed otherwise. 
+You may change the lower bound for success by giving a variable containing the value to apply before the comma-separated upper bound variable.
+In case a lower bound is given the upper bound may be set to unlimited with the \texttt{*}.
+An \texttt{\%} appended to the \texttt{\$} denotes a \indexed{choice point} 
+allowing the user to choose the match to be applied from the available ones in the debugger (see Chapter ~\ref{chapdebugger}).
+
+\begin{example}
+The sequence \verb#(u,v)=r(x,y)# applies the rule \texttt{r} with input from the variables \texttt{x} and \texttt{y} on the host graph 
+and assigns the return elements from the rule to the variables \texttt{u} and \texttt{v} (the parenthesis around the out variables are always needed, even if there's only one variable assigned to).
+The sequence \verb#$[t]# determines all matches of the parameterless rule \texttt{t} on the host graph, then one of the matches is randomly chosen and executed.
+\end{example}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Logical and Sequential Connectives}
+
+\makeatletter
+
+\begin{rail}
+  RewriteSequence: 
+    (RewriteNegTerm) (( (dollar (percent)?)? (ampersand | xorhat | '|' | doubleampersand | '||' | ';>' | '<;') RewriteNegTerm )*)
+|    '(' RewriteSequence ')'
+	;
+  RewriteNegTerm: 
+    ('!')? RewriteTerm ( ('=''>' | ampersand'>' | '|''>') Variable)?
+	;
+\end{rail}\ixnterm{RewriteSequence}\ixnterm{RewriteNegTerm}
+
+A graph rewrite sequence consists of several rewrite terms linked by operators.
+Table \ref{tbl:sequ:op} gives the priorities and semantics of the operators, priorities in ascending order.
+Forcing execution order against the priorities can be achived by parentheses.
+The modifier \texttt{\$} changes the semantics of the following operator to randomly execute the left or the right operand first (i.e. flags the operator to act commutative);
+usually operands are executed / evaluated from left to right if not altered by bracketing.
+In contrast the sequences \texttt{s}, \texttt{t}, \texttt{u} in \texttt{s \$<op> t \$<op> u} are executed / evaluated in arbitrary order.
+The modifier \texttt{\%} appended to the \texttt{\$} overrides the random selection by a user selection (cf. see Chapter~\ref{chapdebugger}, \indexed{choice point}s).
+
+The assign-to operator \texttt{=>} optionally available at the end of the $RewriteNegTerm$ assigns the (negated in case of \texttt{!}) result of the $RewriteTerm$ execution to the given variable; the and-to \texttt{\&>} operator assigns the conjunction and the or-to \texttt{|>} operator assigns the disjunction of the original value of the variable with the sequence result to the variable.
+
+\begin{table}[htbp]
+    \begin{tabularx}{\linewidth}{l|X}
+        \bf Operator & \bf Meaning \\\hline\hline
+        \verb/s1 <; s2/ & Then-Left, evaluates \texttt{s1} then \texttt{s2} and returns(/projects out) the result of \texttt{s1}\\
+		\verb/s1 ;> s2/ & Then-Right, evaluates \texttt{s1} then \texttt{s2} and returns(/projects out) the result of \texttt{s2}\\\hline
+        \verb/s1 || s2/ & Lazy Or, the result is the logical disjunction, evaluates \texttt{s1}, only if \texttt{s1} is false \texttt{s2} gets evaluated\\\hline
+        \verb/s1 && s2/ & Lazy And, the result is the logical conjunction, evaluates \texttt{s1}, only if \texttt{s1} is true \texttt{s2} gets evaluated\\\hline
+        \verb/s1 | s2/ & Strict Or, evaluates \texttt{s1} then \texttt{s2}, the result is the logical disjunction\\\hline
+        \verb/s1 ^ s2/ & Strict Xor, evaluates \texttt{s1} then \texttt{s2}, the result is the logical antivalence\\\hline
+        \verb/s1 & s2/ & Strict And, evaluates \texttt{s1} then \texttt{s2}, the result is the logical conjunction\\\hline
+        \verb/!s/ & Negation, evaluates \texttt{s} and returns its logical negation\\\hline
+	\end{tabularx}    
+    \caption{Semantics and priorities of rewrite sequence operators}
+    \label{tbl:sequ:op}
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Simple Variable Handling}\label{sec:simplevarhandling}
+
+\begin{rail}
+  SimpleVariableHandling: SimpleAssignmentTarget '=' SimpleOrInteractiveExpression | VariableDeclaration | Variable;
+  SimpleAssignmentTarget: Variable | VariableDeclaration; 
+	VariableDeclaration: Variable ':' Type;
+	SimpleOrInteractiveExpression:
+		Variable |  
+		Literal | 
+    (percent)? BoolLit |
+		dollar (percent)? '(' (Number | '1.0' ) ')' |
+		dollar percent '(' Type ')'
+  ;
+  Variable: Word | '::' Word;
+\end{rail}\ixnterm{SimpleVariableHandling}\makeatother
+
+The simple variable handling in the sequences allows to assign a variable or a constant to a variable, to interactively query for an element of a given type or a number and assign it to a variable, or to declare a local variable; these constructs always result in true/success.
+In addition, a boolean variable may be used as a predicate; using such a variable predicate together with the sequence result assignment allows to directly transmit execution results from one part of the sequence to another one.
+Furtheron, a boolean constant may be used as a predicate. 
+These \indexed{sequence constant}s being one of the boolean literals \texttt{true} or \texttt{false} come in handy if a sequence is to be evaluated but its result must be a predefined value; furtheron a \indexed{break point} may be attached to them.
+
+Variables can hold graph elements, or values of value/attribute types, including booleans.
+The typed explicit declaration (which may be given at an assignment, rendering that assignment into an initialization) introduces a sequence local variable, the name alone references a sequence local variable.
+A global variable is accessed with the double colon prefix, it gets implicitely declared if not existing yet (you can't declare a graph global variable).
+The random number assignment \texttt{v=\$(42)} assigns an integer random number in between 0 and 41 (42 excluded) to the variable \texttt{v}. 
+The random number assignment \texttt{v=\$(1.0)} assigns a double random number in between 0.0 and 1.0 exclusive to the variable \texttt{v} (here you can't change the upper bound as with the integer assignment). 
+Appending a \texttt{\%} changes random selection to user selection (defining a \indexed{choice point}).
+The \indexed {user input assignment} \texttt{v=\$\%(string)} queries the user for a string value -- this only works in the GrShell.
+The user input assignment \texttt{v=\$\%(Node)} queries the user for a node from the host graph -- this only works in the GrShell in debug mode.
+The non simple variable handling is given in \ref{sec:seqcomp}, even further variable handling constructs are given in \ref{sec:storages}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Decisions and Loops}\indexmain{loop}\indexmain{regular expression syntax}
+
+\begin{rail} 
+  ExtendedControl: 
+	'if' lbrace Condition ';' TrueCase ';' FalseCase rbrace |
+	'if' lbrace Condition ';' TrueCase rbrace
+	;
+\end{rail}\ixnterm{ExtendedControl}\ixkeyw{if}
+
+The \indexed{conditional sequence}s, or condition execution (/decision) statement \texttt{if} executes the condition sequence, and if it yielded true executes the true case sequence, otherwise the false case sequence.
+The sequence \verb#if{Condition;TrueCase}# is equivalent to \verb#if{Condition;TrueCase;true}#, thus giving a lazy implication.
+
+\begin{rail}
+  RewriteTerm: 
+    (RewriteFactor (() | ('*' | '+' | '[' Number ']' | '[' Number ':' ( Number | '*' ) ']')));
+\end{rail}\ixnterm{RewriteTerm}
+
+A rewrite term consists of a rewrite factor which can be executed multiple times.
+The star (\texttt{*}) executes a sequence repeatedly as long as its execution does not fail. 
+Such a sequence always returns \texttt{true}.
+A sequence \verb#s+# is equivalent to \verb#s && s*#.
+The brackets (\texttt{[m]}) execute a sequence repeatedly as long as its execution does not fail but \emph{m} times at most;
+the min-max-brackets (\texttt{[n:m]}) additionally fail if the minimum amount \emph{n} of iterations was not reached.
+
+\begin{note}
+Consider all-bracketing introduced in the first section for rewriting all matches of a rule instead of iteration if they are independent.
+\end{note}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Quick reference table}
+
+Table~\ref{seqbasictab} lists the basic operations of the graph rewrite sequences at a glance.
+
+%\makeatletter
+\begin{table}[htbp]
+\begin{minipage}{\linewidth} \renewcommand{\footnoterule}{} 
+\begin{tabularx}{\linewidth}{|lX|}
+\hline
+\texttt{s ;> t}		& Execute \texttt{s} then \texttt{t}. Success if \texttt{t} succeeded.\\
+\texttt{s <; t}		& Execute \texttt{s} then \texttt{t}. Success if \texttt{s} succeeded.\\
+\texttt{s | t}		& Execute \texttt{s} then \texttt{t}. Success if \texttt{s} or \texttt{t} succeeded.\\
+\texttt{s || t}	& The same as \texttt{s | t} but with lazy evaluation, i.e. if \texttt{s} is successful, \texttt{t} will not be executed.\\
+\texttt{s \& t}	& Execute \texttt{s} then \texttt{t}. Success if \texttt{s} and \texttt{t} succeeded.\\
+\texttt{s \&\& t}	& The same as \texttt{s \& t} but with lazy evaluation, i.e. if \texttt{s} fails, \texttt{t} will not be executed.\\
+\texttt{s \^\ t}	& Execute \texttt{s} then \texttt{t}. Success if \texttt{s} or \texttt{t} succeeded, but not both.\\
+\texttt{if\{r;s;t\}}	& Execute \texttt{r}. If \texttt{r} succeeded, execute \texttt{s} and return the result of \texttt{s}. Otherwise execute \texttt{t} and return the result of \texttt{t}.\\
+\texttt{if\{r;s\}}	& Same as \texttt{if\{r;s;true\}}\\
+\texttt{!s}		& Switch the result of \texttt{s} from successful to fail and vice versa.\\
+\texttt{\$<op>}	& Use random instead of left-associative execution order for \texttt{<op>}. \\
+\texttt{s*}		& Execute \texttt{s} repeatedly as long as its execution does not fail.\\
+\texttt{s+}		& Same as \texttt{s \&\& s*}.\\
+\texttt{s[n]}	& Execute \texttt{s} repeatedly as long as its execution does not fail but \texttt{n} times at most.\\
+\texttt{s[m:n]}	& Same as \texttt{s[n]} but fails if executed less than m times.\\
+\texttt{s[m:*]}	& Same as \texttt{s*} but fails if executed less than m times.\\
+\texttt{?\emph{Rule}} & Switches \emph{Rule} to a test. \\
+\texttt{\%\emph{Rule}} & This is the multi-purpose flag when accessed from \LibGr. Also used for graph dumping and break points. \\
+\texttt{[\emph{Rule}]} & Rewrite every pattern match produced by the action \emph{Rule}.\\
+\texttt{true}	& A constant acting as a successful match.\\
+\texttt{false}	& A constant acting as a failed match.\\
+\texttt{v}	& A variable acting as a predicate.\\
+\hline
+\end{tabularx}\indexmain{\texttt{\textasciicircum}}\indexmain{\texttt{\&\&}}\indexmain{\texttt{"|}}
+\indexmain{\texttt{\&}}\indexmain{\texttt{"|"|}}\indexmain{\texttt{\$<op>}}\indexmain{\texttt{*}}\indexmain{\texttt{"!}}\indexmain{\texttt{;>}}\indexmain{\texttt{<;}}\indexmain{\texttt{+}}\indexmain{\texttt{[]}}
+\end{minipage}\\
+\\ 
+{\small Let \texttt{r}, \texttt{s}, \texttt{t} be sequences, \texttt{u}, \texttt{v}, \texttt{w} variable identifiers, \texttt{<op>} $\in \{\texttt{|}, \texttt{\textasciicircum}, \texttt{\&}, \texttt{||}, \texttt{\&\&}\}$ }%and \texttt{n}, \texttt{m} $\in \N_0$.}
+\caption{Sequences at a glance}
+\label{seqbasictab}
+\end{table}
+%\makeatother
+ 
+% todo: beispiele im text bringen

@@ -1,0 +1,48 @@
+test GetInt : (int)
+{
+    return(7);
+}
+
+test UseIntTest(var i:int) : (int)
+{
+    return (i + 4);
+}
+
+rule UseIntRule(var i:int) : (int)
+{
+    modify {
+        return (i + 7);
+        exec(UseIntTest(i));
+    }
+}
+
+rule blub
+{
+    modify {
+        exec((j:int) = GetInt
+            && UseIntRule(j));
+    }
+}
+
+rule Wrapper(var i:int)
+{
+    modify {
+        exec(UseIntTest(i));
+    }
+}
+
+rule DoSomething
+{
+    modify
+    {
+        exec(GetInt
+            && (i:int)=GetInt
+            && (i)=GetInt
+            && UseIntTest(i)
+            && (i)=UseIntTest(i)
+            && (j:int)=UseIntTest(i)
+            && UseIntRule(i)
+            && (j)=UseIntRule(i)
+            && (k:int)=UseIntRule(i));
+    }
+}

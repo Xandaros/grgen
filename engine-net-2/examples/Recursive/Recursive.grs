@@ -1,0 +1,16 @@
+new graph "Recursive"
+
+debug set layout Organic
+
+new n1:Node
+new n2:Node
+exec [?chainFromTo(::n1,::n2)]
+exec (::beg,::end)=createChain
+exec [?chainFromTo(::beg,::end)]
+exec [?chainFrom(::beg)]
+exec [?chainFromComplete(::beg)]
+
+exec (::head)=createBlowball
+exec [?blowball(::head)]
+
+quit

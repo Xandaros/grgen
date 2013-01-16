@@ -1,0 +1,26 @@
+using attrib_model_001;
+
+rule r {
+	nb : NBOOL;
+	nd : NDOUBLE;
+	-eb:EBOOL->;
+	-ed:EDOUBLE->;
+
+	modify {
+		eval {
+			nb.a = true;
+			nd.a = 1.0;
+
+			eb.a = false;
+			ed.a = 2.0;
+
+			nb.a = nd.a == ed.a;
+			nb.a = nd.a != ed.a;
+			nb.a = nd.a <  ed.a;
+			nb.a = nd.a >  ed.a;
+			nb.a = nd.a <= ed.a;
+			nb.a = nd.a >= ed.a;
+		}
+	}
+}
+

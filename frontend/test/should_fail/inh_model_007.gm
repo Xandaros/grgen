@@ -1,0 +1,2 @@
+edge class A extends B;
+edge class B extends A;

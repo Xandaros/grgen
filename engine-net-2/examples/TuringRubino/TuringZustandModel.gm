@@ -1,0 +1,13 @@
+node class Zustand {
+  q : int;
+}
+
+node class Band {
+  bu : string;
+}
+
+edge class kopf;
+
+edge class rechts {
+  moves : int;
+}

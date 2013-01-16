@@ -1,0 +1,13 @@
+new graph "Recursive"
+
+debug set layout Organic
+
+exec (beg:Node,end:Node)=createChain \
+		;> chainFromTo(beg,end) \
+		;> reverseChainFromTo(beg,end) \
+		;> (common:Node)=chainFromToReverseToCommon(beg,end) \
+		;> chainFromTo(beg,end) \
+		;> reverseChainFromTo(beg,end) \
+		;> reverseChainFromToToCommon(beg,end,common)
+
+quit

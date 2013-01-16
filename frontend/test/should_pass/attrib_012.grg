@@ -1,0 +1,23 @@
+using attrib_model_001;
+
+rule r {
+	ni : NINT;
+	nb : NBOOL;
+	-ei:EINT->;
+	-eb:EBOOL->;
+
+	modify {
+		eval {
+			ni.a = 1;
+			ei.a = 2;
+
+			nb.a = ni.a == ei.a;
+			nb.a = ni.a != ei.a;
+			nb.a = ni.a <  ei.a;
+			nb.a = ni.a >  ei.a;
+			nb.a = ni.a <= ei.a;
+			nb.a = ni.a >= ei.a;
+		}
+	}
+}
+
