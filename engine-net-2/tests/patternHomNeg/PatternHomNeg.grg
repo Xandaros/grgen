@@ -1,0 +1,10 @@
+using PatternHomNeg;
+
+rule test1 {
+	a:N;
+	negative {
+		b:N;
+	}
+
+	modify {}
+}

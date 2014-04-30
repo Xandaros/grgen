@@ -1,0 +1,112 @@
+using from_storage;
+
+rule r1(ref s:set<Node>)
+{
+	n:Node{s} --> l:Node;
+	
+	modify {
+		delete(l);
+	}
+}
+
+rule r2(ref s:set<Node>)
+{
+	n:N{s} --> l:Node;
+	
+	modify {
+		delete(l);
+	}
+}
+
+rule r3(ref s:set<N>)
+{
+	n:NN{s} --> l:Node;
+	
+	modify {
+		delete(l);
+	}
+}
+
+
+rule r4(ref m:map<Node,Node>)
+{
+	n:Node{m} --> l:Node;
+	
+	modify {
+		delete(l);
+	}
+}
+
+rule r5(ref m:map<Node,Node>)
+{
+	n:N{m} --> l:Node;
+	
+	modify {
+		delete(l);
+	}
+}
+
+rule r6(ref m:map<N,Node>)
+{
+	n:NN{m} --> l:Node;
+	
+	modify {
+		delete(l);
+	}
+}
+
+
+rule r7(ref a:array<Node>)
+{
+	n:Node{a} --> l:Node;
+	
+	modify {
+		delete(l);
+	}
+}
+
+rule r8(ref a:array<Node>)
+{
+	n:N{a} --> l:Node;
+	
+	modify {
+		delete(l);
+	}
+}
+
+rule r9(ref a:array<N>)
+{
+	n:NN{a} --> l:Node;
+	
+	modify {
+		delete(l);
+	}
+}
+
+
+rule r10(ref d:deque<Node>)
+{
+	n:Node{d} --> l:Node;
+	
+	modify {
+		delete(l);
+	}
+}
+
+rule r11(ref d:deque<Node>)
+{
+	n:N{d} --> l:Node;
+	
+	modify {
+		delete(l);
+	}
+}
+
+rule r12(ref d:deque<N>)
+{
+	n:NN{d} --> l:Node;
+	
+	modify {
+		delete(l);
+	}
+}

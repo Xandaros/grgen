@@ -1,0 +1,45 @@
+#using "JDTAST__ecore.gm"
+#using "Q1View__ecore.gm"
+
+rule filter_(var visID:int, var counter:int):(int) {
+	type:_dom::_TypeDeclaration;
+	type -:_dom::_AbstractTypeDeclaration_name-> name:_dom::_SimpleName;
+	method:_dom::_MethodDeclaration <-:_dom::_AbstractTypeDeclaration_bodyDeclarations- type;
+	method -:_dom::_MethodDeclaration_returnType-> returnType:_dom::_SimpleType;
+	returnType -:_dom::_SimpleType_name-> returnName:_dom::_SimpleName;
+	publicModifier:_dom::_Modifier <-:_dom::_BodyDeclaration_modifiers- method;
+	staticModifier:_dom::_Modifier <-:_dom::_BodyDeclaration_modifiers- method;
+
+	if { !type.visited[visID];
+		 name._identifier == returnName._identifier;
+	     publicModifier._public == true;
+	     staticModifier._static == true;
+	}
+
+	modify {
+		eval {
+			type.visited[visID] = true;
+		}
+		emit("\t<View:Class xmi:id=\"a" + counter + "\" name=\"" + name._identifier + "\"/>\n");
+
+		return (counter + 1);
+	}
+}
+
+rule xmlPrefix {
+	modify {
+		emit("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<xmi:XMI xmi:version=\"2.0\" xmlns:xmi=\"http://www.omg.org/XMI\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:View=\"org.amma.viewQ1\">\n");
+	}
+}
+
+rule xmlSuffix {
+	modify {
+		emit("</xmi:XMI>\n");
+	}
+}
+
+rule initXMLCounter : (int) {
+	modify {
+		return (1);
+	}
+}

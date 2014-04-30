@@ -1,0 +1,9 @@
+new graph g2x
+
+include L3Metamodel.grsi
+include newproject1.grsi
+
+exec (cntr:AUX_Counter)=createAUX_Counter && [uniquifyIDs(cntr)] && deleteAUX_Counter(cntr)
+
+redirect emit result.xmi
+exec toXmi

@@ -1,0 +1,36 @@
+new graph "tnt\TNT"
+
+debug set layout Circular
+
+xgrs createTNT
+
+xgrs [?TNTUnfolded]
+xgrs [?TNT]
+xgrs [?TNTTotallyFolded]
+xgrs [?TNTChain]
+xgrs [?ToluolCore]
+
+custom graph analyze_graph
+custom actions gen_searchplan TNT
+
+xgrs [?TNTUnfolded]
+xgrs [?TNT]
+xgrs [?TNTTotallyFolded]
+xgrs [?TNTChain]
+xgrs [?ToluolCore]
+
+xgrs [?DNTUnfolded]
+xgrs [?DNT]
+
+xgrs createDNT
+
+xgrs [?DNTUnfolded]
+xgrs [?DNT]
+
+xgrs [?TNT]
+xgrs [?TNB]
+xgrs [?Toluol]
+xgrs [?ToluolCore]
+xgrs [?ToluolCoreNotC6Nitro]
+
+quit

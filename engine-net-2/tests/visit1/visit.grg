@@ -1,0 +1,110 @@
+using visit;
+
+#include "graphgen.gri"
+
+test initCounter : (int) {
+	return (0);
+}
+
+rule componentStart(var counter:int) : (int)
+{
+    n:N;
+    if { !n.visited; }
+
+	modify {
+		eval { n.visited = true; }
+		return (counter+1);
+	}
+}
+
+rule markComponent
+{
+	n:Node ?--? m:Node;
+	if { n.visited && !m.visited; }
+
+	modify {
+		eval {
+			m.visited = true;
+		}
+	}
+}
+
+// calling patterns with variables is not supported yet, otherwise handing in visited flag id would be nicer
+pattern Component(n:Node)
+{
+	iterated {
+		n ?--? m:Node;
+		c:Component(m);
+
+		modify {
+			c();
+			eval {
+				m.visited = true;
+			}
+		}
+    }
+
+    modify {}
+}
+
+rule findComponent()
+{
+    n:N;
+    if { !n.visited; }
+    c:Component(n);
+
+    modify {
+        c();
+		eval {
+			n.visited = true;
+		}
+    }
+}
+
+rule removeVisited()
+{
+	n:Node;
+	if { n.visited; }
+
+	modify {
+		eval {
+			n.visited = false;
+		}
+	}
+}
+
+test isVisited(var visId:int)
+{
+	n:Node;
+	if { n.visited[visId]; }
+}
+
+rule empty
+{
+	modify {
+	}
+}
+
+rule setVisited(var visId:int)
+{
+	n:Node;
+	if { !n.visited[visId]; }
+
+	modify {
+		eval {
+			n.visited[visId] = true;
+		}
+	}
+}
+
+rule smokeTest : (Node)
+{
+	modify {
+		n:Node;
+		
+		exec( { (vid:int)=valloc(); vreset(vid); vfreenonreset(vid) } );
+		exec( { (vid:int)=valloc(); n.visited[vid] = n.visited[vid] ? false : true; vfree(vid) } );
+		
+		return (n);
+	}
+}

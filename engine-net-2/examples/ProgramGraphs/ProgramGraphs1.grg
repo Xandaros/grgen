@@ -1,0 +1,92 @@
+// rule file containing rules/tests containing alternative patterns showing how to match patterns
+//  with a common part and different alternative parts
+// showing how alternatives can be nested, and that an alternative case may need a negative to prevent a match,
+//  esp. of the empty pattern, as the order of trying the alternative cases is undefined
+// showing that alternatives may contain a nested rewrite part,
+//  i.e. they allow you to specify a change, not only a pattern
+// before was ProgramGraphs0.grg, next is ProgramGraphs2.grg
+
+#using "ProgramGraphs.gm"
+
+#include "ProgramGraphs0WithoutUsing.grg"
+
+test FirstStatement
+{
+	mb:MethodBody;
+
+	alternative
+	{
+		Assignment {
+			mb -:next-> e:Expression;
+			e -:writesTo->;
+		}
+		Call {
+			mb -:next-> e:Expression;
+			e -:calls->;
+		}
+		Return {
+			mb -:next-> e:Expression;
+			e -:uses->;
+		}
+		EndOfList {
+			negative {
+				mb -:next->;
+			}
+		}
+	}
+}
+
+rule FirstStatementEx(mb:MethodBody)
+{
+	alternative
+	{
+		Assignment {
+			mb -:next-> e:Expression;
+			e -:writesTo->;
+			e -:contains\next-> sub:Expression;
+			alternative
+			{
+				Call {
+					sub -ca:calls->;
+
+					modify {
+						delete(ca);
+						sub -:uses-> :Constant <-:contains- mb;
+					}
+				}
+				Use {
+					sub -:uses->;
+
+					modify { }
+				}
+			}
+
+			modify { }
+		}
+		Call {
+			mb -:next-> e:Expression;
+			e -ca:calls->;
+
+			modify {
+				delete(ca);
+				e -:uses-> :Constant <-:contains- mb;
+			}
+		}
+		Return {
+			mb -:next-> e:Expression;
+			e -:uses->;
+
+			modify { }
+		}
+		Empty {
+			negative {
+				mb -:next->;
+			}
+
+			modify { }
+		}
+	}
+
+	modify {
+	}
+}

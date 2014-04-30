@@ -1,0 +1,44 @@
+function one() : int
+{
+	return(1);
+}
+
+function two() : int
+{
+	return(2);
+}
+
+function three(var v:int) : int
+{
+	if(v==3) {
+		return(v);
+	} else {
+		return(two()+one());
+	}
+}
+
+test t : (int)
+{
+	def var res:int;
+	
+	independent {
+		yield {
+			yield res = one() + two();
+		}
+	}
+	
+	return (res);
+}
+
+rule r : (int)
+{	
+	modify {
+		def var res:int;
+		
+		eval { 
+			yield res = one() + two();
+		}
+		
+		return (res);
+	}
+}

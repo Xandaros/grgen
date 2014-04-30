@@ -1,0 +1,12 @@
+function func(var b:boolean) : boolean
+{
+	return(b);
+}
+
+procedure call()
+{
+	def var b:boolean;
+	func(b);
+	return;
+}
+

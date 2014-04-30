@@ -1,0 +1,91 @@
+#This is the GrGen.NET solution to the Program Comprehension case of Grabats 2009,
+#part 2 -- Analysis
+#larger sets are available from http://www.emn.fr/x-info/atlanmod/index.php/GraBaTs_2009_Case_Study
+
+import JDTAST.ecore CFG.ecore PDG.ecore task2.xmi task2.grg
+show num nodes
+show num edges
+
+debug set layout Hierarchic
+
+dump set node HelperNode color grey
+dump set edge HelperEdge color grey
+
+dump set node _org_amma_cfg::_AbstractNode labels off
+dump add node _org_amma_cfg::_AbstractNode shortinfotag _name
+dump set edge _org_amma_cfg::_AbstractNode_toNode labels off
+dump set node _org_amma_cfg::_Expression color grey
+dump add node _org_amma_cfg::_Expression exclude
+dump set edge _org_amma_cfg::_ConditionalNode_trueConditionNode labels "true"
+dump set edge _org_amma_cfg::_ConditionalNode_falseConditionNode labels "false"
+dump set edge _org_amma_cfg::_IterativeNode_trueConditionNode labels "true"
+dump set edge _org_amma_cfg::_IterativeNode_falseConditionNode labels "false"
+
+dump set node CFG_Enter color green
+dump set node CFG_Exit color red
+dump set edge _org_amma_cfg::_Expression_innerExpression color grey
+dump set edge _org_amma_cfg::_AbstractNode_expression color grey
+
+dump set edge pdom color blue
+dump set edge pdom_frontier color orange
+dump set node _org_amma_pdg::_EnterNode labels off
+dump add node _org_amma_pdg::_EnterNode shortinfotag _name
+dump set edge _org_amma_pdg::_ExpressionNode_controlDependenceNodes color red
+dump set edge _org_amma_pdg::_ExpressionNode_controlDependenceNodes textcolor red
+dump set edge _org_amma_pdg::_ExpressionNode_controlDependenceNodes labels "controlDep"
+dump set edge _org_amma_pdg::_ExpressionNode_dataDependenceNodes color black
+dump set edge _org_amma_pdg::_ExpressionNode_dataDependenceNodes labels "dataDep"
+dump set node _org_amma_pdg::_EnterNode color green
+dump set node _org_amma_pdg::_Expression color grey
+dump add node _org_amma_pdg::_Expression exclude
+dump set edge _org_amma_pdg::_ExpressionNode_expression color grey
+dump set edge _org_amma_pdg::_Expression_innerExpressions color grey
+dump set node _org_amma_pdg::_ExpressionNode labels off
+dump add node _org_amma_pdg::_ExpressionNode shortinfotag _name
+
+# if-statement tests
+#exec WhileStatement_to_IfStatement_then
+#exec WhileStatement_to_IfStatement_else
+#exec [rename_prod_2_k]
+
+# Transform AST to CFG
+exec CFG_name_expressions
+exec [CFG_handle_statements]
+exec [CFG_handle_IfStatement]
+exec [CFG_handle_IfStatement_Block]
+exec [CFG_handle_WhileStatement]
+exec [CFG_handle_WhileStatement_Block]
+exec [CFG_handle_EmptyStatement]
+exec [CFG_sweep_graph]
+exec AST_nodes_2_CFG
+
+# Dump CFG
+redirect emit cfg_task2-grgen.xmi
+exec (id:int) = CFG_initial_id \
+		;> (id) = CFG_number_node(id)* \
+		;> CFG_XML_prefix \
+		;> (id) = CFG_initial_id \
+		;> ((n:_org_amma_cfg::_AbstractNode, id) = CFG_node_by_id(id) && CFG_dump_AbstractNode(n))* \
+		;> CFG_XML_suffix \
+		;> CFG_finish_dump \
+		;> (CFG_add_Enter_and_Exit & CFG_connect_Enter* & CFG_connect_Exit*) \
+
+# Transform CFG to PDG
+exec PDG_init_post_dominance
+exec PDG_determine_post_dominance
+exec PDG_determine_post_dominance_frontiers
+exec PDG_create_control_dependencies
+exec PDG_delete_post_dominance*
+exec PDG_add_data_dependencies
+exec CFG_nodes_2_PDG
+
+# Dump PDG
+redirect emit pdg_task2-grgen.xmi
+exec PDG_number_dependencies
+exec PDG_XML_prefix
+exec PDG_dump
+exec PDG_XML_suffix
+exec PDG_finish_dump
+
+show graph ycomp
+exit

@@ -1,0 +1,19 @@
+new graph defYield/yieldLHS
+
+xgrs (::start)=createBlowball
+
+show num nodes
+show num nodes NINT
+show num edges
+
+xgrs (::count_,::numb,::v)=countNINT(::start)
+
+show num nodes
+show num nodes NINT
+show num edges
+
+show var count_
+show var numb
+show var v
+
+quit

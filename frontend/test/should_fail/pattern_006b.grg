@@ -1,0 +1,20 @@
+using patt;
+
+pattern Foo modify(a:A, b:B)
+{
+	n:Node;
+	
+	modify {
+		a --> n <-- b;
+	}	
+}
+
+rule r {
+	foo:Foo();
+
+	modify {
+		a:Node;
+		b:A; 
+		foo(a, b);
+	}
+}

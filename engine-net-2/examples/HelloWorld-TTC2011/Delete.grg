@@ -1,0 +1,46 @@
+#using "graph1__ecore.gm"
+
+rule deleteN1 {
+	n:_graph1::_Node;
+
+	if {n._name == "n1";}
+
+	modify {
+		delete(n);
+	}
+}
+
+rule deleteN1AndAllIncidentEdges {
+	n:_graph1::_Node;
+
+	if {n._name == "n1";}
+
+	iterated {
+		n <-- e:_graph1::_Edge;
+
+		replace {
+		}
+	}
+
+	replace {
+	}
+}
+
+rule fixNodeIndex {
+	n:_graph1::_Node;
+	n <-e:_graph1::_Graph_nodes-;
+
+	if {e.ordering > 0;}
+
+	negative {
+		<-f:_graph1::_Graph_nodes-;
+
+		if { f.ordering == e.ordering - 1;}
+	}
+
+	modify {
+		eval {
+			e.ordering = e.ordering - 1;
+		}
+	}
+}

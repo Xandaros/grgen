@@ -1,0 +1,168 @@
+rule init1
+{
+
+    replace
+    {
+        x:Node;
+        y:Node;
+        z:Node;
+        
+        x --> y;
+        y --> z;
+    }
+}
+
+rule init2
+{
+
+    replace
+    {
+        x:Node;
+        y:Node;
+        z:Node;
+        
+        x --> x;
+        x --> y;
+        y --> z;
+    }
+}
+
+rule init3
+{
+
+    replace
+    {
+        x:Node;
+        y:Node;
+        
+        x --> y;
+        y --> y;
+    }
+}
+
+rule init4
+{
+
+    replace
+    {
+        a:Node;
+        b:Node;
+        c:Node;
+        d:Node;
+        
+        a --> a;
+        b --> c;
+    }
+}
+
+rule initParam : (Node, Edge, Node, Edge, Node)
+{
+
+    replace {
+	    a:Node;
+	    b:Node;
+	    c:Node;
+	    
+        a -e:Edge-> b;
+        b -f:Edge-> c;
+        
+        return(a, e, b, f, c);
+    }
+}
+
+exact rule deleteSrcNode
+{
+    x:Node;
+    y:Node;
+    
+    x --> y;
+
+    replace
+    {
+        y;
+    }
+}
+
+exact rule deleteNodeWithDanglingEdge
+{
+    x:Node;
+    
+    x --> ;
+
+    replace
+    {
+    }
+}
+
+exact rule testHom
+{
+	x: Node;
+	y: Node;
+	
+	hom(x,y);
+	
+	-e:Edge-> x -f:Edge-> y;
+	
+	modify
+	{
+		delete(y);
+	}
+}
+
+exact rule withDot
+{
+	.-->.;
+	modify {}
+}
+
+rule oneOfTwoExact
+{
+    a:Node;
+    b:Node;
+    
+    exact(a);
+
+    modify
+    {
+        delete(a);
+    }    
+}
+
+rule twoOfThreeExact
+{
+    a:Node;
+    b:Node;
+    c:Node;
+    
+    exact(a,b);
+
+    replace
+    {
+    }    
+}
+
+exact rule exactParamNode(a:Node)
+{
+	modify {}
+}
+
+exact rule exactParamEdge(-e:Edge->)
+{
+	modify {}
+}
+
+exact rule exactParamEdgeWithNodes(-e:Edge->)
+{
+	.-e->.;
+
+	modify {}
+}
+
+exact test exactParamNodeTest(a:Node){}
+
+exact test exactParamEdgeTest(-e:Edge->){}
+
+exact test exactParamEdgeWithNodesTest(-e:Edge->)
+{
+	.-e->.;
+}

@@ -1,0 +1,332 @@
+using porter;
+
+// note: double is mapped to float and long, short, byte are mapped to int in exporting gxl 
+// (gxl does not know the distinction float/double, byte/short/int/long and does not specify what their atomic types mean)
+
+rule createTestGraph
+{
+	modify {
+		. <-- n1:N4 -e1:E4-> n2:N4 -e2:E4-> n3:N4 -e3:E4-> n1;
+		n4:N3 -e4:E2a-> n5:N2a; n4 -e5:E2b-> n6:N2b; n4 -e6:E3-> n4;
+		
+		eval {
+			n1.f = 1y;
+			n1.fo = 1s;
+			n1.foo = 1;
+			n1.fooo = 1l;
+			n1.bar = "n1";
+			n1.bla = 3.141592654;
+			n1.huh = true;
+			n1.lal = Bla::Lamm;
+
+			e1.f = 0xCY;
+			e1.fo = 0xCS;
+			e1.foo = 0xC;
+			e1.fooo = 0xCL;
+			e1.bar = "n1->n2";
+			e1.bla = 12.0f;
+			e1.huh = true;
+			e1.lal = Bla::Hurz;
+			
+			n2.f = 2y;
+			n2.fo = 2s;
+			n2.foo = 2;
+			n2.fooo = 2l;
+			n2.bar = "n2";
+			n2.bla = 4.0;
+			n2.huh = false;
+
+			e2.f = 23y;
+			e2.fo = 23s;
+			e2.foo = 23;
+			e2.fooo = 23l;
+			e2.bar = "n2->n3";
+			e2.bla = 23.0f;
+			e2.huh = false;
+
+			n3.f = 3y;
+			n3.fo = 3s;
+			n3.foo = 3;
+			n3.fooo = 3l;
+			n3.bar = "n3";
+			n3.bla = 2.718281828;
+			n3.huh = true;
+			
+			e3.f = 31y;
+			e3.fo = 31s;
+			e3.foo = 31;
+			e3.fooo = 31l;
+			e3.bar = "n3->n1";
+			e3.bla = 3.141593f;
+			e3.huh = true;
+
+			n4.bla = 42.0;
+			
+			e4.f = 42Y;
+			e4.fo = 42S;
+			e4.foo = 42;
+			e4.fooo = 42L;
+
+			n5.f = 42Y;
+			n5.fo = 42S;
+			n5.foo = 42;
+			n5.fooo = 42L;
+
+			e5.bar = "haha";
+
+			n6.bar = "Weltherrschaft!";
+			
+			e6.bla = 42.0f;
+		}
+	}
+}
+
+test checkForTestGraph
+{
+	. <-- n1:N4 -e1:E4-> n2:N4 -e2:E4-> n3:N4 -e3:E4-> n1;
+	n4:N3 -e4:E2a-> n5:N2a; n4 -e5:E2b-> n6:N2b; n4 -e6:E3-> n4;
+	
+	if {
+		n1.f == 1y &&
+		n1.fo == 1s &&
+		n1.foo == 1 &&
+		n1.fooo == 1l &&
+		n1.bar == "n1" &&
+		n1.bla == 3.141592654 &&
+		n1.huh == true &&
+		n1.lal == Bla::Lamm &&
+
+		e1.f == 0xCy &&
+		e1.fo == 0xCs &&
+		e1.foo == 0xC &&
+		e1.fooo == 0xCl &&
+		e1.bar == "n1->n2" &&
+		e1.bla == 12.0f &&
+		e1.huh == true &&
+		e1.lal == Bla::Hurz &&
+		
+		n2.f == 2Y &&
+		n2.fo == 2S &&
+		n2.foo == 2 &&
+		n2.fooo == 2L &&
+		n2.bar == "n2" &&
+		n2.bla == 4.0 &&
+		n2.huh == false &&
+
+		e2.f == 23Y &&
+		e2.fo == 23S &&
+		e2.foo == 23 &&
+		e2.fooo == 23L &&
+		e2.bar == "n2->n3" &&
+		e2.bla == 23.0f &&
+		e2.huh == false &&
+
+		n3.f == 3y &&
+		n3.fo == 3s &&
+		n3.foo == 3 &&
+		n3.fooo == 3l &&
+		n3.bar == "n3" &&
+		n3.bla == 2.718281828 &&
+		n3.huh == true &&
+		
+		e3.f == 31Y &&
+		e3.fo == 31S &&
+		e3.foo == 31 &&
+		e3.fooo == 31L &&
+		e3.bar == "n3->n1" &&
+		e3.bla == 3.141593f &&
+		e3.huh == true &&
+
+		n4.bla == 42.0 &&
+		
+		e4.f == 42y &&
+		e4.fo == 42s &&
+		e4.foo == 42 &&
+		e4.fooo == 42l &&
+
+		n5.f == 42y &&
+		n5.fo == 42s &&
+		n5.foo == 42 &&
+		n5.fooo == 42l &&
+
+		e5.bar == "haha" &&
+
+		n6.bar == "Weltherrschaft!" &&
+		
+		e6.bla == 42.0f;
+	}
+}
+
+rule printNames
+{
+	. <-- n1:N4 -e1:E4-> n2:N4 -e2:E4-> n3:N4 -e3:E4-> n1;
+	n4:N3 -e4:E2a-> n5:N2a; n4 -e5:E2b-> n6:N2b; n4 -e6:E3-> n4;
+	
+	if {
+		n1.f == 1y &&
+		n1.fo == 1s &&
+		n1.foo == 1 &&
+		n1.fooo == 1l &&
+		n1.bar == "n1" &&
+		n1.bla == 3.141592654 &&
+		n1.huh == true &&
+		n1.lal == Bla::Lamm &&
+
+		e1.f == 0xCy &&
+		e1.fo == 0xCs &&
+		e1.foo == 0xC &&
+		e1.fooo == 0xCl &&
+		e1.bar == "n1->n2" &&
+		e1.bla == 12.0f &&
+		e1.huh == true &&
+		e1.lal == Bla::Hurz &&
+		
+		n2.f == 2Y &&
+		n2.fo == 2S &&
+		n2.foo == 2 &&
+		n2.fooo == 2L &&
+		n2.bar == "n2" &&
+		n2.bla == 4.0 &&
+		n2.huh == false &&
+
+		e2.f == 23Y &&
+		e2.fo == 23S &&
+		e2.foo == 23 &&
+		e2.fooo == 23L &&
+		e2.bar == "n2->n3" &&
+		e2.bla == 23.0f &&
+		e2.huh == false &&
+
+		n3.f == 3y &&
+		n3.fo == 3s &&
+		n3.foo == 3 &&
+		n3.fooo == 3l &&
+		n3.bar == "n3" &&
+		n3.bla == 2.718281828 &&
+		n3.huh == true &&
+		
+		e3.f == 31Y &&
+		e3.fo == 31S &&
+		e3.foo == 31 &&
+		e3.fooo == 31L &&
+		e3.bar == "n3->n1" &&
+		e3.bla == 3.141593f &&
+		e3.huh == true &&
+
+		n4.bla == 42.0 &&
+		
+		e4.f == 42y &&
+		e4.fo == 42s &&
+		e4.foo == 42 &&
+		e4.fooo == 42l &&
+
+		n5.f == 42y &&
+		n5.fo == 42s &&
+		n5.foo == 42 &&
+		n5.fooo == 42l &&
+
+		e5.bar == "haha" &&
+
+		n6.bar == "Weltherrschaft!" &&
+		
+		e6.bla == 42.0f;
+	}
+
+	modify {
+		emit("value of variable n1 which is a node rly ", nameof(n1), "\n");
+		emit("value of variable n2 which is a node rly ", nameof(n2), "\n");
+		emit("value of variable n3 which is a node rly ", nameof(n3), "\n");
+		emit("value of variable n4 which is a node rly ", nameof(n4), "\n");
+		emit("value of variable n5 which is a node rly ", nameof(n5), "\n");
+		emit("value of variable n6 which is a node rly ", nameof(n6), "\n");
+		emit("value of variable e1 which is a edge rly ", nameof(e1), "\n");
+		emit("value of variable e2 which is a edge rly ", nameof(e2), "\n");
+		emit("value of variable e3 which is a edge rly ", nameof(e3), "\n");
+		emit("value of variable e4 which is a edge rly ", nameof(e4), "\n");
+		emit("value of variable e5 which is a edge rly ", nameof(e5), "\n");
+		emit("value of variable e6 which is a edge rly ", nameof(e6), "\n");
+	}
+}
+
+rule createConnectedComponents
+{
+	modify {
+		.;
+		
+		. --> :N4 --> .;
+		
+		n1:N2a --> . --> . --> n1;
+		
+		n2:Node --> n3:N3 --> n2 --> n2;
+	}
+}
+
+test matchConnectedComponents
+{
+	.;
+		
+	. --> :N4 --> .;
+		
+	n1:N2a --> . --> . --> n1;
+		
+	n2:Node --> n3:N3 --> n2 --> n2;
+}
+
+
+procedure saveConnectedComponents()
+{
+	def var i:int = 0;
+	while(!empty()) {
+		def var n:Node = fetchNode();
+		def ref connectedComponent:set<Node> = reachable(n) | {n};
+		def var sub:graph = inducedSubgraph(connectedComponent);
+		File::export(sub, "cc"+i+".grs");
+		deleteSubgraph(connectedComponent);
+		i = i + 1;
+	}
+	return;
+}
+
+procedure loadConnectedComponents()
+{
+	def var i:int = 0;
+	while(File::existsFile("cc"+i+".grs")) {
+		insert(File::import("cc"+i+".grs"));
+		i = i + 1;
+	}
+	return;
+}
+
+procedure removeSavedConnectedComponentsFiles()
+{
+	def var i:int = 0;
+	while(File::existsFile("cc"+i+".grs")) {
+		File::deleteFile("cc"+i+".grs");
+		i = i + 1;
+	}
+	return;
+}
+
+function fetchNode() : Node
+{
+	for(n:Node in nodes()) {
+		return(n);
+	}
+	return(null);
+}
+
+procedure deleteSubgraph(ref sn:set<Node>)
+{
+	for(n:Node in sn) {
+//		emit("del "); emit(n); emit(";");
+		rem(n);
+	}
+	return;
+}
+
+rule burnCycles
+{
+	n:Node;
+	modify {
+	}
+}

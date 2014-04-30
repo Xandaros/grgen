@@ -1,0 +1,27 @@
+procedure foo(n1:Node, -e1:Edge->) : (int)
+{
+	def var res:int = 42;
+
+	valloc();
+	startTransaction();
+	add(Edge, n1, n1);
+	retype(n1, Node);
+
+	return(res);
+}
+
+rule r(n1:Node, -e1:Edge->) : (int)
+{	
+	modify {
+		def var res:int = 42;
+		
+		eval { 
+			valloc();
+			startTransaction();
+			add(Edge, n1, n1);
+			retype(n1, Node);
+		}
+		
+		return (res);
+	}
+}

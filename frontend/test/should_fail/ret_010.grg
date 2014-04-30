@@ -1,0 +1,11 @@
+rule r : (Node, EINT, NINT, Node) {
+	x: Node;
+	y: Node;
+
+	x -e:Edge-> y;
+
+	modify {
+		return(x, e, y, a, x);
+	}
+}
+

@@ -1,0 +1,119 @@
+using model_init;
+
+function func1(bb:BB) : B
+{
+	return(bb);
+}
+
+function func2(b:B) : B
+{
+	return(b);
+}
+
+procedure proc1(bb:BB) : (B)
+{
+	return(bb);
+}
+
+procedure proc2(b:B) : (B)
+{
+	return(b);
+}
+
+rule r()
+{
+	bb:BB;
+	b:B;
+	
+	yield {
+		def ret1:Node = func1(bb);
+		def ret2:B = func1(bb);
+		def ret3:B = func2(bb);
+		def ret4:B = func2(b);
+		def ret5:Node = func2(b);
+	}
+	
+	modify {
+		eval {
+			def ret1:Node = func1(bb);
+			def ret2:B = func1(bb);
+			def ret3:B = func2(bb);
+			def ret4:B = func2(b);
+			def ret5:Node = func2(b);
+			
+			(ret1) = proc1(bb);
+			(ret2) = proc1(bb);
+			(ret3) = proc2(bb);
+			(ret4) = proc2(b);
+			(ret5) = proc2(b);
+		}
+		
+		eval {
+			(def ret1:Node) = proc1(bb);
+			(def ret2:B) = proc1(bb);
+			(def ret3:B) = proc2(bb);
+			(def ret4:B) = proc2(b);
+			(def ret5:Node) = proc2(b);
+			ret2 = ret3;
+		}
+	}
+}
+
+function func1e(-ee:EE->) : E1
+{
+	return(ee);
+}
+
+function func2e(-e:E1->) : E1
+{
+	return(e);
+}
+
+procedure proc1e(-ee:EE->) : (E1)
+{
+	return(ee);
+}
+
+procedure proc2e(-e:E1->) : (E1)
+{
+	return(e);
+}
+
+rule re()
+{
+	-ee:EE->;
+	-e:E1->;
+
+	yield {
+		def -ret1:Edge-> = func1e(ee);
+		def -ret2:E1-> = func1e(ee);
+		def -ret3:E1-> = func2e(ee);
+		def -ret4:E1-> = func2e(e);
+		def -ret5:Edge-> = func2e(e);
+	}
+
+	modify {
+		eval {
+			def -ret1:Edge-> = func1e(ee);
+			def -ret2:E1-> = func1e(ee);
+			def -ret3:E1-> = func2e(ee);
+			def -ret4:E1-> = func2e(e);
+			def -ret5:Edge-> = func2e(e);
+			
+			(ret1) = proc1e(ee);
+			(ret2) = proc1e(ee);
+			(ret3) = proc2e(ee);
+			(ret4) = proc2e(e);
+			(ret5) = proc2e(e);
+		}
+		
+		eval {
+			(def -ret1:Edge->) = proc1e(ee);
+			(def -ret2:E1->) = proc1e(ee);
+			(def -ret3:E1->) = proc2e(ee);
+			(def -ret4:E1->) = proc2e(e);
+			(def -ret5:Edge->) = proc2e(e);
+			ret2 = ret3;
+		}
+	}
+}

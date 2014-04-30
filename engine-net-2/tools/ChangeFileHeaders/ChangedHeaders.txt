@@ -1,0 +1,770 @@
+/hgrgen
+  /engine-net-2
+    /examples
+      /ConferenceScheduling-GraBaTs08-Live-Contest-Winning-Solution
+        /manualsolution
+        +Program.cs ... NO HEADER
+        /parseoutput
+        +Program.cs ... NO HEADER
+      /ExternalAttributeEvaluationExample
+      +ExternalAttributeEvaluationModelExternalFunctions.cs ... NO HEADER
+      +ExternalAttributeEvaluationModelExternalFunctionsImpl.cs ... NO HEADER
+      /ExternalFiltersAndSequencesExample
+      +ExternalFiltersAndSequencesActionsExternalFunctions.cs ... NO HEADER
+      +ExternalFiltersAndSequencesActionsExternalFunctionsImpl.cs ... NO HEADER
+      /ProgramGraphExample-AGTIVE11
+      +ProgramGraphsActions_intermediate.cs ... NO HEADER
+      +ProgramGraphsModel.cs ... NO HEADER
+      /Reengineering-TTC-2011
+      +reengineeringActions_intermediate.cs ... NO HEADER
+      +reengineeringModel.cs ... NO HEADER
+    /examples-api
+      /AlternativeExample
+      +AlternativesActions.cs ... NO HEADER
+      +AlternativesActions_intermediate.cs ... NO HEADER
+      +AlternativesExample.cs ... REWRITING ... DONE
+      +AlternativesModel.cs ... NO HEADER
+      /AntWorldExample
+      +AntWorldExample.cs ... REWRITING ... DONE
+      +AntWorld_ExtendAtEndOfRound_NoGammelActions.cs ... NO HEADER
+      +AntWorld_ExtendAtEndOfRound_NoGammelActions_intermediate.cs ... NO HEADER
+      +AntWorld_NoGammelModel.cs ... NO HEADER
+      /BusyBeaverExample
+      +BusyBeaverExample.cs ... REWRITING ... DONE
+      +Turing3Actions.cs ... NO HEADER
+      +Turing3Actions_intermediate.cs ... NO HEADER
+      +Turing3Model.cs ... NO HEADER
+      /edge1Example
+      +edge1Actions.cs ... NO HEADER
+      +edge1Actions_intermediate.cs ... NO HEADER
+      +edge1Example.cs ... REWRITING ... DONE
+      +StdModel.cs ... NO HEADER
+      /ExternalAttributeEvaluationExample
+      +ExternalAttributeEvaluationActions.cs ... NO HEADER
+      +ExternalAttributeEvaluationActions_intermediate.cs ... NO HEADER
+      +ExternalAttributeEvaluationExample.cs ... REWRITING ... DONE
+      +ExternalAttributeEvaluationModel.cs ... NO HEADER
+      +ExternalAttributeEvaluationModelExternalFunctions.cs ... NO HEADER
+      +ExternalAttributeEvaluationModelExternalFunctionsImpl.cs ... NO HEADER
+      /ExternalFiltersAndSequencesExample
+      +ExternalFiltersAndSequencesActions.cs ... NO HEADER
+      +ExternalFiltersAndSequencesActionsExternalFunctions.cs ... NO HEADER
+      +ExternalFiltersAndSequencesActionsExternalFunctionsImpl.cs ... NO HEADER
+      +ExternalFiltersAndSequencesExample.cs ... REWRITING ... DONE
+      +ExternalFiltersAndSequencesModel.cs ... NO HEADER
+      /HelloMutex
+      +HelloMutex.cs ... REWRITING ... DONE
+      /IndependentExample
+      +IndependentActions.cs ... NO HEADER
+      +IndependentActions_intermediate.cs ... NO HEADER
+      +IndependentExample.cs ... REWRITING ... DONE
+      +IndependentModel.cs ... NO HEADER
+      /IteratedExample
+      +IteratedExample.cs ... REWRITING ... DONE
+      +spanningTreeActions.cs ... NO HEADER
+      +spanningTreeActions_intermediate.cs ... NO HEADER
+      +StdModel.cs ... NO HEADER
+      /JavaProgramGraphsExample
+      +JavaProgramGraphsActions.cs ... NO HEADER
+      +JavaProgramGraphsActions_intermediate.cs ... NO HEADER
+      +JavaProgramGraphsExample.cs ... REWRITING ... DONE
+      +JavaProgramGraphsModel.cs ... NO HEADER
+      /MutexDirectExample
+      +MutexDirectExample.cs ... REWRITING ... DONE
+      +MutexModel.cs ... NO HEADER
+      +MutexPimpedActions.cs ... NO HEADER
+      +MutexPimpedActions_intermediate.cs ... NO HEADER
+      /ProgramGraphsExample
+      +ProgramGraphsExample.cs ... REWRITING ... DONE
+      +ProgramGraphsOriginalActions.cs ... NO HEADER
+      +ProgramGraphsOriginalActions_intermediate.cs ... NO HEADER
+      +ProgramGraphsOriginalModel.cs ... NO HEADER
+      /RecursiveExample
+      +RecursiveActions.cs ... NO HEADER
+      +RecursiveActions_intermediate.cs ... NO HEADER
+      +RecursiveExample.cs ... REWRITING ... DONE
+      +StdModel.cs ... NO HEADER
+      /TNTExample
+      +TNTActions.cs ... NO HEADER
+      +TNTActions_intermediate.cs ... NO HEADER
+      +TNTExample.cs ... REWRITING ... DONE
+      +TNTModel.cs ... NO HEADER
+      /VisitedExample
+      +StdModel.cs ... NO HEADER
+      +VisitedExample.cs ... REWRITING ... DONE
+      +VisitedExampleActions.cs ... NO HEADER
+      +VisitedExampleActions_intermediate.cs ... NO HEADER
+      /YCompExample
+      +YCompClient.cs ... REWRITING ... DONE
+      +YCompExample.cs ... REWRITING ... DONE
+    /src
+      /ASTdapter
+      +ASTdapter.cs ... REWRITING ... DONE
+      +MakeModel.cs ... REWRITING ... DONE
+      +ParserPackage.cs ... REWRITING ... DONE
+        /Properties
+        +AssemblyInfo.cs ... REWRITING ... ASSEMBLY INFOS ... DONE
+        /test
+        +CalcLexer.cs ... NO HEADER
+        +CalcParser.cs ... NO HEADER
+        +CalcParserTokenTypes.cs ... NO HEADER
+      /GrGen
+      +GrGen.cs ... REWRITING ... DONE
+        /Properties
+        +AssemblyInfo.cs ... REWRITING ... ASSEMBLY INFOS ... DONE
+      /GrIO
+      +FileIO.cs ... REWRITING ... DONE
+      +Infrastructure.cs ... REWRITING ... DONE
+        /Properties
+        +AssemblyInfo.cs ... REWRITING ... ASSEMBLY INFOS ... DONE
+      /GrShell
+      +Debugger.cs ... REWRITING ... DONE
+      +ElementRealizers.cs ... REWRITING ... DONE
+      +FromToReader.cs ... NO HEADER
+      +GrShell.cs ... NO HEADER
+      +GrShellConstants.cs ... NO HEADER
+      +GrShellImpl.cs ... REWRITING ... DONE
+      +GrShellTokenManager.cs ... NO HEADER
+      +ParseException.cs ... NO HEADER
+      +SimpleCharStream.cs ... NO HEADER
+      +Token.cs ... NO HEADER
+      +TokenMgrError.cs ... NO HEADER
+      +WorkaroundManager.cs ... REWRITING ... DONE
+      +YCompClient.cs ... REWRITING ... DONE
+        /Properties
+        +AssemblyInfo.cs ... REWRITING ... ASSEMBLY INFOS ... DONE
+      /lgspBackend
+      +Expression.cs ... REWRITING ... DONE
+      +GraphCanonizer.cs ... NO HEADER
+      +GraphComparisonMatcher.cs ... REWRITING ... DONE
+      +GraphMatchingState.cs ... REWRITING ... DONE
+      +InterpretationPlan.cs ... REWRITING ... DONE
+      +InterpretationPlanBuilder.cs ... REWRITING ... DONE
+      +lgspActionExecutionEnvironment.cs ... REWRITING ... DONE
+      +lgspActions.cs ... REWRITING ... DONE
+      +lgspBackend.cs ... REWRITING ... DONE
+      +lgspDeferredSequencesManager.cs ... REWRITING ... DONE
+      +lgspGraph.cs ... REWRITING ... DONE
+      +lgspGraphElements.cs ... REWRITING ... DONE
+      +lgspGraphProcessingEnvironment.cs ... REWRITING ... DONE
+      +lgspGrGen.cs ... REWRITING ... DONE
+      +lgspMatcherGenerator.cs ... REWRITING ... DONE
+      +lgspMatcherGeneratorOld.cs ... REWRITING ... DONE
+      +lgspMatches.cs ... REWRITING ... DONE
+      +lgspNamedGraph.cs ... REWRITING ... DONE
+      +lgspPattern.cs ... REWRITING ... DONE
+      +lgspPatternElements.cs ... REWRITING ... DONE
+      +lgspSequenceGenerator.cs ... REWRITING ... DONE
+      +lgspTransactionManager.cs ... REWRITING ... DONE
+      +MonoILReader.cs ... REWRITING ... DONE
+      +NamesOfEntities.cs ... REWRITING ... DONE
+      +Pair.cs ... REWRITING ... DONE
+      +PatternGraphAnalyzer.cs ... REWRITING ... DONE
+      +PlanGraph.cs ... REWRITING ... DONE
+      +PriorityQueue.cs ... REWRITING ... DONE
+      +ScheduledSearchPlan.cs ... REWRITING ... DONE
+      +SearchOperationType.cs ... REWRITING ... DONE
+      +SearchPlanGraph.cs ... REWRITING ... DONE
+      +SearchProgram.cs ... REWRITING ... DONE
+      +SearchProgramBuilder.cs ... REWRITING ... DONE
+      +SearchProgramCompleter.cs ... REWRITING ... DONE
+      +SimpleGraphCanonizer.cs ... NO HEADER
+      +SourceBuilder.cs ... REWRITING ... DONE
+        /Properties
+        +AssemblyInfo.cs ... REWRITING ... ASSEMBLY INFOS ... DONE
+      /libGr
+      +actionInterface.cs ... REWRITING ... DONE
+      +backendInterface.cs ... REWRITING ... DONE
+      +BaseActions.cs ... REWRITING ... DONE
+      +BaseGraph.cs ... REWRITING ... DONE
+      +ContainerHelper.cs ... REWRITING ... DONE
+      +Deque.cs ... REWRITING ... DONE
+      +elementInterface.cs ... REWRITING ... DONE
+      +GraphHelper.cs ... REWRITING ... DONE
+      +GraphValidator.cs ... REWRITING ... DONE
+      +IActionExecutionEnvironment.cs ... REWRITING ... DONE
+      +IGraph.cs ... REWRITING ... DONE
+      +IGraphHelpers.cs ... REWRITING ... DONE
+      +IGraphProcessingEnvironment.cs ... REWRITING ... DONE
+      +INamedGraph.cs ... REWRITING ... DONE
+      +matchesInterface.cs ... REWRITING ... DONE
+      +modelInterface.cs ... REWRITING ... DONE
+      +NamedGraph.cs ... REWRITING ... DONE
+      +ParseException.cs ... NO HEADER
+      +patternInterface.cs ... REWRITING ... DONE
+      +Recorder.cs ... REWRITING ... DONE
+      +RuleAndSequenceInvocationRepresentations.cs ... REWRITING ... DONE
+      +Sequence.cs ... REWRITING ... DONE
+      +SequenceAssignmentTarget.cs ... REWRITING ... DONE
+      +SequenceBase.cs ... REWRITING ... DONE
+      +SequenceComputation.cs ... REWRITING ... DONE
+      +SequenceExecutionInterface.cs ... REWRITING ... DONE
+      +SequenceExpression.cs ... REWRITING ... DONE
+      +SequenceExpressionHelper.cs ... REWRITING ... DONE
+      +SequenceParser.cs ... NO HEADER
+      +SequenceParserConstants.cs ... NO HEADER
+      +SequenceParserExceptions.cs ... REWRITING ... DONE
+      +SequenceParserTokenManager.cs ... NO HEADER
+      +SequenceVariable.cs ... REWRITING ... DONE
+      +SimpleCharStream.cs ... NO HEADER
+      +SingleLinkedList.cs ... REWRITING ... DONE
+      +SymbolTable.cs ... REWRITING ... DONE
+      +SymmetryChecker.cs ... REWRITING ... DONE
+      +Token.cs ... NO HEADER
+      +TokenMgrError.cs ... NO HEADER
+      +TypesHelper.cs ... REWRITING ... DONE
+        /GRSImporter
+        +GRSImporter.cs ... NO HEADER
+        +GRSImporterConstants.cs ... NO HEADER
+        +GRSImporterTokenManager.cs ... NO HEADER
+        +ParseException.cs ... NO HEADER
+        +SimpleCharStream.cs ... NO HEADER
+        +Token.cs ... NO HEADER
+        +TokenMgrError.cs ... NO HEADER
+        /IO
+        +dumpInterface.cs ... REWRITING ... DONE
+        +ECoreImport.cs ... REWRITING ... DONE
+        +GraphDumper.cs ... REWRITING ... DONE
+        +GrgExport.cs ... REWRITING ... DONE
+        +GrsExport.cs ... REWRITING ... DONE
+        +GXLExport.cs ... REWRITING ... DONE
+        +GXLImport.cs ... REWRITING ... DONE
+        +Porter.cs ... REWRITING ... DONE
+        +set.cs ... REWRITING ... DONE
+        +VCGDumper.cs ... REWRITING ... DONE
+        /Properties
+        +AssemblyInfo.cs ... REWRITING ... ASSEMBLY INFOS ... DONE
+    /tools
+      /Benchmarker
+      +Benchmarker.cs ... REWRITING ... DONE
+        /Properties
+        +AssemblyInfo.cs ... REWRITING ... ASSEMBLY INFOS ... DONE
+      /ChangeFileHeaders
+        /ChangeFileHeaders
+        +Program.cs ... REWRITING ... DONE
+      /GenerateGraphs
+      +Program.cs ... REWRITING ... DONE
+      /GrShellBenchmarker
+      +Program.cs ... REWRITING ... DONE
+        /Properties
+        +AssemblyInfo.cs ... REWRITING ... ASSEMBLY INFOS ... DONE
+      /gxl2grs
+      +gxl2grs.cs ... REWRITING ... DONE
+        /Properties
+        +AssemblyInfo.cs ... REWRITING ... ASSEMBLY INFOS ... DONE
+      /spBench
+      +spBench.cs ... REWRITING ... DONE
+        /Properties
+        +AssemblyInfo.cs ... REWRITING ... ASSEMBLY INFOS ... DONE
+      /test
+      +complModelModel.cs ... NO HEADER
+      +complModelModelStub.cs ... NO HEADER
+      +interfaceTest.cs ... REWRITING ... DONE
+      +Program.cs ... REWRITING ... DONE
+      +testActions.cs ... NO HEADER
+      +testActionsManual.cs ... REWRITING ... DONE
+      +testActions_intermediate.cs ... NO HEADER
+      +testModelManual.cs ... REWRITING ... DONE
+      +testModelManual2.cs ... REWRITING ... DONE
+        /Properties
+        +AssemblyInfo.cs ... REWRITING ... ASSEMBLY INFOS ... DONE
+      /TestBench
+      +TestBench.cs ... REWRITING ... DONE
+        /Properties
+        +AssemblyInfo.cs ... REWRITING ... ASSEMBLY INFOS ... DONE
+  /frontend
+    /de
+      /unika
+        /ipd
+          /grgen
+          +Main.java ... REWRITING ... DONE
+          +ReportTest.java ... REWRITING ... DONE
+          +Sys.java ... REWRITING ... DONE
+            /ast
+            +AbstractMemberDeclNode.java ... REWRITING ... DONE
+            +ActionDeclNode.java ... REWRITING ... DONE
+            +AdjacentNodeExprNode.java ... REWRITING ... DONE
+            +AlternativeCaseNode.java ... REWRITING ... DONE
+            +AlternativeCaseTypeNode.java ... REWRITING ... DONE
+            +AlternativeNode.java ... REWRITING ... DONE
+            +AlternativeReplNode.java ... REWRITING ... DONE
+            +AlternativeTypeNode.java ... REWRITING ... DONE
+            +ArbitraryEdgeTypeNode.java ... REWRITING ... DONE
+            +ArithmeticOpNode.java ... REWRITING ... DONE
+            +AssignIndexedNode.java ... REWRITING ... DONE
+            +AssignNode.java ... REWRITING ... DONE
+            +AssignVisitedNode.java ... REWRITING ... DONE
+            +BaseNode.java ... REWRITING ... DONE
+            +BasicTypeNode.java ... REWRITING ... DONE
+            +BoolConstNode.java ... REWRITING ... DONE
+            +BooleanTypeNode.java ... REWRITING ... DONE
+            +ByteConstNode.java ... REWRITING ... DONE
+            +ByteTypeNode.java ... REWRITING ... DONE
+            +CallActionNode.java ... REWRITING ... DONE
+            +CastNode.java ... REWRITING ... DONE
+            +CollectNode.java ... REWRITING ... DONE
+            +CompoundAssignNode.java ... REWRITING ... DONE
+            +CompoundTypeNode.java ... REWRITING ... DONE
+            +ConnAssertNode.java ... REWRITING ... DONE
+            +ConnectionCharacter.java ... REWRITING ... DONE
+            +ConnectionNode.java ... REWRITING ... DONE
+            +ConstNode.java ... REWRITING ... DONE
+            +ConstraintDeclNode.java ... REWRITING ... DONE
+            +ConstructorDeclNode.java ... REWRITING ... DONE
+            +ConstructorParamNode.java ... REWRITING ... DONE
+            +ConstructorTypeNode.java ... REWRITING ... DONE
+            +DeclaredCharacter.java ... REWRITING ... DONE
+            +DeclaredTypeNode.java ... REWRITING ... DONE
+            +DeclExprNode.java ... REWRITING ... DONE
+            +DeclNode.java ... REWRITING ... DONE
+            +DirectedEdgeTypeNode.java ... REWRITING ... DONE
+            +DoubleConstNode.java ... REWRITING ... DONE
+            +DoubleTypeNode.java ... REWRITING ... DONE
+            +DummyNodeDeclNode.java ... REWRITING ... DONE
+            +EdgeCharacter.java ... REWRITING ... DONE
+            +EdgeDeclNode.java ... REWRITING ... DONE
+            +EdgeInterfaceTypeChangeNode.java ... REWRITING ... DONE
+            +EdgesExprNode.java ... REWRITING ... DONE
+            +EdgeTypeChangeNode.java ... REWRITING ... DONE
+            +EdgeTypeNode.java ... REWRITING ... DONE
+            +EmitNode.java ... REWRITING ... DONE
+            +EnumConstNode.java ... REWRITING ... DONE
+            +EnumExprNode.java ... REWRITING ... DONE
+            +EnumItemNode.java ... REWRITING ... DONE
+            +EnumItemTypeNode.java ... REWRITING ... DONE
+            +EnumTypeNode.java ... REWRITING ... DONE
+            +ErrorNode.java ... REWRITING ... DONE
+            +ErrorTypeNode.java ... REWRITING ... DONE
+            +EvalStatementNode.java ... REWRITING ... DONE
+            +ExactNode.java ... REWRITING ... DONE
+            +ExecNode.java ... REWRITING ... DONE
+            +ExecVarDeclNode.java ... REWRITING ... DONE
+            +ExprNode.java ... REWRITING ... DONE
+            +ExternalFunctionDeclNode.java ... REWRITING ... DONE
+            +ExternalFunctionInvocationExprNode.java ... REWRITING ... DONE
+            +ExternalFunctionTypeNode.java ... REWRITING ... DONE
+            +ExternalTypeNode.java ... REWRITING ... DONE
+            +FilterDeclNode.java ... REWRITING ... DONE
+            +FilterTypeNode.java ... REWRITING ... DONE
+            +FloatConstNode.java ... REWRITING ... DONE
+            +FloatTypeNode.java ... REWRITING ... DONE
+            +FunctionInvocationExprNode.java ... REWRITING ... DONE
+            +FunctionSignature.java ... REWRITING ... DONE
+            +GraphNode.java ... REWRITING ... DONE
+            +GraphTypeNode.java ... REWRITING ... DONE
+            +HomNode.java ... REWRITING ... DONE
+            +IdentExprNode.java ... REWRITING ... DONE
+            +IdentNode.java ... REWRITING ... DONE
+            +IncidentEdgeExprNode.java ... REWRITING ... DONE
+            +IndexedAccessExprNode.java ... REWRITING ... DONE
+            +InducedNode.java ... REWRITING ... DONE
+            +InheritanceTypeNode.java ... REWRITING ... DONE
+            +IntConstNode.java ... REWRITING ... DONE
+            +IntTypeNode.java ... REWRITING ... DONE
+            +InvalidConstNode.java ... REWRITING ... DONE
+            +InvalidDeclNode.java ... REWRITING ... DONE
+            +InvalidExprNode.java ... REWRITING ... DONE
+            +IteratedAccumulationYieldNode.java ... REWRITING ... DONE
+            +IteratedNode.java ... REWRITING ... DONE
+            +IteratedReplNode.java ... REWRITING ... DONE
+            +IteratedTypeNode.java ... REWRITING ... DONE
+            +LongConstNode.java ... REWRITING ... DONE
+            +LongTypeNode.java ... REWRITING ... DONE
+            +MatchEdgeByStorageAccessNode.java ... REWRITING ... DONE
+            +MatchEdgeFromStorageNode.java ... REWRITING ... DONE
+            +MatchNodeByStorageAccessNode.java ... REWRITING ... DONE
+            +MatchNodeFromStorageNode.java ... REWRITING ... DONE
+            +MatchTypeNode.java ... REWRITING ... DONE
+            +MaxExprNode.java ... REWRITING ... DONE
+            +MemberAccessExprNode.java ... REWRITING ... DONE
+            +MemberDeclNode.java ... REWRITING ... DONE
+            +MemberInitNode.java ... REWRITING ... DONE
+            +MethodCallNode.java ... REWRITING ... DONE
+            +MethodInvocationExprNode.java ... REWRITING ... DONE
+            +MinExprNode.java ... REWRITING ... DONE
+            +ModelNode.java ... REWRITING ... DONE
+            +ModelTypeNode.java ... REWRITING ... DONE
+            +ModifyDeclNode.java ... REWRITING ... DONE
+            +NameofNode.java ... REWRITING ... DONE
+            +NodeCharacter.java ... REWRITING ... DONE
+            +NodeDeclNode.java ... REWRITING ... DONE
+            +NodeInterfaceTypeChangeNode.java ... REWRITING ... DONE
+            +NodesExprNode.java ... REWRITING ... DONE
+            +NodeTypeChangeNode.java ... REWRITING ... DONE
+            +NodeTypeNode.java ... REWRITING ... DONE
+            +NullConstNode.java ... REWRITING ... DONE
+            +NullNode.java ... REWRITING ... DONE
+            +NullTypeNode.java ... REWRITING ... DONE
+            +ObjectTypeNode.java ... REWRITING ... DONE
+            +OperatorSignature.java ... REWRITING ... DONE
+            +OpNode.java ... REWRITING ... DONE
+            +OrderedReplacementNode.java ... REWRITING ... DONE
+            +PatternGraphNode.java ... REWRITING ... DONE
+            +PowExprNode.java ... REWRITING ... DONE
+            +QualIdentNode.java ... REWRITING ... DONE
+            +RandomNode.java ... REWRITING ... DONE
+            +RangeSpecNode.java ... REWRITING ... DONE
+            +ReachableEdgeExprNode.java ... REWRITING ... DONE
+            +ReachableNodeExprNode.java ... REWRITING ... DONE
+            +ReplaceDeclNode.java ... REWRITING ... DONE
+            +RhsDeclNode.java ... REWRITING ... DONE
+            +RhsTypeNode.java ... REWRITING ... DONE
+            +RuleDeclNode.java ... REWRITING ... DONE
+            +RuleTypeNode.java ... REWRITING ... DONE
+            +ScopeOwner.java ... REWRITING ... DONE
+            +SequenceDeclNode.java ... REWRITING ... DONE
+            +SequenceTypeNode.java ... REWRITING ... DONE
+            +ShortConstNode.java ... REWRITING ... DONE
+            +ShortTypeNode.java ... REWRITING ... DONE
+            +SingleGraphEntityNode.java ... REWRITING ... DONE
+            +SingleNodeConnNode.java ... REWRITING ... DONE
+            +StringConstNode.java ... REWRITING ... DONE
+            +StringIndexOfNode.java ... REWRITING ... DONE
+            +StringLastIndexOfNode.java ... REWRITING ... DONE
+            +StringLengthNode.java ... REWRITING ... DONE
+            +StringReplaceNode.java ... REWRITING ... DONE
+            +StringSubstringNode.java ... REWRITING ... DONE
+            +StringTypeNode.java ... REWRITING ... DONE
+            +SubpatternDeclNode.java ... REWRITING ... DONE
+            +SubpatternReplNode.java ... REWRITING ... DONE
+            +SubpatternTypeNode.java ... REWRITING ... DONE
+            +SubpatternUsageNode.java ... REWRITING ... DONE
+            +TestDeclNode.java ... REWRITING ... DONE
+            +TestTypeNode.java ... REWRITING ... DONE
+            +TotallyHomNode.java ... REWRITING ... DONE
+            +TypeBinaryExprNode.java ... REWRITING ... DONE
+            +TypeConstNode.java ... REWRITING ... DONE
+            +TypeConstraintNode.java ... REWRITING ... DONE
+            +TypeDeclNode.java ... REWRITING ... DONE
+            +TypeExprNode.java ... REWRITING ... DONE
+            +TypeNode.java ... REWRITING ... DONE
+            +TypeofNode.java ... REWRITING ... DONE
+            +TypeTypeNode.java ... REWRITING ... DONE
+            +UndirectedEdgeTypeNode.java ... REWRITING ... DONE
+            +UnitNode.java ... REWRITING ... DONE
+            +UntypedExecVarTypeNode.java ... REWRITING ... DONE
+            +VarDeclNode.java ... REWRITING ... DONE
+            +VisitedNode.java ... REWRITING ... DONE
+            +VoidTypeNode.java ... REWRITING ... DONE
+              /containers
+              +ArrayAddItemNode.java ... REWRITING ... DONE
+              +ArrayClearNode.java ... REWRITING ... DONE
+              +ArrayIndexOfNode.java ... REWRITING ... DONE
+              +ArrayInitNode.java ... REWRITING ... DONE
+              +ArrayItemNode.java ... REWRITING ... DONE
+              +ArrayLastIndexOfNode.java ... REWRITING ... DONE
+              +ArrayPeekNode.java ... REWRITING ... DONE
+              +ArrayRemoveItemNode.java ... REWRITING ... DONE
+              +ArraySizeNode.java ... REWRITING ... DONE
+              +ArraySubarrayNode.java ... REWRITING ... DONE
+              +ArrayTypeNode.java ... REWRITING ... DONE
+              +ArrayVarAddItemNode.java ... REWRITING ... DONE
+              +ArrayVarClearNode.java ... REWRITING ... DONE
+              +ArrayVarRemoveItemNode.java ... REWRITING ... DONE
+              +DequeAddItemNode.java ... REWRITING ... DONE
+              +DequeClearNode.java ... REWRITING ... DONE
+              +DequeIndexOfNode.java ... REWRITING ... DONE
+              +DequeInitNode.java ... REWRITING ... DONE
+              +DequeItemNode.java ... REWRITING ... DONE
+              +DequeLastIndexOfNode.java ... REWRITING ... DONE
+              +DequePeekNode.java ... REWRITING ... DONE
+              +DequeRemoveItemNode.java ... REWRITING ... DONE
+              +DequeSizeNode.java ... REWRITING ... DONE
+              +DequeSubdequeNode.java ... REWRITING ... DONE
+              +DequeTypeNode.java ... REWRITING ... DONE
+              +DequeVarAddItemNode.java ... REWRITING ... DONE
+              +DequeVarClearNode.java ... REWRITING ... DONE
+              +DequeVarRemoveItemNode.java ... REWRITING ... DONE
+              +MapAddItemNode.java ... REWRITING ... DONE
+              +MapClearNode.java ... REWRITING ... DONE
+              +MapDomainNode.java ... REWRITING ... DONE
+              +MapInitNode.java ... REWRITING ... DONE
+              +MapItemNode.java ... REWRITING ... DONE
+              +MapPeekNode.java ... REWRITING ... DONE
+              +MapRangeNode.java ... REWRITING ... DONE
+              +MapRemoveItemNode.java ... REWRITING ... DONE
+              +MapSizeNode.java ... REWRITING ... DONE
+              +MapTypeNode.java ... REWRITING ... DONE
+              +MapVarAddItemNode.java ... REWRITING ... DONE
+              +MapVarClearNode.java ... REWRITING ... DONE
+              +MapVarRemoveItemNode.java ... REWRITING ... DONE
+              +SetAddItemNode.java ... REWRITING ... DONE
+              +SetClearNode.java ... REWRITING ... DONE
+              +SetInitNode.java ... REWRITING ... DONE
+              +SetItemNode.java ... REWRITING ... DONE
+              +SetPeekNode.java ... REWRITING ... DONE
+              +SetRemoveItemNode.java ... REWRITING ... DONE
+              +SetSizeNode.java ... REWRITING ... DONE
+              +SetTypeNode.java ... REWRITING ... DONE
+              +SetVarAddItemNode.java ... REWRITING ... DONE
+              +SetVarClearNode.java ... REWRITING ... DONE
+              +SetVarRemoveItemNode.java ... REWRITING ... DONE
+              /util
+              +ChainChecker.java ... REWRITING ... DONE
+              +Checker.java ... REWRITING ... DONE
+              +CollectChecker.java ... REWRITING ... DONE
+              +CollectPairResolver.java ... REWRITING ... DONE
+              +CollectQuadrupleResolver.java ... REWRITING ... DONE
+              +CollectResolver.java ... REWRITING ... DONE
+              +CollectTripleResolver.java ... REWRITING ... DONE
+              +DeclarationPairResolver.java ... REWRITING ... DONE
+              +DeclarationQuadrupleResolver.java ... REWRITING ... DONE
+              +DeclarationResolver.java ... REWRITING ... DONE
+              +DeclarationTripleResolver.java ... REWRITING ... DONE
+              +DeclarationTypeResolver.java ... REWRITING ... DONE
+              +MemberResolver.java ... REWRITING ... DONE
+              +Pair.java ... REWRITING ... DONE
+              +Quadruple.java ... REWRITING ... DONE
+              +Resolver.java ... REWRITING ... DONE
+              +SimpleChecker.java ... REWRITING ... DONE
+              +Triple.java ... REWRITING ... DONE
+              +TypeChecker.java ... REWRITING ... DONE
+            /be
+            +Backend.java ... REWRITING ... DONE
+            +BackendFactory.java ... REWRITING ... DONE
+            +IDBase.java ... REWRITING ... DONE
+            +IDTypeModel.java ... REWRITING ... DONE
+            +TypeID.java ... REWRITING ... DONE
+              /C
+              +AttrTypeDescriptor.java ... REWRITING ... DONE
+              +CBackend.java ... REWRITING ... DONE
+              +EnumDescriptor.java ... REWRITING ... DONE
+              +InformationCollector.java ... REWRITING ... DONE
+              +MoreInformationCollector.java ... REWRITING ... DONE
+              +SearchPlanBackend.java ... REWRITING ... DONE
+              /Csharp
+              +ActionsGen.java ... REWRITING ... DONE
+              +CSharpBase.java ... REWRITING ... DONE
+              +ModelGen.java ... REWRITING ... DONE
+              +ModifyGen.java ... REWRITING ... DONE
+              +SearchPlanBackend2.java ... REWRITING ... DONE
+            /ir
+            +Action.java ... REWRITING ... DONE
+            +AdjacentNodeExpr.java ... REWRITING ... DONE
+            +Alternative.java ... REWRITING ... DONE
+            +AlternativeReplacement.java ... REWRITING ... DONE
+            +Assignment.java ... REWRITING ... DONE
+            +AssignmentGraphEntity.java ... REWRITING ... DONE
+            +AssignmentIdentical.java ... REWRITING ... DONE
+            +AssignmentIndexed.java ... REWRITING ... DONE
+            +AssignmentVar.java ... REWRITING ... DONE
+            +AssignmentVarIndexed.java ... REWRITING ... DONE
+            +AssignmentVisited.java ... REWRITING ... DONE
+            +Bad.java ... REWRITING ... DONE
+            +BooleanType.java ... REWRITING ... DONE
+            +ByteType.java ... REWRITING ... DONE
+            +Cast.java ... REWRITING ... DONE
+            +CompoundAssignment.java ... REWRITING ... DONE
+            +CompoundAssignmentChanged.java ... REWRITING ... DONE
+            +CompoundAssignmentChangedVar.java ... REWRITING ... DONE
+            +CompoundAssignmentChangedVisited.java ... REWRITING ... DONE
+            +CompoundAssignmentVar.java ... REWRITING ... DONE
+            +CompoundAssignmentVarChanged.java ... REWRITING ... DONE
+            +CompoundAssignmentVarChangedVar.java ... REWRITING ... DONE
+            +CompoundAssignmentVarChangedVisited.java ... REWRITING ... DONE
+            +CompoundType.java ... REWRITING ... DONE
+            +ConnAssert.java ... REWRITING ... DONE
+            +Constant.java ... REWRITING ... DONE
+            +Constructor.java ... REWRITING ... DONE
+            +ConstructorParam.java ... REWRITING ... DONE
+            +DoubleType.java ... REWRITING ... DONE
+            +Dumper.java ... REWRITING ... DONE
+            +DumpVisitor.java ... REWRITING ... DONE
+            +Edge.java ... REWRITING ... DONE
+            +EdgesExpr.java ... REWRITING ... DONE
+            +EdgeType.java ... REWRITING ... DONE
+            +Emit.java ... REWRITING ... DONE
+            +Entity.java ... REWRITING ... DONE
+            +EnumExpression.java ... REWRITING ... DONE
+            +EnumItem.java ... REWRITING ... DONE
+            +EnumType.java ... REWRITING ... DONE
+            +EvalStatement.java ... REWRITING ... DONE
+            +Evaluation.java ... REWRITING ... DONE
+            +Exec.java ... REWRITING ... DONE
+            +ExecVariable.java ... REWRITING ... DONE
+            +ExecVariableExpression.java ... REWRITING ... DONE
+            +Expression.java ... REWRITING ... DONE
+            +ExternalFunction.java ... REWRITING ... DONE
+            +ExternalFunctionInvocationExpr.java ... REWRITING ... DONE
+            +ExternalType.java ... REWRITING ... DONE
+            +FloatType.java ... REWRITING ... DONE
+            +Graph.java ... REWRITING ... DONE
+            +GraphEntity.java ... REWRITING ... DONE
+            +GraphEntityExpression.java ... REWRITING ... DONE
+            +GraphType.java ... REWRITING ... DONE
+            +Ident.java ... REWRITING ... DONE
+            +Identifiable.java ... REWRITING ... DONE
+            +ImperativeStmt.java ... REWRITING ... DONE
+            +IncidentEdgeExpr.java ... REWRITING ... DONE
+            +IndexedAccessExpr.java ... REWRITING ... DONE
+            +InheritanceType.java ... REWRITING ... DONE
+            +IntType.java ... REWRITING ... DONE
+            +IR.java ... REWRITING ... DONE
+            +IteratedAccumulationYield.java ... REWRITING ... DONE
+            +IteratedReplacement.java ... REWRITING ... DONE
+            +LongType.java ... REWRITING ... DONE
+            +MatchAccess.java ... REWRITING ... DONE
+            +MatchingAction.java ... REWRITING ... DONE
+            +MatchType.java ... REWRITING ... DONE
+            +MaxExpr.java ... REWRITING ... DONE
+            +MemberExpression.java ... REWRITING ... DONE
+            +MemberInit.java ... REWRITING ... DONE
+            +MinExpr.java ... REWRITING ... DONE
+            +Model.java ... REWRITING ... DONE
+            +Nameof.java ... REWRITING ... DONE
+            +NeededEntities.java ... REWRITING ... DONE
+            +Node.java ... REWRITING ... DONE
+            +NodesExpr.java ... REWRITING ... DONE
+            +NodeType.java ... REWRITING ... DONE
+            +ObjectType.java ... REWRITING ... DONE
+            +Operator.java ... REWRITING ... DONE
+            +OrderedReplacement.java ... REWRITING ... DONE
+            +Owned.java ... REWRITING ... DONE
+            +PatternGraph.java ... REWRITING ... DONE
+            +PowExpr.java ... REWRITING ... DONE
+            +PrimitiveType.java ... REWRITING ... DONE
+            +Qualification.java ... REWRITING ... DONE
+            +RandomExpr.java ... REWRITING ... DONE
+            +ReachableEdgeExpr.java ... REWRITING ... DONE
+            +ReachableNodeExpr.java ... REWRITING ... DONE
+            +Redirection.java ... REWRITING ... DONE
+            +RetypedEdge.java ... REWRITING ... DONE
+            +RetypedNode.java ... REWRITING ... DONE
+            +Rule.java ... REWRITING ... DONE
+            +Sequence.java ... REWRITING ... DONE
+            +ShortType.java ... REWRITING ... DONE
+            +StringIndexOf.java ... REWRITING ... DONE
+            +StringLastIndexOf.java ... REWRITING ... DONE
+            +StringLength.java ... REWRITING ... DONE
+            +StringReplace.java ... REWRITING ... DONE
+            +StringSubstring.java ... REWRITING ... DONE
+            +StringType.java ... REWRITING ... DONE
+            +SubpatternDependentReplacement.java ... REWRITING ... DONE
+            +SubpatternUsage.java ... REWRITING ... DONE
+            +Type.java ... REWRITING ... DONE
+            +TypeExpr.java ... REWRITING ... DONE
+            +TypeExprConst.java ... REWRITING ... DONE
+            +TypeExprSetOperator.java ... REWRITING ... DONE
+            +Typeof.java ... REWRITING ... DONE
+            +TypeType.java ... REWRITING ... DONE
+            +Unit.java ... REWRITING ... DONE
+            +UntypedExecVarType.java ... REWRITING ... DONE
+            +Variable.java ... REWRITING ... DONE
+            +VariableExpression.java ... REWRITING ... DONE
+            +Visited.java ... REWRITING ... DONE
+            +VoidType.java ... REWRITING ... DONE
+              /containers
+              +ArrayAddItem.java ... REWRITING ... DONE
+              +ArrayClear.java ... REWRITING ... DONE
+              +ArrayIndexOfExpr.java ... REWRITING ... DONE
+              +ArrayInit.java ... REWRITING ... DONE
+              +ArrayItem.java ... REWRITING ... DONE
+              +ArrayLastIndexOfExpr.java ... REWRITING ... DONE
+              +ArrayPeekExpr.java ... REWRITING ... DONE
+              +ArrayRemoveItem.java ... REWRITING ... DONE
+              +ArraySizeExpr.java ... REWRITING ... DONE
+              +ArraySubarrayExpr.java ... REWRITING ... DONE
+              +ArrayType.java ... REWRITING ... DONE
+              +ArrayVarAddItem.java ... REWRITING ... DONE
+              +ArrayVarClear.java ... REWRITING ... DONE
+              +ArrayVarRemoveItem.java ... REWRITING ... DONE
+              +DequeAddItem.java ... REWRITING ... DONE
+              +DequeClear.java ... REWRITING ... DONE
+              +DequeIndexOfExpr.java ... REWRITING ... DONE
+              +DequeInit.java ... REWRITING ... DONE
+              +DequeItem.java ... REWRITING ... DONE
+              +DequeLastIndexOfExpr.java ... REWRITING ... DONE
+              +DequePeekExpr.java ... REWRITING ... DONE
+              +DequeRemoveItem.java ... REWRITING ... DONE
+              +DequeSizeExpr.java ... REWRITING ... DONE
+              +DequeSubdequeExpr.java ... REWRITING ... DONE
+              +DequeType.java ... REWRITING ... DONE
+              +DequeVarAddItem.java ... REWRITING ... DONE
+              +DequeVarClear.java ... REWRITING ... DONE
+              +DequeVarRemoveItem.java ... REWRITING ... DONE
+              +MapAddItem.java ... REWRITING ... DONE
+              +MapClear.java ... REWRITING ... DONE
+              +MapDomainExpr.java ... REWRITING ... DONE
+              +MapInit.java ... REWRITING ... DONE
+              +MapItem.java ... REWRITING ... DONE
+              +MapPeekExpr.java ... REWRITING ... DONE
+              +MapRangeExpr.java ... REWRITING ... DONE
+              +MapRemoveItem.java ... REWRITING ... DONE
+              +MapSizeExpr.java ... REWRITING ... DONE
+              +MapType.java ... REWRITING ... DONE
+              +MapVarAddItem.java ... REWRITING ... DONE
+              +MapVarClear.java ... REWRITING ... DONE
+              +MapVarRemoveItem.java ... REWRITING ... DONE
+              +SetAddItem.java ... REWRITING ... DONE
+              +SetClear.java ... REWRITING ... DONE
+              +SetInit.java ... REWRITING ... DONE
+              +SetItem.java ... REWRITING ... DONE
+              +SetPeekExpr.java ... REWRITING ... DONE
+              +SetRemoveItem.java ... REWRITING ... DONE
+              +SetSizeExpr.java ... REWRITING ... DONE
+              +SetType.java ... REWRITING ... DONE
+              +SetVarAddItem.java ... REWRITING ... DONE
+              +SetVarClear.java ... REWRITING ... DONE
+              +SetVarRemoveItem.java ... REWRITING ... DONE
+            /parser
+            +AnonymousPatternNamer.java ... REWRITING ... DONE
+            +Coords.java ... REWRITING ... DONE
+            +ParserEnvironment.java ... REWRITING ... DONE
+            +Scope.java ... REWRITING ... DONE
+            +Symbol.java ... REWRITING ... DONE
+            +SymbolTable.java ... REWRITING ... DONE
+            +SymbolTableException.java ... REWRITING ... DONE
+              /antlr
+              +Coords.java ... REWRITING ... DONE
+              +GrGenLexer.java ... NO HEADER
+              +GrGenParser.java ... NO HEADER
+              +GRParserEnvironment.java ... REWRITING ... DONE
+              +SubunitInclude.java ... REWRITING ... DONE
+            /util
+            +Annotated.java ... REWRITING ... DONE
+            +Annotations.java ... REWRITING ... DONE
+            +Base.java ... REWRITING ... DONE
+            +BooleanResultVisitor.java ... REWRITING ... DONE
+            +ConstraintWalker.java ... REWRITING ... DONE
+            +DefaultAnnotations.java ... REWRITING ... DONE
+            +DefaultGraphDumpable.java ... REWRITING ... DONE
+            +EmptyAnnotations.java ... REWRITING ... DONE
+            +Formatter.java ... REWRITING ... DONE
+            +GraphDumpable.java ... REWRITING ... DONE
+            +GraphDumpableProxy.java ... REWRITING ... DONE
+            +GraphDumper.java ... REWRITING ... DONE
+            +GraphDumperFactory.java ... REWRITING ... DONE
+            +GraphDumpVisitor.java ... REWRITING ... DONE
+            +Id.java ... REWRITING ... DONE
+            +MultiplexOutputStream.java ... REWRITING ... DONE
+            +MutableInteger.java ... REWRITING ... DONE
+            +MyPreferences.java ... REWRITING ... DONE
+            +MyPreferencesFactory.java ... REWRITING ... DONE
+            +NullOutputStream.java ... REWRITING ... DONE
+            +Pair.java ... REWRITING ... DONE
+            +ParamVisitor.java ... REWRITING ... DONE
+            +PostWalker.java ... REWRITING ... DONE
+            +PrePostWalker.java ... REWRITING ... DONE
+            +PreWalker.java ... REWRITING ... DONE
+            +ResultVisitor.java ... REWRITING ... DONE
+            +Retyped.java ... REWRITING ... DONE
+            +StreamDumpable.java ... REWRITING ... DONE
+            +Util.java ... REWRITING ... DONE
+            +VCGDumper.java ... REWRITING ... DONE
+            +VCGDumperFactory.java ... REWRITING ... DONE
+            +Visitor.java ... REWRITING ... DONE
+            +Walkable.java ... REWRITING ... DONE
+            +Walker.java ... REWRITING ... DONE
+            +XMLDumpable.java ... REWRITING ... DONE
+            +XMLDumper.java ... REWRITING ... DONE
+              /report
+              +DebugReporter.java ... REWRITING ... DONE
+              +EmptyLocation.java ... REWRITING ... DONE
+              +ErrorReporter.java ... REWRITING ... DONE
+              +Handler.java ... REWRITING ... DONE
+              +Location.java ... REWRITING ... DONE
+              +NullReporter.java ... REWRITING ... DONE
+              +Reporter.java ... REWRITING ... DONE
+              +StreamHandler.java ... REWRITING ... DONE
+              +TableHandler.java ... REWRITING ... DONE
+              +TreeHandler.java ... REWRITING ... DONE

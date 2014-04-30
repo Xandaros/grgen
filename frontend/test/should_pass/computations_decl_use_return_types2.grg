@@ -1,0 +1,53 @@
+using model_init;
+
+function some(var by:byte, var sh:short, var i1:int, var l:long, var f:float, var s:string, var b:boolean, var enu:Foo) : boolean
+{
+	return(true);
+}
+
+procedure someproc(var by:byte, var sh:short, var i1:int, var l:long, var f:float, var s:string, var b:boolean, var enu:Foo) 
+	: (byte, short, int, long, float, string, boolean, Foo)
+{
+	return(by, sh, i1, l, f, s, b, enu);
+}
+
+rule r : (boolean)
+{	
+	def var res:boolean;
+
+	yield {
+		def var by:byte = (byte)42;
+		def var sh:short = (short)42;
+		def var i1:int = 42;
+		def var l:long = 0xdeadbeefl;
+		def var f:float = 42.815f;
+		def var s:string = "hello world";
+		def var b:boolean = true;
+		def var enu:Foo = Foo::bar;
+
+		yield res = some(by, sh, i1, l, f, s, b, enu);
+	}
+
+	modify {
+		eval { 
+			def var by:byte = (byte)42;
+			def var sh:short = (short)42;
+			def var i1:int = 42;
+			def var l:long = 0xdeadbeefl;
+			def var f:float = 42.815f;
+			def var s:string = "hello world";
+			def var b:boolean = true;
+			def var enu:Foo = Foo::bar;
+
+			(by, sh, i1, l, f, s, b, enu) = someproc(by, sh, i1, l, f, s, b, enu);
+		}
+
+		eval { 
+			(def var by:byte, def var sh:short, def var i1:int, def var l:long, def var f:float, def var s:string, def var b:boolean, def var enu:Foo) 
+				= someproc(42y, 42s, 42, 0xdeadbeefl, 42.815f, "hello world", true, Foo::bar);
+			sh = by;
+		}
+		
+		return (res);
+	}
+}

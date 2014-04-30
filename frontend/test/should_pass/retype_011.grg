@@ -1,0 +1,11 @@
+using retype_model_001;
+
+rule r {
+	x:TYPE1;
+
+	replace {
+		y:TYPE2<x>;
+		z:typeof(x);
+	}
+}
+

@@ -1,0 +1,187 @@
+rule PDG_number_dependencies {
+	modify {
+		exec(PDG_create_first_ordered_controlDependence* &
+		     PDG_add_ordered_controlDependence* &
+		     [PDG_create_first_named_controlDependence] &
+		     PDG_add_named_controlDependence*);
+	}
+}
+
+rule PDG_create_first_ordered_controlDependence {
+	n:Node;
+	n -e:_org_amma_pdg::_ExpressionNode_controlDependenceNodes-> .;
+
+	negative {
+		n -:ordered_controlDependence->;
+	}
+
+	modify {
+		-f:ordered_controlDependence<e>->;
+
+		eval {
+			f.order = 0;
+		}
+	}
+}
+
+rule PDG_add_ordered_controlDependence {
+	n:Node;
+	n -e:_org_amma_pdg::_ExpressionNode_controlDependenceNodes-> .;
+	n -f:ordered_controlDependence->;
+
+
+	negative {
+		if { f.order < g.order; }
+		n -g:ordered_controlDependence->;
+	}
+
+	modify {
+		-h:ordered_controlDependence<e>->;
+
+		eval {
+			h.order = f.order + 1;
+		}
+	}
+}
+
+rule PDG_create_first_named_controlDependence {
+	n:_org_amma_pdg::_EnterNode -e:ordered_controlDependence->;
+
+	modify {
+		-f:named_controlDependence<e>->;
+
+		eval {
+			f.name = "//@node/@controlDependenceNodes." + e.order;
+		}
+	}
+}
+
+rule PDG_add_named_controlDependence {
+	-e:named_controlDependence-> n:Node;
+	n -f:ordered_controlDependence->;
+
+	modify {
+		-g:named_controlDependence<f>->;
+
+		eval {
+			g.name = e.name + "/@controlDependenceNodes." + f.order;
+		}
+	}
+}
+
+rule PDG_XML_prefix {
+	modify {
+		emit("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<org.amma.pdg:MProgramDependenceGraph xmi:version=\"2.0\" xmlns:xmi=\"http://www.omg.org/XMI\" xmlns:org.amma.pdg=\"org.amma.pdg\">\n");
+	}
+}
+
+rule PDG_dump {
+	n:_org_amma_pdg::_EnterNode;
+
+	modify {
+		emit("  <node name=\"Enter\">\n");
+		exec(PDG_dump_ExpressionNode_Successor(n)*);
+		emit("  </node>\n");
+	}
+}
+
+rule PDG_dump_ExpressionNode_Successor(n:Node) {
+	succ:_org_amma_pdg::_ExpressionNode;
+	n -e:named_controlDependence\visited_named_controlDependence-> succ;
+	succ -:_org_amma_pdg::_ExpressionNode_expression-> expr:_org_amma_pdg::_Expression;
+
+	negative {
+		if { f.order < e.order; }
+		n -f:named_controlDependence\visited_named_controlDependence->;
+	}
+
+	modify {
+		-:visited_named_controlDependence<e>->;
+
+		emit("    <controlDependenceNodes name=\"" + succ._name + "\"");
+		exec(PDG_dump_DataDependencies(succ));
+		emit(">\n");
+		exec(PDG_dump_expression("expression", expr));
+		exec(PDG_dump_ExpressionNode_Successor(succ)*);
+		emit("    </controlDependenceNodes>\n");
+	}
+}
+
+rule PDG_dump_DataDependencies(n:_org_amma_pdg::_ExpressionNode) {
+	hom(n,succ);
+	n -:_org_amma_pdg::_ExpressionNode_dataDependenceNodes-> succ:_org_amma_pdg::_ExpressionNode;
+
+	modify {
+		emit(" dataDependenceNodes=\"");
+		exec([PDG_dump_DataDependence(n)]);
+		emit("\"");
+	}
+}
+
+rule PDG_dump_DataDependence(n:_org_amma_pdg::_ExpressionNode) {
+	hom(n,succ);
+	n -:_org_amma_pdg::_ExpressionNode_dataDependenceNodes-> succ:_org_amma_pdg::_ExpressionNode;
+	-e:named_controlDependence-> succ;
+
+	modify {
+		emit(e.name + " ");
+	}
+}
+
+rule PDG_dump_expression(var tag:string, expr:_org_amma_pdg::_Expression) {
+	modify {
+		exec(PDG_dump_binary_expression(tag, expr) ||
+		     PDG_dump_unary_expression(tag, expr) ||
+		     PDG_dump_leaf_expression(tag, expr) );
+	}
+}
+
+rule PDG_dump_binary_expression(var tag:string, expr:_org_amma_pdg::_Expression) {
+	expr -lhs_edge:_org_amma_pdg::_Expression_innerExpressions-> lhs:_org_amma_pdg::_Expression;
+	expr -rhs_edge:_org_amma_pdg::_Expression_innerExpressions-> rhs:_org_amma_pdg::_Expression;
+
+	if { lhs_edge.ordering < rhs_edge.ordering; }
+
+	modify {
+		emit("      <" + tag + " name=\"" + expr._name + "\">\n");
+		exec(PDG_dump_expression("innerExpressions", lhs));
+		exec(PDG_dump_expression("innerExpressions", rhs));
+		emit("      </" + tag + ">\n");
+	}
+}
+
+rule PDG_dump_unary_expression(var tag:string, expr:_org_amma_pdg::_Expression) {
+	expr -:_org_amma_pdg::_Expression_innerExpressions-> op:_org_amma_pdg::_Expression;
+
+	modify {
+		emit("      <" + tag + " name=\"" + expr._name + "\">\n");
+		exec(PDG_dump_expression("innerExpressions", op));
+		emit("      </" + tag + ">\n");
+	}
+}
+
+rule PDG_dump_leaf_expression(var tag:string, expr:_org_amma_pdg::_Expression) {
+	modify {
+		emit("      <" + tag + " name=\"" + expr._name + "\"/>\n");
+	}
+}
+
+rule PDG_XML_suffix {
+	modify {
+		emit("</org.amma.pdg:MProgramDependenceGraph>\n");
+	}
+}
+
+rule PDG_finish_dump {
+	modify {
+		exec([PDG_revert_named_controlDependence]);
+	}
+}
+
+rule PDG_revert_named_controlDependence {
+	-e:visited_named_controlDependence->;
+
+	modify {
+		-:_org_amma_pdg::_ExpressionNode_controlDependenceNodes<e>->;
+	}
+}

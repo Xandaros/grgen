@@ -1,0 +1,71 @@
+# This is the GrGen.NET solution to the Model Migration case of Transformation Tool Contest 2010.
+
+include alternative_ObjectFlowState.grs
+
+#debug set layout Compilergraph
+#debug set layout option CREATE_LOOP_TREE false
+
+# Nesting
+dump add node _uml::_Activity group by hidden outgoing _uml::_Activity_group
+dump add node _uml::_Activity group by hidden outgoing _uml::_Activity_node
+dump add node _uml::_Activity group by hidden outgoing _uml::_Activity_edge
+dump add node _uml::_ActivityPartition group by hidden outgoing _uml::_ActivityPartition_node
+dump add node _uml::_ActivityPartition group by hidden outgoing _uml::_ActivityPartition_edge
+
+# Hiding
+dump add edge _uml::_ActivityNode_inPartition exclude
+dump add edge _uml::_Activity_node exclude
+dump add edge _uml::_ActivityNode_incoming exclude
+
+dump add edge _uml::_ActivityEdge_inPartition exclude
+dump add edge _uml::_ActivityEdge_source exclude
+
+# Appearance
+dump set edge _uml::_ActivityNode_outgoing labels off
+dump set edge _uml::_ActivityEdge_target labels off
+
+dump set node _uml::_OpaqueAction shape ellipse
+dump set node _uml::_OpaqueAction labels off
+dump add node _uml::_OpaqueAction shortinfotag _name
+
+dump set node _uml::_ActivityFinalNode shape circle
+dump set node _uml::_ActivityFinalNode color red
+dump set node _uml::_ActivityFinalNode labels off
+
+dump set node _uml::_InitialNode shape circle
+dump set node _uml::_InitialNode color green
+dump set node _uml::_InitialNode labels off
+
+dump set node _uml::_ObjectFlow labels off
+dump add node _uml::_ObjectFlow shortinfotag _name
+dump set node _uml::_ObjectFlow color white
+
+dump set node _uml::_DecisionNode shape rhomb
+dump set node _uml::_DecisionNode labels off
+dump set node _uml::_DecisionNode color white
+
+dump set node _uml::_ForkNode labels "                    "
+dump set node _uml::_ForkNode color black
+
+dump set node _uml::_JoinNode labels "                    "
+dump set node _uml::_JoinNode color black
+
+dump set edge dump_transition labels off
+dump add edge dump_transition shortinfotag name
+
+dump set node _uml::_Activity labels off
+dump set node _uml::_Activity color lightgrey
+
+dump set node _uml::_ActivityPartition labels off
+dump add node _uml::_ActivityPartition shortinfotag _name
+
+dump set node _uml::_OpaqueAction color white
+
+# beautify and dump the graph
+exec dump_nonPartitionNode*
+exec dump_nonPartitionEdge*
+exec dump_addActivityEdgesToActivityPartition*
+exec dump_guarded_OpaqueExpression*
+exec dump_ActivityEdge2*
+
+show graph ycomp

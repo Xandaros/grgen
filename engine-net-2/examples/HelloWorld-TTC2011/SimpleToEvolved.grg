@@ -1,0 +1,82 @@
+#using "graph1__ecore.gm"
+#using "graph2__ecore.gm"
+
+rule migrateGraph {
+	n:_graph1::_Graph;
+
+	modify {
+		:_graph2::_Graph<n>;
+	}
+}
+
+rule migrateNode {
+	n:_graph1::_Node;
+
+	modify {
+		migrated:_graph2::_Node<n>;
+
+		eval {
+			migrated._text = n._name;
+		}
+	}
+}
+
+rule migrateEdge {
+	e:_graph1::_Edge;
+
+	modify {
+		migrated:_graph2::_Edge<e>;
+
+		eval {
+			migrated._text = "";
+		}
+	}
+}
+
+rule migrateEdgeSrc {
+	-e:_graph1::_Edge_src->;
+
+	modify {
+		-migrated:_graph2::_Edge_src<e>->;
+
+		eval {
+			migrated.ordering = e.ordering;
+		}
+	}
+}
+
+rule migrateEdgeTrg {
+	-e:_graph1::_Edge_trg->;
+
+	modify {
+		-migrated:_graph2::_Edge_trg<e>->;
+
+		eval {
+			migrated.ordering = e.ordering;
+		}
+	}
+}
+
+rule migrateGraphEdges {
+	-e:_graph1::_Graph_edges->;
+
+	modify {
+		-migrated:_graph2::_Graph_gcs<e>->;
+
+		eval {
+			migrated.ordering = e.ordering;
+		}
+	}
+}
+
+rule migrateGraphNodes {
+	-e:_graph1::_Graph_nodes->;
+
+	modify {
+		-migrated:_graph2::_Graph_gcs<e>->;
+
+		eval {
+			migrated.ordering = e.ordering;
+		}
+	}
+}

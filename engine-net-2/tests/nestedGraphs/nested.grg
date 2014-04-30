@@ -1,0 +1,171 @@
+using nested;
+
+rule init : (set<Node>)
+{
+	modify {
+		r:RedGraph --> g:GreenGraph --> b:BlueGraph --> r;
+		return(set<Node>{r,g,b});
+	}
+}
+
+test red : (RedGraph)
+{
+	r:RedGraph;
+	return(r);
+}
+
+test green : (GreenGraph)
+{
+	g:GreenGraph;
+	return(g);
+}
+
+test blue : (BlueGraph)
+{
+	b:BlueGraph;
+	return(b);
+}
+
+test blueblue
+{
+	b1:BlueGraph --> b2:BlueGraph;
+}
+
+rule remGreen
+{
+	g:GreenGraph;
+	replace {
+	}
+}
+
+sequence remGreenSeq
+{
+	remGreen
+}
+
+rule r1
+{
+	modify {
+		def var result:boolean;
+		exec( (gr:set<Node>)=init ;> (r:RedGraph)=red ;> (g:GreenGraph)=green ;> (b:BlueGraph)=blue ;> {
+			File::export("redgreenblueC.grs");
+			sub:graph = inducedSubgraph(gr);
+			File::export(sub, "redgreenblue2C.grs");
+			r.sub = File::import("redgreenblueC.grs");
+			g.sub = sub;
+			b.sub=File::import("redgreenblue2C.grs");
+			File::export("redgreenbluefullC.grs"); 
+			yield result = r.sub==g.sub && g.sub==b.sub }
+		);
+		emit("The value of variable result of type bool is: ");
+		emit( result );
+		emit("\n");
+	}
+}
+
+rule r2
+{
+	modify {
+		def var result:boolean;
+		exec( (r:RedGraph)=red ;> (g:GreenGraph)=green ;> (b:BlueGraph)=blue ;> {
+			sub:graph = File::import("redgreenbluefullC.grs"); 
+			yield result = sub!=r.sub && sub!=g.sub && sub!=b.sub }
+		);
+		emit("The value of variable result of type bool is: ");
+		emit( result );
+		emit("\n");
+	}
+}
+
+rule r3
+{
+	modify {
+		def var result:boolean;
+		exec( (r:RedGraph)=red ;> (g:GreenGraph)=green ;> (b:BlueGraph)=blue ;>
+			rr:RedGraph ;> in r.sub { (rr)=red ;> { rr.sub = File::import("redgreenblueC.grs")} } ;>
+			gr:RedGraph ;> in g.sub { (gr)=red ;> { gr.sub = File::import("redgreenblueC.grs")} } ;>
+			br:RedGraph ;> in b.sub { (br)=red } ;>
+			{ File::export("redgreenbluefull2C.grs"); 
+			yield result = rr.sub == gr.sub && r.sub == g.sub && rr.sub != br.sub && br.sub == null && r.sub != b.sub; }
+		);
+		emit("The value of variable result of type bool is: ");
+		emit( result );
+		emit("\n");
+	}
+}
+
+rule r4
+{
+	modify {
+		def var result:boolean;
+		exec( { clone:graph=copy(this); full:graph=File::import("redgreenbluefull2C.grs"); initial:graph=File::import("redgreenblueC.grs"); 
+			yield result = this==clone && this==full && this!=initial } 
+		);
+		emit("The value of variable result of type bool is: ");
+		emit( result );
+		emit("\n");
+	}
+}
+
+rule r5
+{
+	modify {
+		def var result:boolean;
+		exec( (r:RedGraph)=red ;> (g:GreenGraph)=green ;> (b:BlueGraph)=blue ;>
+			rsub:graph ;> gsub:graph ;> bsub:graph ;> { rsub=r.sub; gsub=g.sub; bsub=b.sub } ;>
+			attr:graph ;> in gsub { (gg:GreenGraph)=green ;> { rem(gg) } ;> (gr:RedGraph)=red ;> { attr=gr.sub } } ;>
+			in bsub { (bb:BlueGraph)=blue ;> { (bb2:BlueGraph)=add(BlueGraph); add(Edge, bb, bb2) } ;> blueblue() ;> (br:RedGraph)=red ;> { br.sub=attr } } ;>
+			{ File::export("redgreenbluefull3C.grs"); 
+			yield result = rsub != gsub && gsub != bsub && rsub != bsub && this != File::import("redgreenbluefull2C.grs") } 
+		);
+		emit("The value of variable result of type bool is: ");
+		emit( result );
+		emit("\n");
+	}
+}
+
+rule r6
+{
+	modify {
+		def var result:boolean;
+		exec( (r:RedGraph)=red ;> (g:GreenGraph)=green ;> (b:BlueGraph)=blue ;>
+			rsub:graph ;> gsub:graph ;> bsub:graph ;> { rsub=r.sub; gsub=g.sub; bsub=b.sub } ;>
+			in gsub { (bb:BlueGraph)=blue ;> { (bb2:BlueGraph)=add(BlueGraph); add(Edge, bb, bb2) } ;> blueblue() } ;>
+			in bsub { remGreen } ;>
+			{ File::export("redgreenbluefull4C.grs"); 
+			yield result = gsub == bsub && rsub != gsub && rsub != bsub && this != File::import("redgreenbluefull3C.grs") && this == File::import("redgreenbluefull4C.grs") }
+		);
+		emit("The value of variable result of type bool is: ");
+		emit( result );
+		emit("\n");
+	}
+}
+
+rule r2special
+{
+	modify {
+		def var result:boolean;
+		exec( (r:RedGraph)=red ;> (g:GreenGraph)=green ;> (b:BlueGraph)=blue ;>
+			rsub:graph ;> gsub:graph ;> bsub:graph ;> { rsub=r.sub; gsub=g.sub; bsub=b.sub } ;>
+			rsub.remGreen() ;>
+			gsub.remGreen() ;>
+			bsub.remGreenSeq() ;>
+			rsub.green() ;>
+			rsub.red() ;>
+			{ File::export("redbluefullC.grs");
+			yield result = rsub == gsub && gsub == bsub && bsub == rsub }
+		);
+		emit("The value of variable result of type bool is: ");
+		emit( result );
+		emit("\n");
+	}
+}
+
+rule testThis
+{
+	if { this == this; }
+	modify {
+		def var b:boolean;
+		eval { yield b = this != this; }
+	}
+}

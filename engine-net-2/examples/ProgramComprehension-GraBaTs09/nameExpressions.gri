@@ -1,0 +1,141 @@
+rule CFG_name_expressions {
+	modify {
+		exec((CFG_name_SimpleName || CFG_name_NumberLiteral ||
+		      CFG_name_PrefixExpression || CFG_name_PostfixExpression ||
+		      CFG_name_MethodInvocation ||
+		      CFG_name_InfixExpression || CFG_name_Assignment)*);
+	}
+}
+
+rule CFG_name_SimpleName {
+	expr:_dom::_SimpleName;
+
+	negative {
+		expr -:HelperEdge->;
+	}
+
+	modify {
+		expr -:HelperEdge-> helper:HelperNode;
+
+		eval {
+			helper.name = expr._identifier;
+			helper.operator = expr._identifier;
+		}
+	}
+}
+
+rule CFG_name_NumberLiteral {
+	expr:_dom::_NumberLiteral;
+
+	negative {
+		expr -:HelperEdge->;
+	}
+
+	modify {
+		expr -:HelperEdge-> helper:HelperNode;
+
+		eval {
+			helper.name = expr._token;
+			helper.operator = expr._token;
+		}
+	}
+}
+
+rule CFG_name_PrefixExpression {
+	expr:_dom::_PrefixExpression -:_dom::_PrefixExpression_operand-> op:_dom::_Expression;
+	op -:HelperEdge-> opHelper:HelperNode;
+
+	negative {
+		expr -:HelperEdge->;
+	}
+
+	modify {
+		expr -:HelperEdge-> helper:HelperNode;
+
+		eval {
+			helper.name = helper.prefixMap[expr._operator] + opHelper.name;
+			helper.operator = helper.prefixNameMap[expr._operator];
+		}
+	}
+}
+
+rule CFG_name_PostfixExpression {
+	expr:_dom::_PostfixExpression -:_dom::_PostfixExpression_operand-> op:_dom::_Expression;
+	op -:HelperEdge-> opHelper:HelperNode;
+
+	negative {
+		expr -:HelperEdge->;
+	}
+
+	modify {
+		expr -:HelperEdge-> helper:HelperNode;
+
+		eval {
+			helper.name = opHelper.name + helper.postfixMap[expr._operator];
+			helper.operator = helper.postfixNameMap[expr._operator];
+		}
+	}
+}
+
+rule CFG_name_MethodInvocation {
+	expr:_dom::_MethodInvocation -:_dom::_MethodInvocation_name-> name:_dom::_SimpleName;
+	expr -:_dom::_MethodInvocation_arguments-> argument:_dom::_SimpleName;
+	argument -:HelperEdge-> argumentHelper:HelperNode;
+
+
+	negative {
+		expr -:HelperEdge->;
+	}
+
+	modify {
+		expr -:HelperEdge-> helper:HelperNode;
+
+		eval {
+			helper.name = name._identifier + "(" + argumentHelper.name + ")";
+			helper.operator = name._identifier;
+		}
+	}
+}
+
+rule CFG_name_InfixExpression {
+	expr:_dom::_InfixExpression -:_dom::_InfixExpression_leftOperand-> lhs:_dom::_Expression;
+	expr -:_dom::_InfixExpression_rightOperand-> rhs:_dom::_Expression;
+	lhs -:HelperEdge-> lhsHelper:HelperNode;
+	rhs -:HelperEdge-> rhsHelper:HelperNode;
+
+
+	negative {
+		expr -:HelperEdge->;
+	}
+
+	modify {
+		expr -:HelperEdge-> helper:HelperNode;
+
+		eval {
+			helper.name = lhsHelper.name + helper.infixMap[expr._operator] + rhsHelper.name;
+			helper.operator = helper.infixNameMap[expr._operator];
+		}
+	}
+}
+
+rule CFG_name_Assignment {
+	expr:_dom::_Assignment -:_dom::_Assignment_leftHandSide-> lhs:_dom::_Expression;
+	expr -:_dom::_Assignment_rightHandSide-> rhs:_dom::_Expression;
+	lhs -:HelperEdge-> lhsHelper:HelperNode;
+	rhs -:HelperEdge-> rhsHelper:HelperNode;
+
+
+	negative {
+		expr -:HelperEdge->;
+	}
+
+	modify {
+		expr -:HelperEdge-> helper:HelperNode;
+
+		eval {
+			helper.name = lhsHelper.name + helper.operatorMap[expr._operator] + rhsHelper.name;
+			helper.operator = helper.operatorNameMap[expr._operator];
+		}
+	}
+}
+

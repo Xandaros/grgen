@@ -1,0 +1,34 @@
+#using "helloworldext__ecore.gm"
+#using "result__ecore.gm"
+
+#include "Emitter.gri"
+
+rule createHelloWorldExt {
+	replace {
+		greeting:_helloworldext::_Greeting;
+		greeting -e:_helloworldext::_Greeting_greetingMessage-> message:_helloworldext::_GreetingMessage;
+		greeting -f:_helloworldext::_Greeting_person-> person:_helloworldext::_Person;
+
+		eval {
+			message._text = "Hello";
+			person._name = "TTC Participants";
+
+			e.ordering = 0;
+			f.ordering = 0;
+		}
+	}
+}
+
+rule messageToText {
+	greeting:_helloworldext::_Greeting;
+	greeting -:_helloworldext::_Greeting_greetingMessage-> message:_helloworldext::_GreetingMessage;
+	greeting -:_helloworldext::_Greeting_person-> person:_helloworldext::_Person;
+
+	replace {
+		result:_result::_StringResult;
+
+		eval {
+			result._result = message._text + " " + person._name + "!";
+		}
+	}
+}

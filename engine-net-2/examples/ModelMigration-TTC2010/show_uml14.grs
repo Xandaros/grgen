@@ -1,0 +1,49 @@
+# This is the GrGen.NET solution to the Model Migration case of Transformation Tool Contest 2010.
+
+import original_minimal_metamodel.ecore evolved_metamodel.ecore original_model.xmi core.grg
+
+debug set layout Compilergraph
+debug set layout option CREATE_LOOP_TREE false
+
+# Nesting
+dump add node _minuml1::_ActivityGraph group by hidden outgoing _minuml1::_ActivityGraph_partition
+dump add node _minuml1::_ActivityGraph group by hidden outgoing _minuml1::_StateMachine_transitions
+dump add node _minuml1::_Partition group by hidden outgoing _minuml1::_Partition_contents
+
+# Hiding
+dump add node _minuml1::_CompositeState exclude
+
+dump add edge _minuml1::_Transition_source exclude
+dump add edge _minuml1::_Transition_target exclude
+
+dump add edge _minuml1::_CompositeState_subvertex exclude
+dump add edge _minuml1::_StateMachine_top exclude
+
+# Appearance
+dump set node _minuml1::_ActionState shape ellipse
+dump set node _minuml1::_ActionState labels off
+dump add node _minuml1::_ActionState shortinfotag _name
+
+dump set node _minuml1::_FinalState shape circle
+dump set node _minuml1::_FinalState color red
+dump set node _minuml1::_FinalState labels off
+
+dump set node _minuml1::_ObjectFlowState shape lparallelogram
+dump set node _minuml1::_ObjectFlowState labels off
+dump add node _minuml1::_ObjectFlowState shortinfotag _name
+
+dump set edge dump_transition labels off
+dump add edge dump_transition shortinfotag name
+
+dump set node _minuml1::_ActivityGraph labels off
+dump set node _minuml1::_ActivityGraph color white
+
+dump set node _minuml1::_Partition labels off
+dump add node _minuml1::_Partition shortinfotag _name
+
+# beautify and dump the graph
+exec dump_addTransitionsToPartitions*
+exec dump_guardedTransitionEdges*
+exec dump_transitionEdges*
+
+show graph ycomp

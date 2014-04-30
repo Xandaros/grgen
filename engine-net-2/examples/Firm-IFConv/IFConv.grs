@@ -1,0 +1,31 @@
+new graph IFConv
+
+debug set layout Compilergraph
+debug set layout option CREATE_LOOP_TREE false
+dump set node Block textcolor white
+dump set node IR_node color lightgreen
+dump set node Block color yellow
+dump set edge pdom color blue
+dump set edge cdep color green
+dump add node Block group by hidden incoming df
+#dump add node Block group by incoming df
+dump add node Mode exclude
+dump add edge df infotag pos
+
+#exec sad_variant0
+#exec InitDiamond
+#exec g
+exec ifconvTest1
+
+#debug exec testRetype*
+exec CreateEndBlock && InitPDom*
+
+exec InitPDomEnd && CalcPDom*
+exec KillReflexivePDom* && ReducePDom*
+exec [WalkBlocks]
+
+debug enable
+
+#exec %IFConv
+
+#exec IFConv*

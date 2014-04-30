@@ -1,0 +1,79 @@
+// rule file containing rules containing iterated patterns showing how to match a pattern several times
+//  this allows to match and transform structures extending into breadth, e.g. all incident edges of an node
+// before was ProgramGraphs1.grg, next is ProgramGraphs3a.grg
+
+#using "ProgramGraphs.gm"
+
+#include "ProgramGraphs0WithoutUsing.grg"
+
+rule FirstStatementEx(mb:MethodBody)
+{
+	alternative
+	{
+		Assignment {
+			mb -:next-> e:Expression;
+			e -:writesTo->;
+			e -:contains\next-> sub:Expression;
+			alternative
+			{
+				Call {
+					sub -ca:calls->;
+					iterated
+					{
+						sub -:contains\next-> arg:Expression;
+
+						modify {
+							delete(arg);
+						}
+					}
+
+					modify {
+						delete(ca);
+						sub -:uses-> :Constant <-:contains- mb;
+					}
+				}
+				Use {
+					sub -:uses->;
+
+					modify { }
+				}
+			}
+
+			modify { }
+		}
+		Call {
+			mb -:next-> e:Expression;
+			e -ca:calls->;
+			iterated
+			{
+				e -:contains\next-> arg:Expression;
+
+				modify {
+					delete(arg);
+				}
+			}
+
+			modify {
+				delete(ca);
+				e -:uses-> :Constant <-:contains- mb;
+			}
+		}
+		Return {
+			mb -:next-> e:Expression;
+			e -:uses->;
+
+			modify { }
+		}
+		Empty {
+			negative {
+				mb -:next->;
+			}
+
+			modify { }
+		}
+	}
+
+	modify {
+	}
+}
+

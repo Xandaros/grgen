@@ -1,0 +1,10 @@
+rule r {
+	x:Node -e:Edge-> y:Node -f:Edge-> z:Node <-:Edge- zz:Node;
+	hom(x, y);
+	hom(z, zz);
+
+	replace {
+		x <-:Edge- y <-- z;
+	}
+}
+

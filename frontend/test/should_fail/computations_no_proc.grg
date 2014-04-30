@@ -1,0 +1,10 @@
+procedure foo()
+{
+	return;
+}
+
+function bar() : int
+{
+	foo();
+	return(42);
+}

@@ -1,0 +1,42 @@
+using model_init;
+
+procedure foo() : (set<Node>)
+{
+	def res1:Node;
+	(res1) = add(Node);
+	def res2:A;
+	(res2) = add(A);
+	def -res3:Edge->;
+	(res3) = add(Edge, res1, res2);
+	def -res4:E1->;
+	(res4) = add(E1, res2, res1);
+	rem(res1);
+	rem(res2);
+	rem(res3);
+	rem(res4);
+	return( set<Node>{res1, res2} );
+}
+
+rule r()
+{
+	modify {
+		def ref res:set<Node>;
+		
+		eval { 
+			def res1:Node;
+			(res1) = add(Node);
+			def res2:A;
+			(res2) = add(A);
+			def -res3:Edge->;
+			(res3) = add(Edge, res1, res2);
+			def -res4:E1->;
+			(res4) = add(E1, res2, res1);
+			rem(res1);
+			rem(res2);
+			rem(res3);
+			rem(res4);
+			(yield res) = foo();
+			yield res = res | { res1 };
+		}
+	}
+}

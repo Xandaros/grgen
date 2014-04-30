@@ -1,0 +1,39 @@
+function some(n:Node, var id:int) : boolean
+{
+	return(!n.visited[id]);
+}
+
+procedure someMore(n:Node) : (int)
+{
+	def var id:int;
+	(id) = valloc();
+	vfree(id);
+	(id) = valloc();
+	n.visited[id] = some(n, id);
+	vreset(id);
+	vfreenonreset(id);
+	return(id);
+}
+
+rule r() : (int)
+{
+	n:Node;
+	
+	modify {
+		def var res:int;
+		
+		eval { 
+			def var id:int;
+			(id) = valloc();
+			vfree(id);
+			(id) = valloc();
+			n.visited[id] = some(n, id);
+			vreset(id);
+			vfreenonreset(id);
+			(id) = someMore(n);
+			yield res = id;
+		}
+		
+		return(res);
+	}
+}

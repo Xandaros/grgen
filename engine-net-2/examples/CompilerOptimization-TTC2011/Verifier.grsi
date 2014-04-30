@@ -1,0 +1,3 @@
+def verify {\
+	checkStartBlock && checkEndBlock && checkBlockEdges && checkBlocklessEdge && checkConstBlock && checkPhiArity && checkDataflowPosition\
+}

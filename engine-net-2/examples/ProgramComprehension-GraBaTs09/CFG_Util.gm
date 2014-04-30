@@ -1,0 +1,10 @@
+node class CFG_Enter extends _org_amma_cfg::_AbstractNode;
+
+node class CFG_Exit extends _org_amma_cfg::_AbstractNode;
+
+edge class pdom;
+edge class transitive_pdom extends pdom;
+edge class pdom_frontier;
+
+edge class transitive_toNode extends _org_amma_cfg::_AbstractNode_toNode;
+edge class transitive_innerExpression extends _org_amma_cfg::_Expression_innerExpression;

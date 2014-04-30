@@ -1,0 +1,16 @@
+
+//access to an undeclared enum type, 'te2' in this case
+
+using attrib_model_001, enum_model_001;
+
+rule r {
+	x: NBOOL;
+	k: A;
+
+	modify {
+		eval {
+			x.a = te2::y == k.e;
+		}
+	}
+}
+

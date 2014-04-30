@@ -1,0 +1,26 @@
+rule Test1
+{
+    a:Node --> b:Node;
+    alternative
+    {
+        alt1
+        {
+            a --> c:Node;
+            modify {
+                delete(c);
+                delete(b);      // Deleting elements non-locally twice is forbidden
+            }
+        }
+        alt2
+        {
+            b --> a; b-->:Node; b-->:Node;
+            replace {
+                b; :Node; :Node;
+            }
+        }
+    }
+
+    modify {
+		delete(b);
+	}
+}

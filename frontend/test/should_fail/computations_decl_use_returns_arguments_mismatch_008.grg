@@ -1,0 +1,6 @@
+using model_init;
+
+procedure proc() : (boolean)
+{
+	return;
+}

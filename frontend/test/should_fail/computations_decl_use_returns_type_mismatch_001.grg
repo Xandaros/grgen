@@ -1,0 +1,7 @@
+using model_init;
+
+function func(b:Node) : B
+{
+	return(b);
+}
+

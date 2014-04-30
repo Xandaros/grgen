@@ -1,0 +1,124 @@
+rule init : (Node, Node)
+{
+	modify {
+		n1:Node; n2:Node;
+		return (n1, n2);
+	}
+}
+
+rule addNode : (Node)
+{
+	modify {
+		n:Node;
+		return (n);
+	}
+}
+
+rule addDirected(src:Node, tgt:Node)
+{
+	hom(src, tgt);
+	modify {
+		src --> tgt;
+	}
+}
+
+rule addUndirected(n1:Node, n2:Node)
+{
+	hom(n1, n2);
+	modify {
+		n1 -- n2;
+	}
+}
+
+rule unmarkEdge
+{
+	-e:Edge->;
+	
+	if { e.visited; }
+	
+	modify {
+		eval {
+			e.visited = false;
+		}
+	}
+}
+
+rule unmarkUEdge
+{
+	-e:UEdge-;
+	
+	if { e.visited; }
+	
+	modify {
+		eval {
+			e.visited = false;
+		}
+	}
+}
+
+test oneOrMoreEdges(src:Node, tgt:Node)
+{
+	multiple {
+		src --> tgt;
+	}
+}
+
+rule oneOrMoreEdgesDelete(src:Node, tgt:Node)
+{
+	multiple {
+		src --> tgt;
+
+		replace {
+			src; tgt;
+		}
+	}
+	
+	modify {
+	}
+}
+
+rule foo {
+	n1:Node --> n2:Node;
+	optional {
+		n1 -e:UEdge- n1;
+		modify {
+			eval {
+				e.visited = true;
+			}
+		}
+	}
+	optional {
+		n2 ?-e:AEdge-? n2;
+		modify {
+			eval {
+				e.visited = true;
+			}
+		}
+	}
+	
+	modify {
+	}
+}
+
+rule bar {
+	n1:Node --> n2:Node;
+	multiple {
+		n1 -e:UEdge- n1;
+		modify {
+			eval {
+				e.visited = true;
+			}
+		}
+	}
+	iterated {
+		n2 ?-e:AEdge-? n2;
+		modify {
+			eval {
+				e.visited = true;
+			}
+		}
+	}
+	
+	modify {
+	}
+}

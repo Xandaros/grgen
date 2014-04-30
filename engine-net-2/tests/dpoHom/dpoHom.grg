@@ -1,0 +1,40 @@
+rule init
+{
+
+    replace
+    {
+        x:Node;
+        
+        x --> x;
+    }
+}
+
+rule deleteRightNode
+{
+    x:Node;
+    y:Node;
+    
+    hom(x,y);
+    
+    x --> y;
+
+    modify
+    {
+        delete(y);
+    }
+}
+
+dpo rule DPOdeleteRightNode
+{
+    x:Node;
+    y:Node;
+    
+    hom(x,y);
+    
+    x --> y;
+
+    modify
+    {
+        delete(y);
+    }
+}

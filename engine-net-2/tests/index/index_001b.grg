@@ -1,0 +1,101 @@
+#using "index_model_001b.gm"
+
+rule r13 {
+	-n:E{foo==13}->;
+	
+	modify {
+		emit("The value of attribute i is " + n.i + "\n");
+	}
+}
+
+rule rascending {
+	-n:E{ascending(foo)}->;
+
+	modify {
+		emit("The value of attribute i is " + n.i + "\n");
+	}
+}
+
+rule rdescending {
+	-n:E{descending(foo)}->;
+
+	modify {
+		emit("The value of attribute i is " + n.i + "\n");
+	}
+}
+
+rule rascendinglargerthan5lowerequal13 {
+	-n:E{ascending(foo>5, foo<=13)}->;
+
+	modify {
+		emit("The value of attribute i is " + n.i + "\n");
+	}
+}
+
+rule rascendinglargerequal5 {
+	-n:E{ascending(foo>=5)}->;
+
+	modify {
+		emit("The value of attribute i is " + n.i + "\n");
+	}
+}
+
+rule rascendinglowerthan13 {
+	-n:E{ascending(foo<13)}->;
+
+	modify {
+		emit("The value of attribute i is " + n.i + "\n");
+	}
+}
+
+rule rdescendinglowerthan13largerequal5 {
+	-n:E{descending(foo<13, foo>=5)}->;
+
+	modify {
+		emit("The value of attribute i is " + n.i + "\n");
+	}
+}
+
+rule rdescendinglowerequal13 {
+	-n:E{descending(foo<=13)}->;
+
+	modify {
+		emit("The value of attribute i is " + n.i + "\n");
+	}
+}
+
+rule rdescendinglargerthan5 {
+	-n:E{descending(foo>5)}->;
+
+	modify {
+		emit("The value of attribute i is " + n.i + "\n");
+	}
+}
+
+rule retypeEdge(-n:E->) : (Edge, int) {
+	modify {
+		-m:Edge<n>->;
+		return(m, n.i);
+	}
+}
+
+rule retypeBack(-n:Edge->, var i:int) {
+	modify {
+		-m:E<n>->;
+		eval { m.i = i; }
+	}
+}
+
+rule retypeNode(n:Node) : (N) {
+	modify {
+		m:N<n>;
+		return(m);
+	}
+}
+
+rule retypeNodeBack(n:N) : (Node) {
+	modify {
+		m:Node<n>;
+		return(m);
+	}
+}

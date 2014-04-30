@@ -1,0 +1,84 @@
+node class A
+{
+	f:foo;
+	by:byte;
+	sh:short;
+	i:int;
+	l:long;
+	b:boolean;
+	st:string;
+	s:set<foo>;
+	m:map<int,string>;
+	a:array<foo>;
+	dq:deque<foo>;
+	fl:float;
+	d:double;
+}
+
+node class AA extends A;
+
+node class B;
+
+edge class H
+{
+	f:foo;
+	by:byte;
+	sh:short;
+	i:int;
+	l:long;
+	b:boolean;
+	st:string;
+	s:set<foo>;
+	m:map<int,string>;
+	a:array<string>;
+	dq:deque<string>;
+	fl:float;
+	d:double;
+}
+
+edge class HH extends H;
+
+edge class I;
+
+enum foo { Bar, Bla }
+
+
+
+node class Dummy
+{
+	sby:set<byte>;
+	ssh:set<short>;
+	si:set<int>;
+	sl:set<long>;
+	sf:set<float>;
+	sd:set<double>;
+	sb:set<boolean>;
+	ss:set<string>;
+
+	mby:map<byte,byte>;
+	msh:map<short,short>;
+	mi:map<int,int>;
+	ml:map<long,long>;
+	mf:map<float,float>;
+	md:map<double,double>;
+	mb:map<boolean,boolean>;
+	ms:map<string,string>;
+	
+	aby:array<byte>;
+	ash:array<short>;
+	ai:array<int>;
+	al:array<long>;
+	af:array<float>;
+	ad:array<double>;
+	ab:array<boolean>;
+	as:array<string>;
+	
+	dby:deque<byte>;
+	dsh:deque<short>;
+	di:deque<int>;
+	dl:deque<long>;
+	df:deque<float>;
+	dd:deque<double>;
+	db:deque<boolean>;
+	ds:deque<string>;
+}

@@ -1,0 +1,14 @@
+new graph Connectivity
+
+exec init
+
+exec removeLoop*
+exec removeMultipleEdges*
+exec addReverseEdge*
+
+exec (reduceComponent || breakCycle)*
+
+# show results
+exec reportSize*
+
+quit

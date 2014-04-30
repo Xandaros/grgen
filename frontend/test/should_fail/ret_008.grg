@@ -1,0 +1,11 @@
+using attrib_model_001;
+
+rule r : (Node, NINT) {
+	x: Node;
+	y: Node;
+
+	modify {
+		return(x, y);
+	}
+}
+

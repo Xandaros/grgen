@@ -1,0 +1,9 @@
+using attrib_model_001, enum_model_004;
+
+rule r {
+	x:NINT - l:B -> k:A;
+
+	modify{
+		eval { x.a = (te::c == te2::z) ? 0 : 1; }
+	}
+}

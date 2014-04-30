@@ -1,0 +1,33 @@
+new graph storages/storageparameters
+
+new n1:NN
+new n2:NN
+new n3:NNN
+
+xgrs ::st = array<Node>[]
+
+xgrs [addToArray(::st)] <; {::s=::st.size()}
+show var s
+
+xgrs [remFromArray(::st)] <; {::s=::st.size()}
+show var s
+
+xgrs remFromArrayNodeGiven(::st, ::n2) <; {::s=::st.size()}
+show var s
+
+xgrs addNodeIfOtherContainedArray(::st, ::n1) <; {::s=::st.size()}
+show var s
+
+xgrs addNodeIfOtherContainedArray(::st, ::n1) <; {::s=::st.size()}
+show var s
+
+xgrs {::st.add(::n2)} <; {::s=::st.size()}
+show var s
+
+xgrs remFromArray(::st) <; {::s=::st.size()}
+show var s
+
+xgrs remFromArray(::st) <; {::s=::st.size()}
+show var s
+
+quit

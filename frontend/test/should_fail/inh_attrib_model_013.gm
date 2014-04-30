@@ -1,0 +1,14 @@
+// A redeclaration of a directly inherited edge attribute should be rejected
+
+node class Type1 {
+}
+
+node class Type2 extends Type1 {
+	a : float;
+}
+
+node class Type3 extends Type2 {
+	a: float;
+}
+
+

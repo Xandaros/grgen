@@ -1,0 +1,84 @@
+function one() : int
+{
+	def var res:int;
+	res = 1;
+	if(false) {
+		def var resres:int = 0;
+	} else if(true) {
+		def var resres:int = 1;
+	} else {
+		def var resres:int = 2;
+	}
+	return(res);
+}
+
+test t : (int)
+{
+	def var res:int;
+	
+	independent {
+		yield {
+			def var resres:int;
+			resres = one() + 2;
+			yield res = resres;
+		}
+		yield {
+			def var resres:int;
+			resres = one() + 2;
+			yield res = resres;
+		}
+	}
+	
+	return (res);
+}
+
+rule r : (int)
+{	
+	modify {
+		def var res:int;
+		
+		eval { 
+			def var resres:int;
+			resres = one() + 2;
+			yield res = resres;
+		}
+		eval { 
+			def var resres:int;
+			resres = one() + 2;
+			yield res = resres;
+		}
+		
+		return (res);
+	}
+}
+
+pattern P(var x:int, def var res:int) modify(var xx:int, def var resres:int)
+{
+	independent {
+		independent {
+			yield {
+				def var ress:int;
+				ress = one() + 2;
+				yield res = ress;
+			}
+			yield {
+				def var ress:int;
+				ress = one() + 2;
+				yield res = ress;
+			}
+		}
+	}
+	
+	modify {
+		eval { 
+			def var resress:int;
+			resress = one() + 2;
+			yield resres = resress;
+		}
+		eval { 
+			def var resress:int;
+			resress = one() + 2;
+			yield resres = resress;
+		}
+	}
+}

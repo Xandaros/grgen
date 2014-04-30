@@ -1,0 +1,10 @@
+dpo rule r {
+	x:Node --> y:Node;
+	y --> y;
+	y --> y;
+	z:Node;
+
+	replace {
+	}
+}
+

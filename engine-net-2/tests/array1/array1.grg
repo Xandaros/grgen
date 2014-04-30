@@ -1,0 +1,108 @@
+using array1;
+
+test existsFooHuu
+{
+	nb:B;
+
+	if { "foo" in nb.b; }
+	if { "huu" in nb.b; }
+}
+
+rule addFooHuu
+{
+    nb:B;
+	modify {
+		eval {
+			nb.b = nb.b + [ "foo" ];
+			nb.b.add("huu");
+		}
+	}
+}
+
+test existsBar
+{
+	nb:B;
+	if { "bar" in nb.a; }
+}
+
+rule removeBar()
+{
+    nb:B;
+
+	modify {
+		eval {
+			nb.a.rem(1);
+		}
+	}
+}
+
+rule addHarr()
+{
+    nb:B;
+
+	modify {
+		eval {
+			nb.a.add("harr");
+		}
+	}
+}
+
+rule remove()
+{
+    nb:B;
+
+	modify {
+		eval {
+			nb.a.rem();
+		}
+	}
+}
+
+test anonymousArray
+{
+	na:A;
+	if { na.val in [ "foo", "argl" ]; }
+}
+
+test anonymousArrayNA
+{
+	nb:B;
+	if { nb.val in [ "aha","oho","uh?" ]; }
+}
+
+rule useArrayVar(ref niceArray:array<string>)
+{
+    if { "Hallo" in niceArray; }
+    
+    modify {
+        emit("1 value of attribute 5 6 " + ("Handtuch" in niceArray ? "yes" : "no") + "\n");
+    }
+}
+
+rule arrayIndexof
+{
+	a:A; b:B;
+
+	if {
+		a.a.subarray(a.a.indexOf("foo"), 1).size()>=1 ;
+		a.a.subarray(0, a.a.size()).size()>=1;
+	}		
+	
+	modify {
+		eval {
+			b.a = a.a.subarray(a.a.indexOf("foo"), 1);
+			b.b = a.a.subarray(0, a.a.size());
+		}		
+	}
+}
+
+rule arrayIteration
+{    
+    modify {
+		exec( ::a=array<string>[] ;> ::tmp="a" ;> {::a.add(::tmp)} ;> ::tmp="b" ;> {::a.add(::tmp)} ;> ::tmp="c" ;> {::a.add(::tmp)} ;> ::tmp="d" ;> {::a.add(::tmp)} ;> ::tmp="e" ;> {::a.add(::tmp)} );
+		exec( for{::i->::e in ::a; {emit("1 value of attribute 5 6 ")} ;> {emit(::i)} ;> {emit("\n")} } );
+		exec( for{::i->::e in ::a; {emit("1 value of attribute 5 6 ")} ;> {emit(::e)} ;> {emit("\n")} } );
+		exec( for{::e in ::a; {emit("1 value of attribute 5 6 ")} ;> {emit(::e)} ;> {emit("\n")} } );
+    }
+}
+

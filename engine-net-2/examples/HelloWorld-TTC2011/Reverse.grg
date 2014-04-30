@@ -1,0 +1,22 @@
+#using "graph1__ecore.gm"
+
+rule reverseEdge {
+	alternative {
+		Src {
+			-src:_graph1::_Edge_src->;
+
+			modify {
+				-:_graph1::_Edge_trg<src>->;
+			}
+		}
+		Trg {
+			-trg:_graph1::_Edge_trg->;
+
+			modify {
+				-:_graph1::_Edge_src<trg>->;
+			}
+		}
+	}
+
+	modify { }
+}

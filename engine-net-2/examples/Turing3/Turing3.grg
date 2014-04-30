@@ -1,0 +1,79 @@
+#using "Turing3.gm"
+
+rule readZeroRule(s:State, bp:BandPosition) : (WriteValue) {
+	s -rv:readZero-> wv:WriteValue;
+	if{bp.value == 0;}
+
+	modify {
+		eval {
+			bp.value = wv.value;
+		}
+		return(wv);
+	}
+}
+
+rule readOneRule(s:State, bp:BandPosition) : (WriteValue) {
+	s -rv:readOne-> wv:WriteValue;
+	if{bp.value == 1;}
+
+	modify {
+		eval {
+			bp.value = wv.value;
+		}
+		return (wv);
+	}
+}
+
+rule ensureMoveLeftValidRule(wv:WriteValue, bp:BandPosition) {
+	wv -:moveLeft-> :State;
+	negative {
+		bp <-:right- :BandPosition;
+	}
+
+	modify {
+		bp <-:right- :BandPosition;
+	}
+}
+
+rule ensureMoveRightValidRule(wv:WriteValue, bp:BandPosition) {
+	wv -:moveRight-> :State;
+	negative {
+		bp -:right-> :BandPosition;
+	}
+
+	modify {
+		bp -:right-> :BandPosition;
+	}
+}
+
+rule moveLeftRule(wv:WriteValue, bp:BandPosition) : (State, BandPosition) {
+	wv -:moveLeft-> s:State;
+	bp <-:right- lbp:BandPosition;
+
+	modify {
+		return (s, lbp);
+	}
+}
+
+rule moveRightRule(wv:WriteValue, bp:BandPosition) : (State, BandPosition) {
+	wv -:moveRight-> s:State;
+	bp -:right-> rbp:BandPosition;
+
+	modify {
+		return (s, rbp);
+	}
+}
+
+rule countZeros {
+	bp:BandPosition;
+	if { bp.value == 0; }
+
+	modify {}
+}
+
+rule countOnes {
+	bp:BandPosition;
+	if { bp.value == 1; }
+
+	modify {}
+}

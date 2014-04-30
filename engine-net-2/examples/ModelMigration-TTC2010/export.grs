@@ -1,0 +1,12 @@
+# This is the GrGen.NET solution to the Model Migration case of Transformation Tool Contest 2010.
+
+include core.grs
+
+# Export the graph
+redirect emit migrated_model.xmi
+exec (::id) = initial_id
+exec (::id) = number_node(::id)*
+exec XMI_prefix
+exec [emit_activity]
+exec XMI_suffix
+exec finish_dump

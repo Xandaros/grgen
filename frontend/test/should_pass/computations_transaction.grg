@@ -1,0 +1,29 @@
+procedure foo
+{
+	def var transactionId:int;
+	(transactionId) = startTransaction();
+	pauseTransaction();
+	resumeTransaction();
+	commitTransaction(transactionId);
+	(transactionId) = startTransaction();
+	rollbackTransaction(transactionId);
+	return;
+}
+
+rule r : (int)
+{	
+	modify {
+		def var transactionId:int;
+		
+		eval { 
+			(yield transactionId) = startTransaction();
+			pauseTransaction();
+			resumeTransaction();
+			commitTransaction(transactionId);
+			(yield transactionId) = startTransaction();
+			rollbackTransaction(transactionId);
+		}
+		
+		return (transactionId);
+	}
+}

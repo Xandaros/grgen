@@ -1,0 +1,13 @@
+new graph "induced4\induced4" "Nice Graph"
+
+
+show num nodes
+show num edges
+xgrs init1
+show num nodes
+show num edges
+xgrs [deleteSingleNode]
+show num nodes
+show num edges
+
+quit

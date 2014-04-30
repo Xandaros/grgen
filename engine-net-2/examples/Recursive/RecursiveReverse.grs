@@ -1,0 +1,15 @@
+new graph "Recursive"
+
+debug set layout Organic
+
+exec (::beg,::end)=createChain
+exec chainFromTo(::beg,::end)
+exec reverseChainFromTo(::beg,::end)
+exec chainFromToReverse(::beg,::end)
+exec chainFromTo(::beg,::end)
+exec reverseChainFromTo(::beg,::end)
+
+custom graph analyze_graph
+custom actions gen_searchplan chainFromToReverse
+
+quit

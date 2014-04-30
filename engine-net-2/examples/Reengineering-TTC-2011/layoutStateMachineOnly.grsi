@@ -1,0 +1,24 @@
+dump reset
+
+debug set layout Hierarchic
+debug set layout option EDGE_LABELING HIERARCHIC
+debug set layout option EDGE_LABEL_MODEL BEST
+
+# hide non state machine element
+dump add node _commons::_Commentable exclude
+
+# Layout for state machine
+dump add node _statemachine::_StateMachine group by hidden outgoing _statemachine::_StateMachine_states
+dump add node _statemachine::_StateMachine group by hidden outgoing _statemachine::_StateMachine_transitions
+dump set node _statemachine::_StateMachine color red
+dump set node _statemachine::_State labels off
+dump set node _statemachine::_State shape circle
+dump set node _statemachine::_State color black
+dump set node _statemachine::_State textcolor white
+dump add node _statemachine::_State shortinfotag _name
+
+dump set edge Transition color white
+dump set edge Transition textcolor white
+dump set edge Transition labels off
+dump add edge Transition shortinfotag action
+dump add edge Transition shortinfotag trigger

@@ -1,0 +1,11 @@
+#using "helloworld__ecore.gm"
+
+rule createHelloWorld {
+	replace {
+		greeting:_helloworld::_Greeting;
+
+		eval {
+			greeting._text = "Hello World";
+		}
+	}
+}

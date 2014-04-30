@@ -1,0 +1,131 @@
+// This is the GrGen.NET solution to the Model Migration case of Transformation Tool Contest 2010.
+
+// Rules for beautify the UML 1.4 graph
+
+rule dump_addTransitionsToPartitions {
+	state1:_minuml1::_StateVertex <-:_minuml1::_Transition_source- transition:_minuml1::_Transition;
+	state2:_minuml1::_StateVertex <-:_minuml1::_Transition_target- transition;
+
+	state1 <-:_minuml1::_Partition_contents- partition:_minuml1::_Partition -:_minuml1::_Partition_contents-> state2;
+
+	negative {
+		partition -:_minuml1::_Partition_contents-> transition;
+	}
+
+	modify {
+		partition -:_minuml1::_Partition_contents-> transition;
+	}
+}
+
+rule dump_guardedTransitionEdges {
+	state1:_minuml1::_StateVertex;
+	state2:_minuml1::_StateVertex;
+
+	state1 -:_minuml1::_StateVertex_outgoing-> transition:_minuml1::_Transition <-:_minuml1::_StateVertex_incoming- state2;
+
+	transition -:_minuml1::_Transition_guard-> guard:_minuml1::_Guard;
+	guard -:_minuml1::_Guard_expression-> expr:_minuml1::_BooleanExpression;
+
+	modify {
+		delete(transition, guard, expr);
+
+		state1 -e:dump_transition-> state2;
+
+		eval {
+			e.name = guard._name;
+		}
+	}
+}
+
+rule dump_transitionEdges {
+	state1:_minuml1::_StateVertex;
+	state2:_minuml1::_StateVertex;
+
+	state1 -:_minuml1::_StateVertex_outgoing-> transition:_minuml1::_Transition <-:_minuml1::_StateVertex_incoming- state2;
+
+	modify {
+		delete(transition);
+
+		state1 -:dump_transition-> state2;
+	}
+}
+
+// Rules for beautify the UML 2.2 graph
+
+rule dump_nonPartitionNode {
+	activity:_uml::_ActivityNode -:_uml::_ActivityNode_inPartition->;
+	activity <-e:_uml::_Activity_node-;
+
+	modify {
+		delete(e);
+	}
+}
+
+rule dump_nonPartitionEdge {
+	activity:_uml::_ActivityEdge -:_uml::_ActivityEdge_inPartition->;
+	activity <-e:_uml::_Activity_edge-;
+
+	modify {
+		delete(e);
+	}
+}
+
+rule dump_addActivityEdgesToActivityPartition {
+	activity1:_uml::_ActivityNode <-:_uml::_ActivityEdge_source- actEdge:_uml::_ActivityEdge;
+	activity2:_uml::_ActivityNode <-:_uml::_ActivityEdge_target- actEdge;
+
+	activity1 <-:_uml::_ActivityPartition_node- partition:_uml::_ActivityPartition -:_uml::_ActivityPartition_node-> activity2;
+
+	negative {
+		partition -:_uml::_ActivityPartition_node-> actEdge;
+	}
+
+	modify {
+		partition -:_uml::_ActivityPartition_node-> actEdge;
+	}
+}
+
+rule dump_guarded_OpaqueExpression {
+	actEdge:_uml::_ActivityEdge;
+
+	actEdge -:_uml::_ActivityEdge_guard-> expr:_uml::_OpaqueExpression;
+
+	modify {
+		delete(expr);
+
+		eval {
+			actEdge._name = expr._name;
+		}
+	}
+}
+
+rule dump_ActivityEdge {
+	actNode1:_uml::_ActivityNode;
+	actNode2:_uml::_ActivityNode;
+
+	actNode1 <-:_uml::_ActivityEdge_source- actEdge:_uml::_ActivityEdge -:_uml::_ActivityEdge_target-> actNode2;
+
+	modify {
+		delete(actEdge);
+
+		actNode1 -e:dump_transition-> actNode2;
+
+		eval { e.name = actEdge._name; }
+	}
+}
+
+rule dump_ActivityEdge2 {
+	actNode1:_uml::_ActivityNode;
+	actNode2:_uml::_ActivityNode;
+
+	actNode1 <-:_uml::_ActivityEdge_source- actEdge:_uml::_ControlFlow -:_uml::_ActivityEdge_target-> actNode2;
+
+	modify {
+		delete(actEdge);
+
+		actNode1 -e:dump_transition-> actNode2;
+
+		eval { e.name = actEdge._name; }
+	}
+}
+
